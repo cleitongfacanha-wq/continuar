@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>UDSO • HGCR | Plataforma Continuar</title>
+  <meta name="description" content="Programa de Cinesioterapia Laboral Preventiva e Manejo Ergonômico do HGCR - Unidade de Desempenho em Saúde Ocupacional (UDSO)."/>
+  
+  <!-- Fontes Oficiais Inter & Montserrat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf9',
+              100: '#ccfbf1',
+              200: '#99f6e4',
+              300: '#5eead4',
+              400: '#2dd4bf',
+              500: '#14b8a6',
+              600: '#0d9488',
+              700: '#0f4c43',
+              800: '#0c3b34',
+              900: '#082823',
+              dark: '#0B302B',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            heading: ['Montserrat', 'Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: #0f172a;
+      background-color: #ffffff;
+      -webkit-font-smoothing: antialiased;
+    }
+    .font-heading { font-family: 'Montserrat', 'Inter', sans-serif; }
+    .card-sirio {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 1.5rem;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .card-sirio:hover {
+      transform: translateY(-2px);
+      border-color: #5eead4;
+    }
+    .card-stack {
+      position: -webkit-sticky;
+      position: sticky;
+      background-color: #ffffff;
+      box-shadow: 0 -6px 20px -2px rgba(0, 0, 0, 0.06), 0 25px 35px -10px rgba(15, 76, 67, 0.14);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease-in-out, opacity 0.3s ease-in-out;
+      opacity: 0;
+    }
+    .faq-item.active .faq-answer {
+      max-height: 500px;
+      opacity: 1;
+    }
+    .faq-item.active .faq-chevron {
+      transform: rotate(180deg);
+    }
+    @keyframes bounceHeroi {
+        from { transform: translateY(0); }
+        to { transform: translateY(-8px); }
+    }
+    /* Acessibilidade - Alto Contraste */
+    body.high-contrast { background-color: #000000 !important; color: #ffffff !important; }
+    body.high-contrast .bg-white, body.high-contrast .bg-slate-50, body.high-contrast .bg-slate-100, body.high-contrast .card-sirio {
+      background-color: #121212 !important; border-color: #38bdf8 !important; color: #ffffff !important;
+    }
+    body.high-contrast h1, body.high-contrast h2, body.high-contrast h3, body.high-contrast h4, body.high-contrast p, body.high-contrast span {
+      color: #f8fafc !important;
+    }
+    body.high-contrast #barra-acessibilidade { background-color: #000000 !important; border-bottom: 2px solid #10b981 !important; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+  <!-- ======================================================== -->
+  <!-- COMPONENTE:(PASSO A PASSO)       -->
+  <!-- ======================================================== -->
+  <div id="guia-heroi-modal" style="display: none; position: fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(15, 76, 67, 0.85); backdrop-filter: blur(5px); z-index: 99999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; font-family: sans-serif;">
+      <div style="background: #ffffff; max-width: 440px; width: 100%; border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.25); border: 4px solid #14b8a6; padding: 30px 25px; text-align: center; box-sizing: border-box; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+          <div style="font-size: 44px; line-height: 1; margin-bottom: 12px; display: flex; justify-content: center; align-items: center; width: 100%; animation: bounceHeroi 1s infinite alternate;">🩺</div>
+          
+          <h2 style="color: #0F4C43; margin: 0 0 8px 0; font-size: 20px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.3; width: 100%; text-align: center;">
+              Como Funciona o Seu Acompanhamento em 3 Etapas
+          </h2>
+          <p style="color: #64748b; font-size: 13px; margin: 0 0 16px 0; line-height: 1.4;">
+              
+          </p>
+          
+          <!-- Passo 1: Anamnese -->
+          <div id="passo-1" class="passo-guia" style="display: block; width: 100%; text-align: center;">
+              <div style="font-size: 48px; line-height: 1; margin: 12px 0; display: flex; justify-content: center; align-items: center; width: 100%;">📝</div>
+              <h3 style="color: #0F4C43; margin: 0 0 8px 0; font-size: 16px; font-weight: 700;">1. Anamnese Inicial Ocupacional</h3>
+              <p style="color: #475569; font-size: 13px; line-height: 1.5; margin: 0; padding: 0 8px;">
+                  Clique no botão <strong>"Iniciar Anamnese Digital"</strong>. Preencha seus dados de identificação e rotina de trabalho. Depois, clique em <strong>"Salvar"</strong>.
+              </p>
+          </div>
+
+          <!-- Passo 2: A Esteira Automática -->
+          <div id="passo-2" class="passo-guia" style="display: none; width: 100%; text-align: center;">
+              <div style="font-size: 48px; line-height: 1; margin: 12px 0; display: flex; justify-content: center; align-items: center; width: 100%;">📊</div>
+              <h3 style="color: #0F4C43; margin: 0 0 8px 0; font-size: 16px; font-weight: 700;">2. Avaliação com Escalas Clínicas</h3>
+              <p style="color: #475569; font-size: 13px; line-height: 1.5; margin: 0; padding: 0 8px;">
+                  Após a anamnese, os questionários clínicos validados abrem-se na tela conforme as queixas assinaladas, mensurando a capacidade física para as tarefas do posto.
+              </p>
+          </div>
+
+          <!-- Passo 3: Relato -->
+          <div id="passo-3" class="passo-guia" style="display: none; width: 100%; text-align: center;">
+              <div style="font-size: 48px; line-height: 1; margin: 12px 0; display: flex; justify-content: center; align-items: center; width: 100%;">🗺️</div>
+              <h3 style="color: #0F4C43; margin: 0 0 8px 0; font-size: 16px; font-weight: 700;">3. Relato Diário de Dor & Autocuidado</h3>
+              <p style="color: #475569; font-size: 13px; line-height: 1.5; margin: 0; padding: 0 8px;">
+                  Durante sua jornada, registre pontos de desconforto no mapa anatômico por voz ou toque e acesse os protocolos de pausas ativas orientadas no próprio setor.
+              </p>
+          </div>
+
+          <div style="display: flex; gap: 8px; margin: 20px 0 15px 0; justify-content: center; width: 100%;">
+              <div id="dot-1" style="width: 10px; height: 10px; background: #0F4C43; border-radius: 50%; transition: 0.2s;"></div>
+              <div id="dot-2" style="width: 10px; height: 10px; background: #cfd8dc; border-radius: 50%; transition: 0.2s;"></div>
+              <div id="dot-3" style="width: 10px; height: 10px; background: #cfd8dc; border-radius: 50%; transition: 0.2s;"></div>
+          </div>
+
+          <button id="btn-guia-proximo" onclick="avancarFaseGuia()" style="background: #0F4C43; color: #ffffff; border: none; padding: 14px 28px; font-size: 14px; font-weight: bold; border-radius: 50px; cursor: pointer; box-shadow: 0 4px 10px rgba(15, 76, 67, 0.25); transition: all 0.2s ease; width: 100%; text-transform: uppercase; letter-spacing: 0.5px;">
+              Próxima Etapa ➔
+          </button>
+      </div>
+  </div>
+
+  <!-- BARRA DE ACESSIBILIDADE GOVERNAMENTAL -->
+  <div id="barra-acessibilidade" class="bg-slate-900 text-slate-300 text-xs py-1.5 px-4 border-b border-slate-800 relative z-50">
+    <div class="max-w-7xl mx-auto flex items-center justify-end gap-2">
+      <div class="flex items-center gap-2">
+        <div class="flex items-center bg-slate-800 rounded px-1.5 py-0.5 border border-slate-700">
+          <button type="button" onclick="alterarFonte(-1)" title="Diminuir Fonte" class="px-1.5 py-0.5 text-slate-300 hover:text-white font-bold transition">A-</button>
+          <button type="button" onclick="alterarFonte(0)" title="Fonte Padrão" class="px-1.5 py-0.5 text-slate-300 hover:text-white text-xs transition">A</button>
+          <button type="button" onclick="alterarFonte(1)" title="Aumentar Fonte" class="px-1.5 py-0.5 text-slate-300 hover:text-white font-bold transition">A+</button>
+        </div>
+        <button type="button" onclick="alternarAltoContraste()" id="btn-alto-contraste" title="Alternar Alto Contraste" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-0.5 rounded border border-slate-700 font-medium transition">
+          <span>🌓 Alto Contraste</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CABEÇALHO INSTITUCIONAL UDSO -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <a href="#inicio" class="flex items-center gap-3 group">
+          <div class="w-9 h-9 rounded-xl bg-[#0F4C43] flex items-center justify-center text-white shadow-sm shadow-[#0F4C43]/20 group-hover:scale-105 transition">
+            <svg class="w-4.5 h-4.5 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+            </svg>
+          </div>
+          <div class="text-left">
+            <div class="flex items-center gap-1.5">
+              <span class="text-lg font-heading font-black text-[#0F4C43] tracking-tight">Continuar</span>
+              <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            </div>
+            <span class="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Fisioterapia do Trabalho UDSO • HGCR</span>
+          </div>
+        </a>
+
+        <nav class="hidden md:flex items-center gap-6 lg:gap-8 text-xs font-semibold text-slate-500">
+          <a href="#inicio" class="hover:text-[#0F4C43] transition-colors py-1">Início</a>
+          <a href="#guia-pratico" class="hover:text-[#0F4C43] transition-colors py-1">Como Funciona</a>
+          <a href="#pilares" class="hover:text-[#0F4C43] transition-colors py-1">Pilares Metodológicos</a>
+          <a href="#acoes-udso" class="hover:text-[#0F4C43] transition-colors py-1">Ações</a>
+          
+        </nav>
+
+        <div class="flex md:hidden items-center">
+          <button onclick="toggleMobileMenu()" type="button" class="p-2 rounded-xl text-slate-700 hover:bg-slate-100 focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-5 space-y-2 text-xs font-semibold text-slate-600">
+      <a href="#inicio" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg hover:bg-slate-50">Início</a>
+      <a href="#guia-pratico" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg hover:bg-slate-50">Como Funciona</a>
+      <a href="#pilares" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg hover:bg-slate-50">Pilares Metodológicos</a>
+      <a href="#acoes-udso" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg hover:bg-slate-50">Ações</a>
+     
+    </div>
+  </header>
+
+  <main class="flex-grow">
+
+    <!-- HERO SECTION -->
+    <section id="inicio" class="relative bg-gradient-to-br from-[#0B302B] via-[#0F4C43] to-[#082823] text-white py-16 md:py-24 overflow-hidden">
+      <div class="absolute inset-0 opacity-10 pointer-events-none">
+        <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid-pattern" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(#grid-pattern)"/></svg>
+      </div>
+      
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+          
+          <div class="lg:col-span-7 text-left space-y-6">
+            <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/15 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider text-emerald-300">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+              UDSO • Hospital Governador Celso Ramos
+            </div>
+
+            <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-heading font-black tracking-tight leading-[1.15] text-white">
+              Programa de Cinesioterapia Laboral Preventiva
+            </h1>
+
+            <p class="text-xl sm:text-2xl text-emerald-100 font-medium leading-snug">
+              Seu Corpo Foi Feito para se Mover. Nós Ajudamos Você a <span class="text-emerald-300 font-bold underline decoration-emerald-400 decoration-2">Continuar</span>.
+            </p>
+
+            <p class="text-sm sm:text-base text-teal-100/90 max-w-2xl leading-relaxed">
+              Bem-vindo ao portal da Unidade de Descentralizada de Saúde Ocupacional (UDSO). Nosso objetivo é promover o seu bem-estar, conforto postural e segurança física durante sua jornada laboral.
+            </p>
+
+            <div class="pt-2 flex flex-wrap items-center gap-3 text-xs font-semibold text-emerald-200">
+              <span class="flex items-center gap-1.5 bg-black/20 px-3 py-1.5 rounded-lg border border-white/10">
+                🏥 Uso Exclusivo Servidores HGCR
+              </span>
+              <span class="flex items-center gap-1.5 bg-black/20 px-3 py-1.5 rounded-lg border border-white/10">
+                🔒 Sigilo de Dados (LGPD)
+              </span>
+              <button type="button" onclick="abrirGuiaHerico()" class="flex items-center gap-1.5 bg-[#0F4C43]/80 hover:bg-[#0F4C43] text-white px-3 py-1.5 rounded-lg border border-emerald-500/50 transition shadow-sm">
+                <svg class="w-4 h-4 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Passo a Passo
+              </button>
+            </div>
+          </div>
+
+          <div class="lg:col-span-5">
+            <div class="bg-white text-slate-900 p-6 sm:p-8 rounded-3xl shadow-2xl border border-white/20 relative">
+              <div class="flex items-center justify-between pb-4 mb-5 border-b border-slate-100">
+                <div>
+                  <span class="text-[10px] font-extrabold uppercase tracking-widest text-[#0F4C43] bg-teal-50 px-2.5 py-1 rounded-md border border-teal-100">
+                     Preencha seus dados institucionais para iniciar.
+                  </span>
+                  <h3 class="text-lg font-bold text-slate-900 mt-1">Identificação Funcional</h3>
+                </div>
+                <div class="text-2xl">📋</div>
+              </div>
+
+             
+
+              <form onsubmit="iniciarAcolhimento(event)" class="space-y-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Nome Completo</label>
+                  <input type="text" id="hero-nome" placeholder="Ex: Cleiton Gomes Façanha" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#0F4C43] focus:border-transparent outline-none transition"/>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Matrícula</label>
+                    <input type="text" id="hero-matricula" placeholder="Ex: 987654-1" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#0F4C43] focus:border-transparent outline-none transition"/>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Setor (Área/Unidade)</label>
+                    <input type="text" id="hero-setor" placeholder="Ex: UDSO, RH" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#0F4C43] focus:border-transparent outline-none transition"/>
+                  </div>
+                </div>
+
+                <button type="submit" class="w-full bg-[#0F4C43] hover:bg-[#0c3b34] text-white py-3.5 px-4 rounded-xl font-bold text-sm shadow-lg shadow-[#0F4C43]/25 hover:shadow-xl transition flex items-center justify-center gap-2">
+                  <span>Iniciar Anamnese Digital</span>
+                  <svg class="w-4 h-4 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                </button>
+              </form>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- AÇÕES DA FISIOTERAPIA DO TRABALHO -->
+    <section id="acoes-udso" class="py-20 bg-slate-50 border-b border-slate-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-14">
+          <h2 class="text-xl sm:text-2xl font-heading font-bold text-slate-900 mb-2">Ações da Fisioterapia do Trabalho</h2>
+          <p class="text-slate-600 text-sm">Objetivos gerais e mapeamento de riscos voltados à prevenção de lesões durante a jornada laboral.</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8">
+          <!-- Ação 1: Mapeamento -->
+          <div class="card-sirio p-8 flex flex-col items-start border-t-4 border-[#0F4C43]">
+            <div class="w-14 h-14 rounded-2xl bg-teal-50 text-[#0F4C43] flex items-center justify-center font-bold text-2xl mb-4">📋</div>
+            <h3 class="font-bold text-slate-900 text-xl mb-3">Mapeamento Topográfico e Segmentar</h3>
+            <p class="text-sm text-slate-600 leading-relaxed mb-4">
+              A Anamnese Inicial Ocupacional estrutura a base referencial para a intervenção clínica no HGCR. O mapeamento busca vincular os fatores mecânicos associados ao posto do servidor aos sinais álgicos que se iniciam em segmentos anatômicos específicos, de forma preditiva, estabelecendo parâmetros de prevenção para evitar a consolidação crônica das desordens.
+            </p>
+          </div>
+
+          <!-- Ação 2: Pausas Ativas -->
+          <div class="card-sirio p-8 flex flex-col items-start border-t-4 border-emerald-600">
+            <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-2xl mb-4">🧘</div>
+            <h3 class="font-bold text-slate-900 text-xl mb-3">Pausas Ativas e Atividade Laboral</h3>
+            <p class="text-sm text-slate-600 leading-relaxed mb-4">
+              Consiste na intervenção prática direta nas estações de trabalho e alas hospitalares. O protocolo foca na inserção de manobras guiadas (mecanotransdução e descompressão articular) focadas na ruptura da tensão contínua. Estas ações, aplicadas e coordenadas pela equipe da UDSO, atenuam a sobrecarga imediata e resgatam o condicionamento local.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESPONSABILIDADE TÉCNICA -->
+    <section class="py-16 bg-white border-b border-slate-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="card-sirio p-8 sm:p-10 border border-slate-200 bg-gradient-to-r from-slate-50 via-white to-teal-50/40">
+          <div class="grid md:grid-cols-12 gap-6 items-center">
+            <div class="md:col-span-3 text-center md:text-left">
+              <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-[#0F4C43] text-white flex flex-col items-center justify-center font-heading font-bold mx-auto md:mx-0 shadow-lg shadow-[#0F4C43]/20">
+                <span class="text-3xl">👨‍⚕️</span>
+                <span class="text-[10px] uppercase tracking-widest text-emerald-300 mt-1">CREFITO-10</span>
+              </div>
+            </div>
+            <div class="md:col-span-9 space-y-2 text-center md:text-left">
+              <div class="inline-block text-[11px] font-bold uppercase tracking-wider text-[#0F4C43] bg-teal-50 px-2.5 py-0.5 rounded border border-teal-200">
+                Responsabilidade Técnica
+              </div>
+              <h3 class="text-xl sm:text-2xl font-bold text-slate-900">Dr. Cleiton Gomes Façanha</h3>
+              <p class="text-xs sm:text-sm font-semibold text-slate-600">
+                Fisioterapeuta do Trabalho (CREFITO-10: 265.366-F) • Unidade de Descentralizada de Saúde Ocupacional  (UDSO / HGCR)
+              </p>
+              <p class="text-xs sm:text-sm text-slate-600 leading-relaxed pt-1">
+                 </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- RODAPÉ INSTITUCIONAL (Intacto) -->
+  <footer class="bg-slate-950 text-slate-400 text-xs py-14 border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+        
+        <!-- Identidade e Slogan -->
+        <div class="md:col-span-2 space-y-3">
+          <div class="flex items-center gap-2.5 text-white font-bold text-lg">
+            <div class="w-79 h-75 rounded-lg bg-[#0F4C43] flex items-center justify-center text-white font-black text-sm">Projeto</div>
+            <span class="font-heading font-black tracking-tight text-white">Continuar</span>
+          </div>
+          <p class="text-slate-300 font-medium text-sm">
+            "Seu Corpo Foi Feito para se Mover. Nós Ajudamos Você a Continuar."
+          </p>
+          <p class="text-slate-400 text-xs leading-relaxed max-w-md">
+            Unidade de Descentralizada de Saúde Ocupacional (UDSO).
+          </p>
+        </div>
+
+        <!-- Links Rápidos -->
+        <div class="space-y-2">
+          <h5 class="text-white font-bold text-xs uppercase tracking-wider mb-3">Acesso Rápido</h5>
+          <ul class="space-y-1.5 text-xs">
+          </ul>
+        </div>
+
+        <!-- Governança e Regulação -->
+        <div class="space-y-2">
+          <h5 class="text-white font-bold text-xs uppercase tracking-wider mb-3">Conformidade</h5>
+          <p class="text-[11px] leading-relaxed text-slate-400">
+            Fundamentado na NR-17 (Ergonomia - Portaria MTE nº 4.219/2022), CIF (OMS), Lei Estadual nº 6.745/85 e diretrizes da RNDS / Datasus.
+          </p>
+          <div class="pt-2">
+            <a href="painel_gestor_udso.html" target="_blank" class="inline-flex items-center gap-2 bg-[#0F4C43] hover:bg-[#0c3b34] text-white px-4 py-2 rounded-xl text-xs font-bold shadow-md shadow-[#0F4C43]/30 transition border border-emerald-500/30">
+              <svg class="w-3.5 h-3.5 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              <span>Acessar Painel Gestor (UDSO) →</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="pt-8 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-4 text-[11px] text-slate-500">
+        <div>
+          © 2026 Plataforma Continuar. Responsável Técnico: Dr. Cleiton Gomes Façanha (CREFITO-10: 265.366-F).
+        </div>
+        <div class="flex items-center gap-4">
+          <a href="anamnese.html" class="hover:text-slate-300">TCLE Digital</a>
+          <span>•</span>
+          <a href="#faq" class="hover:text-slate-300">Privacidade & LGPD</a>
+          <span>•</span>
+          <button onclick="alterarFonte(0)" class="hover:text-slate-300">Redefinir Acessibilidade</button>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- SCRIPT -->
+  <script>
+    // 1. Accordion Interativo (FAQ)
+    function toggleFaq(item) {
+      const isActive = item.classList.contains('active');
+      document.querySelectorAll('.faq-item').forEach(el => el.classList.remove('active'));
+      if (!isActive) {
+        item.classList.add('active');
+      }
+    }
+
+    // 2. Lógica do Modal Passo a Passo
+    let faseAtual = 1;
+    const totalFases = 3;
+
+    function abrirGuiaHerico() {
+        faseAtual = 1; 
+        for (let i = 1; i <= totalFases; i++) {
+            document.getElementById(`passo-${i}`).style.display = i === 1 ? 'block' : 'none';
+            document.getElementById(`dot-${i}`).style.background = i === 1 ? '#0F4C43' : '#cfd8dc';
+        }
+        document.getElementById('btn-guia-proximo').innerText = "Próxima Etapa ➔";
+        document.getElementById('btn-guia-proximo').style.background = '#0F4C43';
+        document.getElementById('guia-heroi-modal').style.display = 'flex';
+    }
+
+    function avancarFaseGuia() {
+        document.getElementById(`passo-${faseAtual}`).style.display = 'none';
+        document.getElementById(`dot-${faseAtual}`).style.background = '#cfd8dc';
+        faseAtual++;
+        if (faseAtual <= totalFases) {
+            document.getElementById(`passo-${faseAtual}`).style.display = 'block';
+            document.getElementById(`dot-${faseAtual}`).style.background = '#0F4C43';
+            if (faseAtual === totalFases) {
+                document.getElementById('btn-guia-proximo').innerText = "Entendido, Continuar ➔";
+                document.getElementById('btn-guia-proximo').style.background = '#0F4C43';
+            }
+        } else {
+            document.getElementById('guia-heroi-modal').style.display = 'none';
+        }
+    }
+
+    // 3. Acolhimento do Formulário Rápido do Hero
+    function iniciarAcolhimento(e) {
+      e.preventDefault();
+      const nome = document.getElementById('hero-nome').value.trim();
+      const mat = document.getElementById('hero-matricula').value.trim();
+      const setor = document.getElementById('hero-setor').value.trim();
+
+      if (nome) localStorage.setItem('hgcr_user_nome', nome);
+      if (mat) localStorage.setItem('hgcr_user_matricula', mat);
+      if (setor) localStorage.setItem('hgcr_user_setor', setor);
+
+      window.location.href = 'anamnese.html';
+    }
+
+    // Carregar dados salvos no form do Hero
+    window.addEventListener('DOMContentLoaded', () => {
+      const n = localStorage.getItem('hgcr_user_nome');
+      const m = localStorage.getItem('hgcr_user_matricula');
+      const s = localStorage.getItem('hgcr_user_setor');
+      if (n && document.getElementById('hero-nome')) document.getElementById('hero-nome').value = n;
+      if (m && document.getElementById('hero-matricula')) document.getElementById('hero-matricula').value = m;
+      if (s && document.getElementById('hero-setor')) document.getElementById('hero-setor').value = s;
+    });
+
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbx_QkwiHI7nIzgBseEkbIk0mY33A2Uuqrq5Tn5X-v0BSLs3DmpUpn9cvInUUaPyOPV8rg/exec';
+
+    // Limpeza rápida de cache
+    function limparDadosTerminal() {
+      localStorage.removeItem('hgcr_servidor_nome');
+      localStorage.removeItem('hgcr_servidor_mat');
+      localStorage.removeItem('hgcr_servidor_setor');
+      localStorage.removeItem('hgcr_user_nome');
+      localStorage.removeItem('hgcr_user_matricula');
+      localStorage.removeItem('hgcr_user_setor');
+      localStorage.removeItem('hgcr_user_cargo');
+      localStorage.removeItem('hgcr_submissions');
+      sessionStorage.clear();
+      alert('Dados de identificação removidos deste terminal compartilhado.');
+      location.reload();
+    }
+
+    function toggleMobileMenu() {
+      document.getElementById('mobile-menu').classList.toggle('hidden');
+    }
+
+    // Acessibilidade
+    let currentFontScale = 100;
+    function alterarFonte(delta) {
+      if (delta === 0) {
+        currentFontScale = 100;
+      } else {
+        currentFontScale = Math.min(140, Math.max(85, currentFontScale + delta * 10));
+      }
+      document.documentElement.style.fontSize = (currentFontScale / 100) * 16 + 'px';
+      localStorage.setItem('continuar_font_scale', currentFontScale);
+    }
+
+    function alternarAltoContraste() {
+      const isHigh = document.body.classList.toggle('high-contrast');
+      localStorage.setItem('continuar_high_contrast', isHigh ? '1' : '0');
+      const btn = document.getElementById('btn-alto-contraste');
+      if (btn) {
+        btn.innerHTML = isHigh ? '<span>☀️ Contraste Normal</span>' : '<span>🌓 Alto Contraste</span>';
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedScale = localStorage.getItem('continuar_font_scale');
+      if (savedScale) {
+        currentFontScale = parseInt(savedScale, 10);
+        if (!isNaN(currentFontScale) && currentFontScale !== 100) {
+          document.documentElement.style.fontSize = (currentFontScale / 100) * 16 + 'px';
+        }
+      }
+      if (localStorage.getItem('continuar_high_contrast') === '1') {
+        document.body.classList.add('high-contrast');
+        const btn = document.getElementById('btn-alto-contraste');
+        if (btn) btn.innerHTML = '<span>☀️ Contraste Normal</span>';
+      }
+    });
+
+  </script>
+</body>
+</html>

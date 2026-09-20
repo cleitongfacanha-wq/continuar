@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>NASA-TLX • Carga de Trabalho Mental e Cognitiva — Continuar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #0F4C43;
+      --primary-hover: #134e4a;
+      --bg: #f8fafc;
+    }
+    body {
+      background-color: var(--bg);
+      color: #0f172a;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .loader {
+      border: 2.5px solid #e2e8f0;
+      border-top: 2.5px solid var(--primary);
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      animation: spin 0.8s linear infinite;
+      display: none;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="p-3 md:p-6 lg:p-8 antialiased min-h-screen flex flex-col justify-between">
+
+  <div class="max-w-4xl mx-auto w-full bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden" id="form-container">
+    
+    <!-- Topbar Institucional -->
+    <header class="bg-gradient-to-r from-slate-900 to-[#0F4C43] text-white p-6 md:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2 mb-1.5">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-[11px] font-extrabold uppercase tracking-widest text-emerald-200">
+            UDSO • Hospital Governador Celso Ramos
+          </span>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-black tracking-tight">NASA-TLX (Carga Mental e Cognitiva)</h1>
+        <p class="text-xs md:text-sm text-emerald-100/80 mt-0.5 font-medium">
+          Avaliação de Fatores Psicossociais & Exigência Cognitiva
+        </p>
+      </div>
+      <a href="index.html" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-xs font-bold transition border border-white/20 backdrop-blur-sm self-stretch sm:self-auto text-center">
+        ← Voltar ao Portal
+      </a>
+    </header>
+
+    <form id="form-nasa" class="p-6 md:p-8 space-y-8" onsubmit="submitNASA(event)">
+      
+      <!-- Identificação do Servidor -->
+      <div class="bg-slate-50 border border-slate-200/80 p-5 rounded-2xl">
+        <div class="flex items-center justify-between mb-3 border-b border-slate-200/60 pb-2">
+          <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Identificação do Servidor</h3>
+          <span class="text-[11px] text-emerald-700 font-semibold">Sincronização Automática</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nome Completo *</label>
+            <input type="text" id="nasa_nome" name="nome" required placeholder="Nome do Servidor" 
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition font-medium" 
+                   oninput="salvarLocal('nome', this.value)">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Matrícula SES/SC *</label>
+            <input type="text" id="nasa_matricula" name="matricula" required placeholder="Ex: 123456-7" 
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs font-mono text-slate-900 transition" 
+                   oninput="salvarLocal('mat', this.value)">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Setor de Lotação *</label>
+            <input type="text" id="nasa_setor" name="setor" required placeholder="Ex: Emergência, UTI, Centro Cirúrgico" 
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition font-medium" 
+                   oninput="salvarLocal('setor', this.value)">
+          </div>
+        </div>
+      </div>
+
+      <!-- Fundamentação -->
+      <div class="bg-emerald-50/70 border-l-4 border-[#0F4C43] p-4 rounded-r-2xl text-xs space-y-1">
+        <p class="text-slate-800 font-bold flex items-center gap-1.5">
+          <span>🧠</span> Aspectos Psicossociais e Cognitivos:
+        </p>
+        <p class="text-slate-600 leading-relaxed">
+          A avaliação ergonômica contempla os aspectos cognitivos e psicossociais associados ao estresse laboral. O NASA-TLX permite diferenciar setores com sobrecarga física de setores de alta densidade mental e emocional no HGCR (como Emergência e UTI).
+        </p>
+      </div>
+
+      <!-- As 6 Dimensões do NASA-TLX -->
+      <div class="space-y-6">
+
+        <!-- 1. Exigência Mental -->
+        <div class="border border-slate-200 rounded-2xl p-5 space-y-2 bg-white hover:border-emerald-300 transition">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-emerald-100 text-[#0F4C43] font-black text-xs flex items-center justify-center">1</span>
+              Exigência Mental
+            </h3>
+            <span class="text-base font-black text-[#0F4C43]" id="val-tlx-mental">50</span>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Quanta atividade mental e perceptiva foi exigida (pensar, decidir, calcular, lembrar, olhar, vigiar pacientes instáveis)? A tarefa foi fácil ou complexa?
+          </p>
+          <div class="pt-2">
+            <input type="range" min="0" max="100" value="50" step="5" id="tlx_mental" name="tlx_mental" 
+                   class="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0F4C43]" 
+                   oninput="document.getElementById('val-tlx-mental').innerText = this.value; atualizarPreviewNASA();">
+            <div class="flex justify-between text-[11px] text-slate-400 font-semibold mt-1">
+              <span>0: Muito Baixa</span>
+              <span>50: Moderada</span>
+              <span>100: Muito Elevada</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Exigência Física -->
+        <div class="border border-slate-200 rounded-2xl p-5 space-y-2 bg-white hover:border-emerald-300 transition">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-emerald-100 text-[#0F4C43] font-black text-xs flex items-center justify-center">2</span>
+              Exigência Física
+            </h3>
+            <span class="text-base font-black text-[#0F4C43]" id="val-tlx-fisica">60</span>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Quanta atividade física foi exigida (empurrar, puxar, carregar caixas/materiais, mobilizar pacientes no leito, permanecer em pé)?
+          </p>
+          <div class="pt-2">
+            <input type="range" min="0" max="100" value="60" step="5" id="tlx_fisica" name="tlx_fisica" 
+                   class="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0F4C43]" 
+                   oninput="document.getElementById('val-tlx-fisica').innerText = this.value; atualizarPreviewNASA();">
+            <div class="flex justify-between text-[11px] text-slate-400 font-semibold mt-1">
+              <span>0: Muito Baixa</span>
+              <span>50: Moderada</span>
+              <span>100: Muito Elevada</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Pressão Temporal -->
+        <div class="border border-slate-200 rounded-2xl p-5 space-y-2 bg-white hover:border-emerald-300 transition">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-emerald-100 text-[#0F4C43] font-black text-xs flex items-center justify-center">3</span>
+              Pressão Temporal
+            </h3>
+            <span class="text-base font-black text-[#0F4C43]" id="val-tlx-temporal">55</span>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Quanta pressão de tempo você sentiu devido ao ritmo acelerado das tarefas? O ritmo foi calmo ou apressado e frenético?
+          </p>
+          <div class="pt-2">
+            <input type="range" min="0" max="100" value="55" step="5" id="tlx_temporal" name="tlx_temporal" 
+                   class="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0F4C43]" 
+                   oninput="document.getElementById('val-tlx-temporal').innerText = this.value; atualizarPreviewNASA();">
+            <div class="flex justify-between text-[11px] text-slate-400 font-semibold mt-1">
+              <span>0: Sem Pressa</span>
+              <span>50: Moderada</span>
+              <span>100: Pressão Extrema</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Desempenho -->
+        <div class="border border-slate-200 rounded-2xl p-5 space-y-2 bg-white hover:border-emerald-300 transition">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-emerald-100 text-[#0F4C43] font-black text-xs flex items-center justify-center">4</span>
+              Percepção de Desempenho e Fracasso
+            </h3>
+            <span class="text-base font-black text-[#0F4C43]" id="val-tlx-desempenho">20</span>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Quão satisfeito você ficou com o seu trabalho? (Atenção: 0 significa sucesso perfeito e total satisfação; 100 significa fracasso e insatisfação com a assistência entregue).
+          </p>
+          <div class="pt-2">
+            <input type="range" min="0" max="100" value="20" step="5" id="tlx_desempenho" name="tlx_desempenho" 
+                   class="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0F4C43]" 
+                   oninput="document.getElementById('val-tlx-desempenho').innerText = this.value; atualizarPreviewNASA();">
+            <div class="flex justify-between text-[11px] text-slate-400 font-semibold mt-1">
+              <span>0: Perfeito / Ótimo</span>
+              <span>50: Aceitável</span>
+              <span>100: Totalmente Insatisfeito</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Esforço Geral -->
+        <div class="border border-slate-200 rounded-2xl p-5 space-y-2 bg-white hover:border-emerald-300 transition">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-emerald-100 text-[#0F4C43] font-black text-xs flex items-center justify-center">5</span>
+              Esforço Geral (Custo Físico e Mental)
+            </h3>
+            <span class="text-base font-black text-[#0F4C43]" id="val-tlx-esforco">65</span>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Quão duro você teve que trabalhar mental e fisicamente para alcançar o seu nível de desempenho no plantão?
+          </p>
+          <div class="pt-2">
+            <input type="range" min="0" max="100" value="65" step="5" id="tlx_esforco" name="tlx_esforco" 
+                   class="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0F4C43]" 
+                   oninput="document.getElementById('val-tlx-esforco').innerText = this.value; atualizarPreviewNASA();">
+            <div class="flex justify-between text-[11px] text-slate-400 font-semibold mt-1">
+              <span>0: Esforço Mínimo</span>
+              <span>50: Moderado</span>
+              <span>100: Esforço Máximo</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. Nível de Frustração / Estresse -->
+        <div class="border border-slate-200 rounded-2xl p-5 space-y-2 bg-white hover:border-emerald-300 transition">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-emerald-100 text-[#0F4C43] font-black text-xs flex items-center justify-center">6</span>
+              Nível de Frustração e Sobrecarga Emocional
+            </h3>
+            <span class="text-base font-black text-[#0F4C43]" id="val-tlx-frustracao">30</span>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Quão inseguro, desencorajado, irritado, estressado ou aborrecido você se sentiu durante a sua jornada de trabalho?
+          </p>
+          <div class="pt-2">
+            <input type="range" min="0" max="100" value="30" step="5" id="tlx_frustracao" name="tlx_frustracao" 
+                   class="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0F4C43]" 
+                   oninput="document.getElementById('val-tlx-frustracao').innerText = this.value; atualizarPreviewNASA();">
+            <div class="flex justify-between text-[11px] text-slate-400 font-semibold mt-1">
+              <span>0: Relaxado / Seguro</span>
+              <span>50: Moderado</span>
+              <span>100: Frustração Extrema</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Botão de Envio -->
+      <div class="flex items-center justify-between pt-4 border-t border-slate-200">
+        <a href="index.html" class="text-xs font-semibold text-slate-500 hover:text-slate-700 transition">
+          Cancelar
+        </a>
+        <button type="submit" id="btn-submit-nasa" class="bg-[#0F4C43] hover:bg-[#134e4a] text-white px-8 py-3.5 rounded-2xl font-black text-xs uppercase tracking-wider transition shadow-sm flex items-center gap-2">
+          <span>Registrar Avaliação NASA-TLX</span>
+          <div class="loader" id="load-nasa"></div>
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- FEEDBACK APÓS ENVIO -->
+  <div class="max-w-2xl mx-auto w-full bg-white rounded-3xl shadow-sm border border-slate-200/80 p-8 text-center space-y-6 hidden" id="feedback-container">
+    <div class="w-16 h-16 bg-emerald-100 text-[#0F4C43] rounded-full flex items-center justify-center mx-auto text-2xl font-black">
+      ✓
+    </div>
+    <div class="space-y-2">
+      <h2 class="text-2xl font-black text-slate-900">Avaliação Cognitiva Registrada com Sucesso!</h2>
+      <p class="text-xs text-slate-600 max-w-md mx-auto">
+        Suas respostas foram registradas com sucesso no sistema da UDSO/HGCR para acompanhamento da saúde do trabalhador.
+      </p>
+    </div>
+
+    <div class="pt-4 flex flex-col sm:flex-row gap-3 justify-center">
+      <a href="index.html" class="bg-[#0F4C43] text-white px-6 py-3 rounded-xl text-xs font-bold hover:bg-[#134e4a] transition">
+        Voltar ao Portal Principal
+      </a>
+      <button onclick="reiniciarFormulario()" class="bg-slate-100 text-slate-700 px-6 py-3 rounded-xl text-xs font-bold hover:bg-slate-200 transition">
+        Nova Avaliação NASA-TLX
+      </button>
+    </div>
+  </div>
+
+  <footer class="mt-8 text-center text-[11px] text-slate-400">
+    Plataforma Continuar • UDSO / HGCR
+  </footer>
+
+  <script>
+    const API = "https://script.google.com/macros/s/AKfycbx_QkwiHI7nIzgBseEkbIk0mY33A2Uuqrq5Tn5X-v0BSLs3DmpUpn9cvInUUaPyOPV8rg/exec";
+
+    function calcularNASA() {
+      const mental = parseFloat(document.getElementById('tlx_mental').value) || 0;
+      const fisica = parseFloat(document.getElementById('tlx_fisica').value) || 0;
+      const temporal = parseFloat(document.getElementById('tlx_temporal').value) || 0;
+      const desempenho = parseFloat(document.getElementById('tlx_desempenho').value) || 0;
+      const esforco = parseFloat(document.getElementById('tlx_esforco').value) || 0;
+      const frustracao = parseFloat(document.getElementById('tlx_frustracao').value) || 0;
+
+      // Média aritmética simples (Raw TLX)
+      const rawScore = (mental + fisica + temporal + desempenho + esforco + frustracao) / 6;
+      const scoreFinal = rawScore.toFixed(1);
+
+      let classificacao = "Carga Moderada (30 - 59)", parecer = "Demanda cognitiva equilibrada com a rotina.", badgeClass = "bg-amber-500/20 text-amber-300 border-amber-500/30";
+      if (rawScore >= 80) {
+        classificacao = "Carga Crítica / Risco de Burnout (≥ 80)";
+        parecer = "Alerta severo: sobrecarga cognitiva extrema. Recomenda-se rotação de posto e apoio psicossocial.";
+        badgeClass = "bg-rose-500/20 text-rose-300 border-rose-500/30";
+      } else if (rawScore >= 60) {
+        classificacao = "Carga Elevada (60 - 79)";
+        parecer = "Fadiga mental e temporal relevantes. Indicação de micro-pausas ativas e revisão de ritmo.";
+        badgeClass = "bg-orange-500/20 text-orange-300 border-orange-500/30";
+      } else if (rawScore < 30) {
+        classificacao = "Carga Baixa (0 - 29)";
+        parecer = "Atividade de rotina confortável e sem estresse psicossocial agudo.";
+        badgeClass = "bg-emerald-500/20 text-emerald-300 border-emerald-500/30";
+      }
+
+      return { scoreFinal, rawScore, mental, fisica, temporal, desempenho, esforco, frustracao, classificacao, parecer, badgeClass };
+    }
+
+    function atualizarPreviewNASA() {
+      const el = document.getElementById('nasa-preview-score');
+      if (!el) return;
+      const res = calcularNASA();
+      el.innerText = res.scoreFinal;
+      const elClass = document.getElementById('nasa-preview-class');
+      if (elClass) {
+        elClass.innerText = res.classificacao;
+        elClass.className = `px-3 py-1 rounded-full text-xs font-bold uppercase border ${res.badgeClass}`;
+      }
+      const elParecer = document.getElementById('nasa-preview-parecer');
+      if (elParecer) {
+        elParecer.innerText = res.parecer;
+      }
+    }
+
+    function salvarLocal(campo, val) {
+      if (campo === 'nome') {
+        localStorage.setItem('hgcr_servidor_nome', val);
+        localStorage.setItem('hgcr_user_nome', val);
+      } else if (campo === 'mat') {
+        localStorage.setItem('hgcr_servidor_mat', val);
+        localStorage.setItem('hgcr_user_matricula', val);
+      } else if (campo === 'setor') {
+        localStorage.setItem('hgcr_servidor_setor', val);
+        localStorage.setItem('hgcr_user_setor', val);
+      }
+    }
+
+    function carregarDados() {
+      document.getElementById('nasa_nome').value = localStorage.getItem('hgcr_servidor_nome') || localStorage.getItem('hgcr_user_nome') || '';
+      document.getElementById('nasa_matricula').value = localStorage.getItem('hgcr_servidor_mat') || localStorage.getItem('hgcr_user_matricula') || '';
+      document.getElementById('nasa_setor').value = localStorage.getItem('hgcr_servidor_setor') || localStorage.getItem('hgcr_user_setor') || '';
+    }
+
+    function submitNASA(e) {
+      e.preventDefault();
+      const res = calcularNASA();
+      const form = document.getElementById('form-nasa');
+      const btn = document.getElementById('btn-submit-nasa');
+      const loader = document.getElementById('load-nasa');
+
+      const fd = new FormData(form);
+      fd.append("TIPO_FORMULARIO", "NASA_TLX");
+      fd.append("DATA_REGISTRO", new Date().toLocaleString('pt-BR'));
+      fd.append("score_nasa_tlx", res.scoreFinal);
+      fd.append("classificacao_nasa", res.classificacao);
+      fd.append("parecer_nasa", res.parecer);
+
+      // Salvar histórico no localStorage
+      try {
+        const historico = JSON.parse(localStorage.getItem('continuar_nasa_historico') || '[]');
+        historico.push({
+          data: new Date().toISOString(),
+          nome: fd.get('nome'),
+          mat: fd.get('matricula'),
+          setor: fd.get('setor'),
+          score: res.scoreFinal,
+          classificacao: res.classificacao,
+          mental: res.mental,
+          fisica: res.fisica,
+          temporal: res.temporal,
+          desempenho: res.desempenho,
+          esforco: res.esforco,
+          frustracao: res.frustracao
+        });
+        localStorage.setItem('continuar_nasa_historico', JSON.stringify(historico));
+      } catch (err) {}
+
+      btn.disabled = true;
+      loader.style.display = 'block';
+
+      fetch(API, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: new URLSearchParams(fd)
+      }).then(() => {
+        btn.disabled = false;
+        loader.style.display = 'none';
+        document.getElementById('form-container').style.display = 'none';
+        document.getElementById('feedback-container').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }).catch(() => {
+        btn.disabled = false;
+        loader.style.display = 'none';
+        document.getElementById('form-container').style.display = 'none';
+        document.getElementById('feedback-container').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    function reiniciarFormulario() {
+      document.getElementById('feedback-container').style.display = 'none';
+      document.getElementById('form-container').style.display = 'block';
+      carregarDados();
+      atualizarPreviewNASA();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      carregarDados();
+      atualizarPreviewNASA();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Diagrama de Corlett & Manenica • Desconforto Postural Situacional — Continuar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #0F4C43;
+      --primary-hover: #134e4a;
+      --bg: #f8fafc;
+    }
+    body {
+      background-color: var(--bg);
+      color: #0f172a;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .loader {
+      border: 2.5px solid #e2e8f0;
+      border-top: 2.5px solid var(--primary);
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      animation: spin 0.8s linear infinite;
+      display: none;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="p-3 md:p-6 lg:p-8 antialiased min-h-screen flex flex-col justify-between">
+
+  <div class="max-w-4xl mx-auto w-full bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden" id="form-container">
+    
+    <!-- Topbar Institucional -->
+    <header class="bg-gradient-to-r from-slate-900 to-[#0F4C43] text-white p-6 md:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2 mb-1.5">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-[11px] font-extrabold uppercase tracking-widest text-emerald-200">
+            UDSO • Hospital Governador Celso Ramos
+          </span>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-black tracking-tight">Diagrama de Desconforto Postural</h1>
+        <p class="text-xs md:text-sm text-emerald-100/80 mt-0.5 font-medium">
+          Método Corlett & Manenica (1980) • Monitoramento Situacional Pré e Pós-Plantão / Tarefas Críticas
+        </p>
+      </div>
+      <a href="index.html" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-xs font-bold transition border border-white/20 backdrop-blur-sm self-stretch sm:self-auto text-center">
+        ← Voltar ao Portal
+      </a>
+    </header>
+
+    <form id="form-corlett" class="p-6 md:p-8 space-y-8" onsubmit="submitCorlett(event)">
+      
+      <!-- Identificação do Servidor -->
+      <div class="bg-slate-50 border border-slate-200/80 p-5 rounded-2xl">
+        <div class="flex items-center justify-between mb-3 border-b border-slate-200/60 pb-2">
+          <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Identificação & Momento da Avaliação</h3>
+          <span class="text-[11px] text-emerald-700 font-semibold">Sincronização Automática</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nome Completo *</label>
+            <input type="text" id="corlett_nome" name="nome" required placeholder="Nome do Servidor" 
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition font-medium" 
+                   oninput="salvarLocal('nome', this.value)">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Matrícula SES/SC *</label>
+            <input type="text" id="corlett_matricula" name="matricula" required placeholder="Ex: 123456-7" 
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs font-mono text-slate-900 transition" 
+                   oninput="salvarLocal('mat', this.value)">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Setor de Atuação *</label>
+            <input type="text" id="corlett_setor" name="setor" required placeholder="Ex: Centro Cirúrgico, UTI" 
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition font-medium" 
+                   oninput="salvarLocal('setor', this.value)">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Momento da Coleta *</label>
+            <select id="corlett_momento" name="momento" required class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition font-semibold">
+              <option value="Fim do Plantão (12h)">Término do Plantão de 12h</option>
+              <option value="Início do Plantão">Início do Plantão (Linha de Base)</option>
+              <option value="Pós-Procedimento Cirúrgico">Pós-Cirurgia / Procedimento Longo</option>
+              <option value="Pós-Mobilização de Paciente">Pós-Transferência / Banho no Leito</option>
+              <option value="Pós-Pausa de Cinesioterapia">Pós-Micro-pausa de Cinesioterapia</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Diferencial Metodológico (Corlett vs QNSO) -->
+      <div class="bg-emerald-50/70 border-l-4 border-[#0F4C43] p-4 rounded-r-2xl text-xs space-y-1">
+        <p class="text-slate-800 font-bold flex items-center gap-1.5">
+          <span>📍</span> Aplicação Situacional em Tempo Real:
+        </p>
+        <p class="text-slate-600 leading-relaxed">
+          Diferente do QNSO (que avalia os últimos 12 meses), o <strong>Diagrama de Corlett</strong> mede a sobrecarga e a fadiga biomecânica aguda gerada <strong>neste exato momento</strong> ou após uma tarefa crítica. Gradue de 1 a 5 a sensação física em cada região corporal.
+        </p>
+      </div>
+
+      <!-- Legenda de Escala de Desconforto (1 a 5) -->
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs">
+        <div class="p-2 rounded-xl bg-slate-100 border border-slate-200">
+          <span class="font-black text-slate-700 block">1</span>
+          <span class="text-[11px] text-slate-500">Nenhum desconforto</span>
+        </div>
+        <div class="p-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800">
+          <span class="font-black block">2</span>
+          <span class="text-[11px]">Leve desconforto</span>
+        </div>
+        <div class="p-2 rounded-xl bg-amber-50 border border-amber-200 text-amber-800">
+          <span class="font-black block">3</span>
+          <span class="text-[11px]">Moderado</span>
+        </div>
+        <div class="p-2 rounded-xl bg-orange-50 border border-orange-200 text-orange-800">
+          <span class="font-black block">4</span>
+          <span class="text-[11px]">Severo / Dor forte</span>
+        </div>
+        <div class="p-2 rounded-xl bg-rose-50 border border-rose-200 text-rose-800">
+          <span class="font-black block">5</span>
+          <span class="text-[11px]">Intolerável</span>
+        </div>
+      </div>
+
+      <!-- 12 Segmentos Corporais de Corlett & Manenica -->
+      <div class="border border-slate-200 rounded-2xl p-5 space-y-4 bg-white" id="segmentos-container">
+        <!-- Renderizado via JavaScript -->
+      </div>
+
+      <!-- Botão de Envio -->
+      <div class="flex items-center justify-between pt-4 border-t border-slate-200">
+        <button type="button" onclick="zerarCorlett()" class="text-xs font-semibold text-slate-500 hover:text-slate-700 transition">
+          Redefinir para Nível 1 (Sem Dor)
+        </button>
+        <button type="submit" id="btn-submit-corlett" class="bg-[#0F4C43] hover:bg-[#134e4a] text-white px-8 py-3.5 rounded-2xl font-black text-xs uppercase tracking-wider transition shadow-sm flex items-center gap-2">
+          <span>Registrar Desconforto Postural</span>
+          <div class="loader" id="load-corlett"></div>
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- FEEDBACK APÓS ENVIO -->
+  <div class="max-w-2xl mx-auto w-full bg-white rounded-3xl shadow-sm border border-slate-200/80 p-8 text-center space-y-6 hidden" id="feedback-container">
+    <div class="w-16 h-16 bg-emerald-100 text-[#0F4C43] rounded-full flex items-center justify-center mx-auto text-2xl font-black">
+      ✓
+    </div>
+    <div class="space-y-2">
+      <h2 class="text-2xl font-black text-slate-900">Registro Postural Gravado com Sucesso!</h2>
+      <p class="text-xs text-slate-600 max-w-md mx-auto">
+        Suas respostas foram registradas com sucesso no sistema da UDSO/HGCR para acompanhamento da saúde do trabalhador.
+      </p>
+    </div>
+
+    <div class="pt-4 flex flex-col sm:flex-row gap-3 justify-center">
+      <a href="index.html" class="bg-[#0F4C43] text-white px-6 py-3 rounded-xl text-xs font-bold hover:bg-[#134e4a] transition">
+        Voltar ao Portal Principal
+      </a>
+      <button onclick="reiniciarFormulario()" class="bg-slate-100 text-slate-700 px-6 py-3 rounded-xl text-xs font-bold hover:bg-slate-200 transition">
+        Novo Registro Situacional
+      </button>
+    </div>
+  </div>
+
+  <footer class="mt-8 text-center text-[11px] text-slate-400">
+    Plataforma Continuar • UDSO / HGCR
+  </footer>
+
+  <script>
+    const API = "https://script.google.com/macros/s/AKfycbx_QkwiHI7nIzgBseEkbIk0mY33A2Uuqrq5Tn5X-v0BSLs3DmpUpn9cvInUUaPyOPV8rg/exec";
+
+    const segmentos = [
+      { id: "pescoco", nome: "1. Pescoço e Região Cervical", icone: "🦒" },
+      { id: "ombros", nome: "2. Ombros e Trapézios (Direito/Esquerdo)", icone: "💪" },
+      { id: "dorsal", nome: "3. Parte Superior das Costas (Coluna Dorsal / Escápulas)", icone: "🛡️" },
+      { id: "lombar", nome: "4. Região Lombar (Parte Inferior das Costas)", icone: "🩺" },
+      { id: "bracos", nome: "5. Braços", icone: "🦾" },
+      { id: "antebracos", nome: "6. Cotovelos e Antebraços", icone: "✋" },
+      { id: "punhos_maos", nome: "7. Punhos e Mãos", icone: "✍️" },
+      { id: "quadril", nome: "8. Quadril, Pélvis e Glúteos", icone: "🧘" },
+      { id: "coxas", nome: "9. Coxas", icone: "🦵" },
+      { id: "joelhos", nome: "10. Joelhos", icone: "🦵" },
+      { id: "pernas", nome: "11. Pernas e Panturrilhas", icone: "🦶" },
+      { id: "pes", nome: "12. Tornozelos e Pés", icone: "👟" }
+    ];
+
+    function renderSegmentos() {
+      const container = document.getElementById('segmentos-container');
+      container.innerHTML = '';
+
+      segmentos.forEach(seg => {
+        const div = document.createElement('div');
+        div.className = 'p-3.5 rounded-xl border border-slate-200/80 bg-slate-50 hover:bg-white hover:border-emerald-300 transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5';
+        
+        div.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="text-base">${seg.icone}</span>
+            <span class="text-xs font-bold text-slate-800">${seg.nome}</span>
+          </div>
+          <div class="flex items-center gap-1.5 self-stretch sm:self-auto justify-between sm:justify-end">
+            ${[1, 2, 3, 4, 5].map(v => `
+              <label class="cursor-pointer">
+                <input type="radio" name="corlett_${seg.id}" value="${v}" ${v === 1 ? 'checked' : ''} 
+                       class="peer sr-only" onchange="atualizarPreviewCorlett()">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition border 
+                            peer-checked:bg-[#0F4C43] peer-checked:text-white peer-checked:border-[#0F4C43] 
+                            bg-white text-slate-600 border-slate-200 hover:border-emerald-400">
+                  ${v}
+                </div>
+              </label>
+            `).join('')}
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function calcularCorlett() {
+      let soma = 0;
+      const criticos = [];
+
+      segmentos.forEach(seg => {
+        const val = parseInt(document.querySelector(`input[name="corlett_${seg.id}"]:checked`)?.value || '1', 10);
+        soma += val;
+        if (val >= 4) {
+          criticos.push(`${seg.nome.split('.')[1].trim()} (Nota ${val})`);
+        }
+      });
+
+      // Varia de 12 (mínimo) a 60 (máximo)
+      const pctSobrecarga = Math.round(((soma - 12) / 48) * 100);
+
+      let grau = "Sobrecarga Mínima / Confortável", nivelClass = "Conforto Normal (Sem queixas)", badgeClass = "bg-emerald-500/20 text-emerald-300 border-emerald-500/30";
+      if (pctSobrecarga >= 60 || criticos.length >= 3) {
+        grau = "Sobrecarga Severa / Fadiga Aguda Crítica";
+        nivelClass = "Sobrecarga Crítica (Intervenção Imediata)";
+        badgeClass = "bg-rose-500/20 text-rose-300 border-rose-500/30";
+      } else if (pctSobrecarga >= 35 || criticos.length >= 1) {
+        grau = "Sobrecarga Moderada / Atenção Ergonômica";
+        nivelClass = "Desconforto Moderado (Recomenda-se Pausa)";
+        badgeClass = "bg-amber-500/20 text-amber-300 border-amber-500/30";
+      } else if (pctSobrecarga > 10) {
+        grau = "Sobrecarga Leve";
+        nivelClass = "Leve Tensão Postural";
+        badgeClass = "bg-teal-500/20 text-teal-300 border-teal-500/30";
+      }
+
+      return { soma, pctSobrecarga, criticos, grau, nivelClass, badgeClass };
+    }
+
+    function atualizarPreviewCorlett() {
+      const el = document.getElementById('corlett-preview-score');
+      if (!el) return;
+      const res = calcularCorlett();
+      el.innerText = res.soma;
+      document.getElementById('corlett-preview-pct').innerText = `(${res.pctSobrecarga}% sobrecarga)`;
+      
+      const elNivel = document.getElementById('corlett-preview-nivel');
+      if (elNivel) {
+        elNivel.innerText = res.nivelClass;
+        elNivel.className = `px-3 py-1 rounded-full text-xs font-bold uppercase border ${res.badgeClass}`;
+      }
+
+      const elAlerta = document.getElementById('corlett-preview-alerta');
+      if (elAlerta) {
+        elAlerta.innerText = res.criticos.length > 0 
+          ? `Pontos críticos (${res.criticos.length}): ${res.criticos.join(', ')}`
+          : 'Pontos críticos (nota 4-5): Nenhum';
+      }
+    }
+
+    function salvarLocal(campo, val) {
+      if (campo === 'nome') {
+        localStorage.setItem('hgcr_servidor_nome', val);
+        localStorage.setItem('hgcr_user_nome', val);
+      } else if (campo === 'mat') {
+        localStorage.setItem('hgcr_servidor_mat', val);
+        localStorage.setItem('hgcr_user_matricula', val);
+      } else if (campo === 'setor') {
+        localStorage.setItem('hgcr_servidor_setor', val);
+        localStorage.setItem('hgcr_user_setor', val);
+      }
+    }
+
+    function carregarDados() {
+      document.getElementById('corlett_nome').value = localStorage.getItem('hgcr_servidor_nome') || localStorage.getItem('hgcr_user_nome') || '';
+      document.getElementById('corlett_matricula').value = localStorage.getItem('hgcr_servidor_mat') || localStorage.getItem('hgcr_user_matricula') || '';
+      document.getElementById('corlett_setor').value = localStorage.getItem('hgcr_servidor_setor') || localStorage.getItem('hgcr_user_setor') || '';
+    }
+
+    function zerarCorlett() {
+      segmentos.forEach(seg => {
+        const el = document.querySelector(`input[name="corlett_${seg.id}"][value="1"]`);
+        if (el) el.checked = true;
+      });
+      atualizarPreviewCorlett();
+    }
+
+    function submitCorlett(e) {
+      e.preventDefault();
+      const res = calcularCorlett();
+      const form = document.getElementById('form-corlett');
+      const btn = document.getElementById('btn-submit-corlett');
+      const loader = document.getElementById('load-corlett');
+
+      const fd = new FormData(form);
+      fd.append("TIPO_FORMULARIO", "CORLETT");
+      fd.append("DATA_REGISTRO", new Date().toLocaleString('pt-BR'));
+      fd.append("score_corlett", res.soma);
+      fd.append("pct_sobrecarga_corlett", res.pctSobrecarga);
+      fd.append("grau_corlett", res.grau);
+      fd.append("criticos_corlett", res.criticos.join('; '));
+
+      // Salvar histórico no localStorage
+      try {
+        const historico = JSON.parse(localStorage.getItem('continuar_corlett_historico') || '[]');
+        historico.push({
+          data: new Date().toISOString(),
+          nome: fd.get('nome'),
+          mat: fd.get('matricula'),
+          setor: fd.get('setor'),
+          momento: fd.get('momento'),
+          score: res.soma,
+          pct: res.pctSobrecarga,
+          grau: res.grau,
+          criticos: res.criticos
+        });
+        localStorage.setItem('continuar_corlett_historico', JSON.stringify(historico));
+      } catch (err) {}
+
+      btn.disabled = true;
+      loader.style.display = 'block';
+
+      fetch(API, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: new URLSearchParams(fd)
+      }).then(() => {
+        btn.disabled = false;
+        loader.style.display = 'none';
+        document.getElementById('form-container').style.display = 'none';
+        document.getElementById('feedback-container').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }).catch(() => {
+        btn.disabled = false;
+        loader.style.display = 'none';
+        document.getElementById('form-container').style.display = 'none';
+        document.getElementById('feedback-container').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    function reiniciarFormulario() {
+      document.getElementById('feedback-container').style.display = 'none';
+      document.getElementById('form-container').style.display = 'block';
+      carregarDados();
+      zerarCorlett();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderSegmentos();
+      carregarDados();
+      atualizarPreviewCorlett();
+    });
+  </script>
+</body>
+</html>

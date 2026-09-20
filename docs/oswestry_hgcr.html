@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Oswestry Disability Index (ODI) • Coluna Lombar (NR-17 & CIF) — Continuar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #0F4C43;
+      --primary-hover: #134e4a;
+      --bg: #f8fafc;
+    }
+    body {
+      background-color: var(--bg);
+      color: #0f172a;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .loader {
+      border: 2.5px solid #e2e8f0;
+      border-top: 2.5px solid var(--primary);
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      animation: spin 0.8s linear infinite;
+      display: none;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="p-3 md:p-6 lg:p-8 antialiased min-h-screen flex flex-col justify-between">
+
+  <div class="max-w-4xl mx-auto w-full bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden" id="form-container">
+    
+    <!-- Topbar Institucional -->
+    <header class="bg-gradient-to-r from-slate-900 to-[#0F4C43] text-white p-6 md:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2 mb-1.5">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-[11px] font-extrabold uppercase tracking-widest text-emerald-200">
+            UDSO • Hospital Governador Celso Ramos
+          </span>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-black tracking-tight">Oswestry Disability Index (ODI)</h1>
+        <p class="text-xs md:text-sm text-emerald-100/80 mt-0.5 font-medium">
+          Avaliação de Incapacidade Funcional Lombar • NR-17 & CIF
+        </p>
+      </div>
+      <a href="index.html" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-xs font-bold transition border border-white/20 backdrop-blur-sm self-stretch sm:self-auto text-center">
+        ← Voltar ao Portal
+      </a>
+    </header>
+
+    <form id="form-oswestry" class="p-6 md:p-8 space-y-6" onsubmit="submitOswestry(event)">
+      
+      <!-- Identificação do Servidor -->
+      <div class="bg-slate-50 border border-slate-200/80 p-5 rounded-2xl">
+        <div class="flex items-center justify-between mb-3 border-b border-slate-200/60 pb-2">
+          <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Identificação do Servidor</h3>
+          <span class="text-[11px] text-emerald-700 font-semibold">Sincronização Automática</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nome Completo *</label>
+            <input type="text" id="osw_nome" name="nome" required placeholder="Nome Completo" 
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition font-medium" 
+                   oninput="salvarLocal('nome', this.value)">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Matrícula SES/SC *</label>
+            <input type="text" id="osw_matricula" name="matricula" required placeholder="Ex: 123456-7" 
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs font-mono text-slate-900 transition" 
+                   oninput="salvarLocal('mat', this.value)">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Setor de Lotação *</label>
+            <input type="text" id="osw_setor" name="setor" required placeholder="Ex: UTI Adulto, Emergência" 
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition font-medium" 
+                   oninput="salvarLocal('setor', this.value)">
+          </div>
+        </div>
+      </div>
+
+      <!-- Instrução Clínica Baseada na CIF -->
+      <div class="bg-emerald-50/70 border-l-4 border-[#0F4C43] p-4 rounded-r-2xl text-xs space-y-1">
+        <p class="text-slate-800 font-bold flex items-center gap-1.5">
+          <span>📋</span> Instrução de Preenchimento:
+        </p>
+        <p class="text-slate-600 leading-relaxed">
+          Marque apenas <strong>uma afirmação</strong> em cada uma das seções abaixo que melhor descreve sua condição lombar atual (códigos CIF b28013 - Dor lombar, d410 - Mudar posições, d430 - Levantar e carregar peso).
+        </p>
+      </div>
+
+      <!-- Container das Seções Clínicas -->
+      <div class="space-y-6" id="osw-questions"></div>
+
+      <!-- Campo de Observação com Ditado por Voz -->
+      <div class="p-5 bg-slate-50 border border-slate-200/80 rounded-2xl relative">
+        <div class="flex items-center justify-between mb-1.5">
+          <label class="block text-xs font-bold text-slate-700">
+            Observação Pericial ou Histórico de Afastamento (Opcional)
+          </label>
+          <button type="button" onclick="startDictation('obs_oswestry', this)" 
+                  class="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-800 hover:text-emerald-950 transition">
+            <span>🎤 Ditar por Voz</span>
+          </button>
+        </div>
+        <input type="text" id="obs_oswestry" name="obs_relato" 
+               placeholder="Ex: Piora ao transferir paciente em leito; uso de analgésico no plantão..." 
+               class="w-full p-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#0F4C43] text-xs text-slate-900 transition">
+      </div>
+
+      <!-- Termo e Consentimento LGPD -->
+      <label class="flex items-start gap-3 text-xs text-slate-600 p-4 rounded-2xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100/70 transition">
+        <input type="checkbox" required class="mt-0.5 w-4 h-4 accent-[#0F4C43]"> 
+        <span class="leading-relaxed">
+          Autorizo o tratamento seguro destes dados clínicos pela equipe de Fisioterapia do Trabalho da <strong>Plataforma Continuar</strong>, nos termos da LGPD e para fundamentação de medidas ergonômicas preventivas (NR-17).
+        </span>
+      </label>
+
+      <!-- Botão de Envio -->
+      <button type="submit" id="btn-submit-osw" 
+              class="w-full bg-[#0F4C43] hover:bg-[#134e4a] text-white font-bold py-4 px-6 rounded-2xl shadow-lg shadow-emerald-950/15 flex justify-center items-center gap-2 transition-all hover:-translate-y-0.5 text-sm uppercase tracking-wide">
+        <span>Gravar Avaliação Lombar (Oswestry)</span>
+        <div class="loader" id="load-osw"></div>
+      </button>
+    </form>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- TELA DE FEEDBACK / CONCLUSÃO                             -->
+  <!-- ======================================================== -->
+  <div id="feedback-container" class="hidden text-center py-12 px-6 max-w-lg mx-auto bg-white rounded-3xl shadow-xl border border-slate-200 my-auto">
+    <div class="w-16 h-16 bg-emerald-100 text-[#0F4C43] rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl font-black shadow-inner">
+      ✓
+    </div>
+    <h2 class="text-2xl font-black text-slate-900 mb-1">Avaliação Concluída!</h2>
+    <p class="text-slate-500 mb-6 text-xs leading-relaxed">
+      Os dados sobre a capacidade funcional da sua coluna lombar foram registrados na base da Plataforma Continuar.
+    </p>
+
+    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 mb-6 text-xs space-y-2">
+      <div class="flex justify-between items-center border-b border-slate-200 pb-2">
+        <span class="text-slate-500 font-medium">Índice de Incapacidade (ODI):</span>
+        <strong id="res-score" class="text-2xl font-black text-[#0F4C43]">--</strong>
+      </div>
+      <div class="flex justify-between items-center pt-1">
+        <span class="text-slate-500 font-medium">Estratificação Funcional:</span>
+        <strong id="res-class" class="text-xs font-bold text-slate-800">--</strong>
+      </div>
+      <p class="text-[10px] text-slate-400 text-left pt-1">
+        * Escala de 0 a 100%: escores acima de 40% indicam necessidade prioritária de adequação ergonômica e cinesioterapia laboral no posto.
+      </p>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      <a href="index.html" class="border border-slate-200 text-slate-700 font-bold py-3 px-6 rounded-xl hover:bg-slate-50 transition text-xs">
+        Voltar ao Portal
+      </a>
+      <a href="index.html#escalas" class="bg-[#0F4C43] text-white font-bold py-3 px-6 rounded-xl hover:bg-[#134e4a] transition text-xs shadow-md">
+        Próxima Avaliação →
+      </a>
+    </div>
+  </div>
+
+  <footer class="text-center text-[11px] text-slate-400 py-6">
+    Plataforma Continuar • Gestão de Saúde Ocupacional & Ergonomia (NR-17 / CIF)
+  </footer>
+
+  <!-- ======================================================== -->
+  <!-- MOTOR JAVASCRIPT: RENDERIZAÇÃO & CÁLCULO CLÍNICO         -->
+  <!-- ======================================================== -->
+  <script>
+    const API = "https://script.google.com/macros/s/AKfycbx_QkwiHI7nIzgBseEkbIk0mY33A2Uuqrq5Tn5X-v0BSLs3DmpUpn9cvInUUaPyOPV8rg/exec";
+
+    const sections = [
+      {
+        title: "1. Intensidade da Dor Lombar",
+        opts: [
+          "Posso suportar a dor sem necessidade de medicamentos.",
+          "A dor é forte, mas consigo controlar razoavelmente sem medicação.",
+          "A medicação alivia a dor completamente.",
+          "A medicação alivia moderadamente a dor.",
+          "A medicação alivia muito pouco a dor.",
+          "A dor é intensa e a medicação não surte alívio."
+        ]
+      },
+      {
+        title: "2. Cuidados Pessoais (Vestir-se, banho, higiene)",
+        opts: [
+          "Consigo me cuidar normalmente sem desencadear dor.",
+          "Consigo me cuidar normalmente, mas isso desperta dor.",
+          "Cuidar de mim causa dor; sou lento e cuidadoso.",
+          "Preciso de alguma ajuda para determinadas tarefas de autocuidado.",
+          "Preciso de ajuda diária na maior parte do cuidado pessoal.",
+          "Não consigo me vestir sozinho e lavo-me com extrema dificuldade."
+        ]
+      },
+      {
+        title: "3. Levantar e Carregar Pesos",
+        opts: [
+          "Posso levantar objetos pesados sem dor.",
+          "Posso levantar pesos pesados, mas sinto dor.",
+          "A dor impede pegar pesos do chão, mas consigo de mesas ou bancadas.",
+          "A dor me impede de pegar pesos grandes, mas manipulo leves a médios.",
+          "Posso levantar apenas objetos muito leves.",
+          "Não consigo levantar nem carregar absolutamente nada."
+        ]
+      },
+      {
+        title: "4. Caminhar / Deambulação",
+        opts: [
+          "A dor não me impede de caminhar qualquer distância.",
+          "A dor me impede de caminhar mais de 1 km.",
+          "A dor me impede de caminhar mais de 500 metros.",
+          "A dor me impede de caminhar mais de 100 metros.",
+          "Só consigo caminhar usando apoio de bengala, muleta ou andador.",
+          "Permaneço na cama a maior parte do tempo e mal consigo deambular."
+        ]
+      },
+      {
+        title: "5. Permanecer Sentado (Sedestação)",
+        opts: [
+          "Posso sentar em qualquer cadeira o tempo que quiser sem dor.",
+          "Posso sentar na minha cadeira favorita o tempo que quiser.",
+          "A dor me impede de ficar sentado mais de 1 hora contínua.",
+          "A dor me impede de ficar sentado mais de 30 minutos seguidos.",
+          "A dor me impede de ficar sentado mais de 10 minutos seguidos.",
+          "A dor me impede totalmente de sentar."
+        ]
+      },
+      {
+        title: "6. Permanecer em Pé (Ortostatismo)",
+        opts: [
+          "Posso ficar em pé o tempo que quiser sem dor.",
+          "Posso ficar em pé o tempo que quiser, mas isso causa dor.",
+          "A dor me impede de ficar em pé mais de 1 hora seguida.",
+          "A dor me impede de ficar em pé mais de 30 minutos seguidos.",
+          "A dor me impede de ficar em pé mais de 10 minutos seguidos.",
+          "A dor me impede totalmente de permanecer em pé."
+        ]
+      },
+      {
+        title: "7. Sono e Repouso",
+        opts: [
+          "A dor nunca interfere no meu sono.",
+          "Consigo dormir bem apenas tomando medicação analgésica.",
+          "Mesmo medicado, durmo menos de 6 horas por causa da dor.",
+          "Mesmo medicado, durmo menos de 4 horas por causa da dor.",
+          "Mesmo medicado, durmo menos de 2 horas por causa da dor.",
+          "A dor me impede completamente de dormir."
+        ]
+      },
+      {
+        title: "8. Vida Social e Convivência",
+        opts: [
+          "Minha vida social é normal e não desperta dor.",
+          "Minha vida social é normal, mas aumenta um pouco o desconforto.",
+          "A dor restringe atividades sociais vigorosas (esportes, dança, caminhadas).",
+          "A dor limitou minhas saídas e não saio com frequência.",
+          "A dor me restringe quase que exclusivamente à minha casa.",
+          "Não tenho vida social devido à dor na coluna."
+        ]
+      },
+      {
+        title: "9. Viagens e Deslocamento",
+        opts: [
+          "Posso viajar para qualquer lugar sem dor.",
+          "Posso viajar para qualquer lugar, mas sinto dor.",
+          "A dor é incômoda, mas consigo viagens de até 2 horas.",
+          "A dor me restringe a viagens de menos de 1 hora.",
+          "A dor me restringe a trajetos indispensáveis de menos de 30 minutos.",
+          "A dor me impede de viajar, exceto para ir ao médico ou hospital."
+        ]
+      }
+    ];
+
+    function renderSections() {
+      const container = document.getElementById('osw-questions');
+      container.innerHTML = '';
+
+      sections.forEach((sec, idx) => {
+        let html = `
+          <div class="p-5 bg-slate-50/80 border border-slate-200/80 rounded-2xl hover:border-emerald-700/40 transition">
+            <p class="text-xs font-bold text-slate-900 mb-3 flex items-center gap-1.5">
+              <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 inline-flex items-center justify-center text-[10px] font-mono">${idx + 1}</span>
+              ${sec.title}
+            </p>
+            <div class="flex flex-col gap-2">`;
+        
+        sec.opts.forEach((opt, v) => {
+          html += `
+            <label class="cursor-pointer">
+              <input type="radio" name="q${idx}" value="${v}" required class="sr-only peer">
+              <div class="border border-slate-200 rounded-xl p-3 text-xs font-medium text-slate-700 peer-checked:bg-[#0F4C43] peer-checked:text-white peer-checked:border-[#0F4C43] peer-checked:shadow-sm bg-white hover:bg-slate-100 transition-all flex items-start gap-2.5">
+                <span class="inline-block w-4 h-4 rounded-full border border-slate-300 peer-checked:border-white peer-checked:bg-white flex-shrink-0 mt-0.5 text-center text-[10px] font-bold text-[#0F4C43]"></span>
+                <span class="leading-relaxed">${opt}</span>
+              </div>
+            </label>`;
+        });
+        
+        html += `</div></div>`;
+        container.innerHTML += html;
+      });
+    }
+
+    function salvarLocal(campo, val) {
+      if (campo === 'nome') {
+        localStorage.setItem('hgcr_servidor_nome', val);
+        localStorage.setItem('hgcr_user_nome', val);
+      } else if (campo === 'mat') {
+        localStorage.setItem('hgcr_servidor_mat', val);
+        localStorage.setItem('hgcr_user_matricula', val);
+      } else if (campo === 'setor') {
+        localStorage.setItem('hgcr_servidor_setor', val);
+        localStorage.setItem('hgcr_user_setor', val);
+      }
+    }
+
+    function carregarDados() {
+      document.getElementById('osw_nome').value = localStorage.getItem('hgcr_servidor_nome') || localStorage.getItem('hgcr_user_nome') || '';
+      document.getElementById('osw_matricula').value = localStorage.getItem('hgcr_servidor_mat') || localStorage.getItem('hgcr_user_matricula') || '';
+      document.getElementById('osw_setor').value = localStorage.getItem('hgcr_servidor_setor') || localStorage.getItem('hgcr_user_setor') || '';
+    }
+
+    function startDictation(id, btn) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if(!SpeechRecognition) return alert("Gravação de voz indisponível neste navegador.");
+      const sr = new SpeechRecognition();
+      sr.lang = "pt-BR";
+      const orig = btn.innerText; 
+      btn.innerText = "🔴 Gravando...";
+      sr.onresult = e => { document.getElementById(id).value += (document.getElementById(id).value ? ' ' : '') + e.results[0][0].transcript; };
+      sr.onerror = () => { btn.innerText = orig; };
+      sr.onend = () => { btn.innerText = orig; };
+      try { sr.start(); } catch(e) { btn.innerText = orig; }
+    }
+
+    function submitOswestry(e) {
+      e.preventDefault();
+      const form = document.getElementById('form-oswestry');
+      const btn = document.getElementById('btn-submit-osw');
+      const loader = document.getElementById('load-osw');
+
+      let sum = 0, answered = 0;
+      for(let i = 0; i < sections.length; i++) {
+        const val = form.querySelector(`input[name="q${i}"]:checked`);
+        if(val) { 
+          sum += parseInt(val.value, 10); 
+          answered++; 
+        }
+      }
+
+      if(answered < sections.length) {
+        return alert(`Por favor, responda todas as ${sections.length} seções para cálculo clínico exato.`);
+      }
+
+      // Fórmula Padrão Internacional ODI: (soma / (n_seções * 5)) * 100
+      const pct = ((sum / (answered * 5)) * 100);
+      const scoreFinal = pct.toFixed(1);
+
+      let classificacao = "Incapacidade Mínima (0 a 20%)";
+      if(pct > 80) classificacao = "Confinado ao Leito / Inválido (81 a 100%)";
+      else if(pct > 60) classificacao = "Incapacitante / Severa Extrema (61 a 80%)";
+      else if(pct > 40) classificacao = "Incapacidade Severa (41 a 60%)";
+      else if(pct > 20) classificacao = "Incapacidade Moderada (21 a 40%)";
+
+      const fd = new FormData(form);
+      fd.append("TIPO_FORMULARIO", "Oswestry");
+      fd.append("DATA_REGISTRO", new Date().toLocaleString('pt-BR'));
+      fd.append("score_oswestry", scoreFinal);
+      fd.append("classificacao_oswestry", classificacao);
+
+      btn.disabled = true; 
+      loader.style.display = 'block';
+
+      fetch(API, { 
+        method: 'POST', 
+        mode: 'no-cors', 
+        body: new URLSearchParams(fd) 
+      }).then(() => {
+        btn.disabled = false; 
+        loader.style.display = 'none';
+        document.getElementById('res-score').innerText = scoreFinal + ' %';
+        document.getElementById('res-class').innerText = classificacao;
+        document.getElementById('form-container').style.display = 'none';
+        document.getElementById('feedback-container').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }).catch(() => {
+        btn.disabled = false; 
+        loader.style.display = 'none';
+        alert("Falha na sincronização dos dados com a base da Continuar. Tente novamente.");
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderSections();
+      carregarDados();
+    });
+  </script>
+</body>
+</html>

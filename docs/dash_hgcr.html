@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>QuickDASH • Membros Superiores (NR-17 & CIF) — Continuar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #0F4C43;
+      --primary-hover: #134e4a;
+      --bg: #f8fafc;
+    }
+    body {
+      background-color: var(--bg);
+      color: #0f172a;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .loader {
+      border: 2.5px solid #e2e8f0;
+      border-top: 2.5px solid var(--primary);
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      animation: spin 0.8s linear infinite;
+      display: none;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="p-3 md:p-6 lg:p-8 antialiased min-h-screen flex flex-col justify-between">
+
+  <div class="max-w-4xl mx-auto w-full bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden" id="form-container">
+    
+    <!-- Topbar Institucional -->
+    <header class="bg-gradient-to-r from-slate-900 to-[#0F4C43] text-white p-6 md:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2 mb-1.5">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-[11px] font-extrabold uppercase tracking-widest text-emerald-200">
+            UDSO • Hospital Governador Celso Ramos
+          </span>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-black tracking-tight">QuickDASH (11 Itens)</h1>
+        <p class="text-xs md:text-sm text-emerald-100/80 mt-0.5 font-medium">
+          Avaliação Funcional de Membros Superiores (Ombro, Braço e Mão) • NR-17 & CIF
+        </p>
+      </div>
+      <a href="index.html" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-xs font-bold transition border border-white/20 backdrop-blur-sm self-stretch sm:self-auto text-center">
+        ← Voltar ao Portal
+      </a>
+    </header>
+
+    <form id="form-dash" class="p-6 md:p-8 space-y-6" onsubmit="submitDASH(event)">
+      
+      <!-- Identificação do Servidor -->
+      <div class="bg-slate-50 border border-slate-200/80 p-5 rounded-2xl">
+        <div class="flex items-center justify-between mb-3 border-b border-slate-200/60 pb-2">
+          <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Identificação do Servidor</h3>
+          <span class="text-[11px] text-emerald-700 font-semibold">Sincronização Automática</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nome Completo *</label>
+            <input type="text" id="dash_nome" name="nome" required placeholder="Nome Completo" 
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition font-medium" 
+                   oninput="salvarLocal('nome', this.value)">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Matrícula SES/SC *</label>
+            <input type="text" id="dash_matricula" name="matricula" required placeholder="Ex: 123456-7" 
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs font-mono text-slate-900 transition" 
+                   oninput="salvarLocal('mat', this.value)">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Setor de Lotação *</label>
+            <input type="text" id="dash_setor" name="setor" required placeholder="Ex: UTI Adulto, CME" 
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition font-medium" 
+                   oninput="salvarLocal('setor', this.value)">
+          </div>
+        </div>
+      </div>
+
+      <!-- Instrução Clínica Baseada na CIF -->
+      <div class="bg-emerald-50/70 border-l-4 border-[#0F4C43] p-4 rounded-r-2xl text-xs space-y-1">
+        <p class="text-slate-800 font-bold flex items-center gap-1.5">
+          <span>📋</span> Instrução de Preenchimento:
+        </p>
+        <p class="text-slate-600 leading-relaxed">
+          Classifique sua capacidade física de realizar as atividades durante a <strong>última semana</strong> devido a sintomas no seu braço, ombro ou mão (códigos CIF d430, d445). Se você não realizou alguma atividade, estime a dificuldade que teria se precisasse realizá-la.
+        </p>
+      </div>
+
+      <!-- Container das 11 Questões -->
+      <div id="q-dash" class="space-y-4"></div>
+
+      <!-- Termo e Consentimento LGPD -->
+      <label class="flex items-start gap-3 text-xs text-slate-600 p-4 rounded-2xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100/70 transition">
+        <input type="checkbox" required class="mt-0.5 w-4 h-4 accent-[#0F4C43]"> 
+        <span class="leading-relaxed">
+          Confirmo a veracidade das respostas sobre meus sintomas nos membros superiores e autorizo o processamento sigiloso pela equipe de Fisioterapia do Trabalho da <strong>Plataforma Continuar</strong>, nos termos da LGPD e para fins de proteção ergonômica (NR-17).
+        </span>
+      </label>
+
+      <!-- Botão de Envio -->
+      <button type="submit" id="btn-submit-dash" 
+              class="w-full bg-[#0F4C43] hover:bg-[#134e4a] text-white font-bold py-4 px-6 rounded-2xl shadow-lg shadow-emerald-950/15 flex justify-center items-center gap-2 transition-all hover:-translate-y-0.5 text-sm uppercase tracking-wide">
+        <span>Gravar Avaliação QuickDASH</span>
+        <div class="loader" id="load-dash"></div>
+      </button>
+    </form>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- TELA DE FEEDBACK / CONCLUSÃO                             -->
+  <!-- ======================================================== -->
+  <div id="feedback-container" class="hidden text-center py-12 px-6 max-w-lg mx-auto bg-white rounded-3xl shadow-xl border border-slate-200 my-auto">
+    <div class="w-16 h-16 bg-emerald-100 text-[#0F4C43] rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl font-black shadow-inner">
+      ✓
+    </div>
+    <h2 class="text-2xl font-black text-slate-900 mb-1">Avaliação Registrada!</h2>
+    <p class="text-slate-500 mb-6 text-xs leading-relaxed">
+      Os índices funcionais dos seus membros superiores foram gravados na base da Plataforma Continuar.
+    </p>
+
+    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 mb-6 text-xs space-y-2">
+      <div class="flex justify-between items-center border-b border-slate-200 pb-2">
+        <span class="text-slate-500 font-medium">Escore QuickDASH:</span>
+        <strong id="res-score" class="text-2xl font-black text-[#0F4C43]">--</strong>
+      </div>
+      <div class="flex justify-between items-center pt-1">
+        <span class="text-slate-500 font-medium">Classificação Funcional:</span>
+        <strong id="res-class" class="text-xs font-bold text-slate-800">--</strong>
+      </div>
+      <p class="text-[10px] text-slate-400 text-left pt-1">
+        * Escala de 0 a 100: quanto maior a pontuação, maior o impacto da restrição nas tarefas cotidianas.
+      </p>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      <a href="index.html" class="border border-slate-200 text-slate-700 font-bold py-3 px-6 rounded-xl hover:bg-slate-50 transition text-xs">
+        Voltar ao Portal
+      </a>
+      <a href="index.html#escalas" class="bg-[#0F4C43] text-white font-bold py-3 px-6 rounded-xl hover:bg-[#134e4a] transition text-xs shadow-md">
+        Próxima Avaliação →
+      </a>
+    </div>
+  </div>
+
+  <footer class="text-center text-[11px] text-slate-400 py-6">
+    Plataforma Continuar • Gestão de Saúde Ocupacional & Ergonomia (NR-17 / CIF)
+  </footer>
+
+  <!-- ======================================================== -->
+  <!-- MOTOR JAVASCRIPT: RENDERIZAÇÃO & CÁLCULO CLÍNICO         -->
+  <!-- ======================================================== -->
+  <script>
+    const API = "https://script.google.com/macros/s/AKfycbx_QkwiHI7nIzgBseEkbIk0mY33A2Uuqrq5Tn5X-v0BSLs3DmpUpn9cvInUUaPyOPV8rg/exec";
+    
+    const questions = [
+      { q: "1. Abrir um vidro novo ou com a tampa muito apertada.", opts: ["Nenhuma", "Pouca", "Moderada", "Muita", "Incapaz"] },
+      { q: "2. Realizar tarefas domésticas pesadas (esfregar paredes, passar pano com força).", opts: ["Nenhuma", "Pouca", "Moderada", "Muita", "Incapaz"] },
+      { q: "3. Carregar uma sacola de compras, mochila ou volume moderado a pesado.", opts: ["Nenhuma", "Pouca", "Moderada", "Muita", "Incapaz"] },
+      { q: "4. Lavar as próprias costas ou alcançar a região dorsal com as mãos.", opts: ["Nenhuma", "Pouca", "Moderada", "Muita", "Incapaz"] },
+      { q: "5. Usar uma faca para cortar alimentos firmes.", opts: ["Nenhuma", "Pouca", "Moderada", "Muita", "Incapaz"] },
+      { q: "6. Atividades de lazer com esforço do membro superior (esportes, instrumentos, jardinagem).", opts: ["Nenhuma", "Pouca", "Moderada", "Muita", "Incapaz"] },
+      { q: "7. Em que medida o problema no braço interferiu no convívio social habitual?", opts: ["Nada", "Pouco", "Moderado", "Muito", "Extremo"] },
+      { q: "8. Em que medida você foi limitado no seu trabalho ou tarefas normais do plantão?", opts: ["Nada", "Pouco", "Moderado", "Muito", "Extremo"] },
+      { q: "9. Gravidade da dor no braço, ombro ou mão durante a última semana:", opts: ["Nenhuma", "Leve", "Moderada", "Intensa", "Extrema"] },
+      { q: "10. Sensação de formigamento ou agulhadas no seu braço, ombro ou mão:", opts: ["Nenhum", "Leve", "Moderado", "Intenso", "Extremo"] },
+      { q: "11. Dificuldade para dormir decorrente de dor no braço, ombro ou mão:", opts: ["Nenhuma", "Pouca", "Moderada", "Muita", "Extrema"] }
+    ];
+
+    function renderQuestions() {
+      const qContainer = document.getElementById('q-dash');
+      qContainer.innerHTML = '';
+
+      questions.forEach((item, i) => {
+        let h = `
+          <div class="p-4 bg-slate-50/80 border border-slate-200/80 rounded-2xl hover:border-emerald-700/40 transition">
+            <p class="text-xs font-bold text-slate-800 mb-3">${item.q}</p>
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">`;
+        
+        item.opts.forEach((txt, v) => {
+          const val = v + 1;
+          h += `
+            <label class="cursor-pointer">
+              <input type="radio" name="q${i+1}" value="${val}" required class="sr-only peer">
+              <div class="p-2.5 border border-slate-200 rounded-xl text-center text-xs font-semibold peer-checked:bg-[#0F4C43] peer-checked:text-white peer-checked:border-[#0F4C43] peer-checked:shadow-sm bg-white text-slate-700 hover:bg-slate-100 transition-all">
+                <span class="block text-[10px] opacity-70 font-mono">${val}</span>
+                <span>${txt}</span>
+              </div>
+            </label>`;
+        });
+        
+        h += `</div></div>`;
+        qContainer.innerHTML += h;
+      });
+    }
+
+    function salvarLocal(campo, val) {
+      if (campo === 'nome') {
+        localStorage.setItem('hgcr_servidor_nome', val);
+        localStorage.setItem('hgcr_user_nome', val);
+      } else if (campo === 'mat') {
+        localStorage.setItem('hgcr_servidor_mat', val);
+        localStorage.setItem('hgcr_user_matricula', val);
+      } else if (campo === 'setor') {
+        localStorage.setItem('hgcr_servidor_setor', val);
+        localStorage.setItem('hgcr_user_setor', val);
+      }
+    }
+
+    function carregarDados() {
+      document.getElementById('dash_nome').value = localStorage.getItem('hgcr_servidor_nome') || localStorage.getItem('hgcr_user_nome') || '';
+      document.getElementById('dash_matricula').value = localStorage.getItem('hgcr_servidor_mat') || localStorage.getItem('hgcr_user_matricula') || '';
+      document.getElementById('dash_setor').value = localStorage.getItem('hgcr_servidor_setor') || localStorage.getItem('hgcr_user_setor') || '';
+    }
+
+    function submitDASH(e) {
+      e.preventDefault();
+      const form = document.getElementById('form-dash');
+      const btn = document.getElementById('btn-submit-dash');
+      const loader = document.getElementById('load-dash');
+
+      let soma = 0, respondidas = 0;
+      for(let i = 1; i <= 11; i++) {
+        const checked = form.querySelector(`input[name="q${i}"]:checked`);
+        if(checked) {
+          soma += parseInt(checked.value, 10);
+          respondidas++;
+        }
+      }
+
+      // Regra oficial do QuickDASH: mínimo de 10 das 11 respondidas
+      if(respondidas < 10) {
+        alert("Por favor, responda pelo menos 10 das 11 questões para validar o cálculo clínico.");
+        return;
+      }
+
+      // Fórmula Padrão Internacional IWH: [ (soma / n) - 1 ] * 25
+      const scoreRaw = (((soma / respondidas) - 1) * 25);
+      const scoreFinal = scoreRaw.toFixed(1);
+
+      let classificacao = "Comprometimento Leve (0 a 19%)";
+      if(scoreRaw >= 40) classificacao = "Comprometimento Severo / Grave (≥ 40%)";
+      else if(scoreRaw >= 20) classificacao = "Comprometimento Moderado (20 a 39%)";
+
+      const fd = new FormData(form);
+      fd.append("TIPO_FORMULARIO", "DASH");
+      fd.append("DATA_REGISTRO", new Date().toLocaleString('pt-BR'));
+      fd.append("score_dash", scoreFinal);
+      fd.append("classificacao_dash", classificacao);
+
+      btn.disabled = true;
+      loader.style.display = 'block';
+
+      fetch(API, { 
+        method: 'POST', 
+        mode: 'no-cors', 
+        body: new URLSearchParams(fd) 
+      }).then(() => {
+        btn.disabled = false;
+        loader.style.display = 'none';
+        document.getElementById('res-score').innerText = scoreFinal + ' %';
+        document.getElementById('res-class').innerText = classificacao;
+        document.getElementById('form-container').style.display = 'none';
+        document.getElementById('feedback-container').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }).catch(() => {
+        btn.disabled = false;
+        loader.style.display = 'none';
+        alert("Erro de conexão ao enviar os dados. Tente novamente.");
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderQuestions();
+      carregarDados();
+    });
+  </script>
+</body>
+</html>

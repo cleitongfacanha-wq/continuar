@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Anamnese Ocupacional • Triagem Biopsicossocial — Continuar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #0F4C43;
+      --primary-hover: #134e4a;
+      --bg: #f8fafc;
+    }
+    body {
+      background-color: var(--bg);
+      color: #0f172a;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .card-shadow {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    }
+    .loader {
+      border: 2.5px solid #e2e8f0;
+      border-top: 2.5px solid var(--primary);
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      animation: spin 0.8s linear infinite;
+      display: none;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="p-3 md:p-6 lg:p-8 antialiased min-h-screen flex flex-col justify-between">
+
+  <!-- ======================================================== -->
+  <!-- CONTAINER DO FORMULÁRIO DE ANAMNESE                      -->
+  <!-- ======================================================== -->
+  <div class="max-w-4xl mx-auto w-full bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden" id="form-container">
+    
+    <!-- Topbar Institucional -->
+    <header class="bg-gradient-to-r from-slate-900 to-[#0F4C43] text-white p-6 md:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2 mb-1.5">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-[11px] font-extrabold uppercase tracking-widest text-emerald-200">
+            UDSO • Hospital Governador Celso Ramos
+          </span>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-black tracking-tight">Anamnese do Servidor</h1>
+        <p class="text-xs md:text-sm text-emerald-100/80 mt-0.5 font-medium">
+          Triagem Biopsicossocial & Mapeamento Ergonômico de Posto
+        </p>
+        <p class="text-[11px] text-emerald-200/90 font-medium mt-1">
+          "Seu Corpo Foi Feito para se Mover. Nós Ajudamos Você a <span class="font-bold text-white">Continuar</span>."
+        </p>
+      </div>
+      <a href="index.html" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-xs font-bold transition border border-white/20 backdrop-blur-sm self-stretch sm:self-auto text-center">
+        ← Voltar ao Portal
+      </a>
+    </header>
+
+    <!-- Barra de Terminal Coletivo e Aviso de Sigilo -->
+    <div class="px-6 md:px-8 pt-5 pb-2 flex flex-wrap items-center justify-between gap-3 border-b border-slate-100">
+      <span class="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
+        <span class="text-emerald-700">●</span> Prontuário Funcional Digital
+      </span>
+      <button type="button" onclick="limparDadosTerminal()" class="text-xs text-slate-400 hover:text-rose-600 transition underline flex items-center gap-1.5">
+        <span>🔒</span> Usando computador compartilhado? Limpar dados deste terminal
+      </button>
+    </div>
+
+    <form id="form-anamnese" class="p-6 md:p-8 space-y-6" onsubmit="salvarAnamnese(event)">
+      
+      <!-- Bloco de Orientação Inicial -->
+      <div class="bg-emerald-50/70 border-l-4 border-[#0F4C43] p-4 rounded-r-2xl text-xs space-y-1">
+        <p class="text-slate-800 font-bold flex items-center gap-1.5">
+          <span>📋</span> Identificador Único do Servidor:
+        </p>
+        <p class="text-slate-600 leading-relaxed">
+          A matrícula SES/SC atua como chave de sincronização no sistema. Os dados informados possuem sigilo resguardado nos termos da LGPD e do NEP/HGCR. O preenchimento da matrícula é necessário apenas nesta primeira interação, sincronizando automaticamente com as escalas clínicas subsequentes (QNSO, QuickDASH, ODI, LEFS, RMDQ e EVA).
+        </p>
+      </div>
+
+      <!-- Bloco 1: Identificação do Servidor -->
+      <div class="bg-slate-50 border border-slate-200/80 p-5 rounded-2xl">
+        <div class="flex items-center justify-between mb-4 border-b border-slate-200/60 pb-2">
+          <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">1. Dados de Identificação Pessoal</h3>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nome Completo <span class="text-rose-500">*</span></label>
+            <input type="text" id="ana_nome" name="nome_servidor" required placeholder="Nome completo do servidor"
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition font-medium"
+                   oninput="salvarLocal('nome', this.value)">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Matrícula SES/SC <span class="text-rose-500">*</span></label>
+            <input type="text" id="ana_matricula" name="matricula_servidor" required placeholder="Ex: 123456-7"
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs font-mono text-slate-900 transition"
+                   oninput="salvarLocal('mat', this.value)">
+            <span class="text-[10px] text-emerald-700 mt-1 block font-medium">✓ Gravação validada para relatórios e escalas</span>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Data de Nascimento</label>
+            <input type="date" id="ana_nascimento" name="data_nascimento"
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Sexo</label>
+            <select id="ana_sexo" name="sexo"
+                    class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition">
+              <option value="">Selecione</option>
+              <option value="Feminino">Feminino</option>
+              <option value="Masculino">Masculino</option>
+              <option value="Outro">Outro</option>
+              <option value="Prefiro não informar">Prefiro não informar</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">E-mail Institucional ou Pessoal</label>
+            <input type="email" id="ana_email" name="email_servidor" placeholder="servidor@saude.sc.gov.br"
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Telefone / Ramal de Contato</label>
+            <input type="text" id="ana_telefone" name="telefone_servidor" placeholder="(48) 90000-0000"
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition">
+          </div>
+        </div>
+      </div>
+
+      <!-- Bloco 2: Perfil Biomecânico & Regime de Trabalho -->
+      <div class="bg-slate-50 border border-slate-200/80 p-5 rounded-2xl">
+        <div class="flex items-center justify-between mb-4 border-b border-slate-200/60 pb-2">
+          <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">2. Perfil Biomecânico & Regime de Trabalho</h3>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Dominância Motora (Mão Principal) <span class="text-rose-500">*</span></label>
+            <select name="lateralidade" id="ana_lateralidade" required onchange="salvarLocal('lateralidade', this.value)" class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition">
+              <option value="Destro">Destro</option>
+              <option value="Canhoto">Canhoto</option>
+              <option value="Ambidestro">Ambidestro</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Turno Habitual de Plantão <span class="text-rose-500">*</span></label>
+            <select name="turno_horario" id="ana_turno_horario" required class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition">
+              <option value="Manhã">Manhã</option>
+              <option value="Tarde">Tarde</option>
+              <option value="Noite">Noite</option>
+              <option value="Misto / Rodízio de Escala">Misto / Rodízio de Escala</option>
+              <option value="Plantão 12x36 Diurno">Plantão 12x36 Diurno</option>
+              <option value="Plantão 12x36 Noturno">Plantão 12x36 Noturno</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Possui Outro Vínculo na Saúde? <span class="text-rose-500">*</span></label>
+            <select name="dupla_jornada" id="ana_dupla_jornada" required class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition">
+              <option value="Não">Não (Apenas HGCR)</option>
+              <option value="Sim (até 60h semanais totais)">Sim (até 60h semanais totais)</option>
+              <option value="Sim (mais de 60h semanais totais)">Sim (mais de 60h semanais totais)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Afastamento/Atestado no Último Ano por Dor</label>
+            <select name="historico_afastamento" id="ana_historico_afastamento" class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition">
+              <option value="Nenhum">Nenhum afastamento</option>
+              <option value="1 a 5 dias">1 a 5 dias de atestado</option>
+              <option value="6 a 15 dias">6 a 15 dias de atestado</option>
+              <option value="Mais de 15 dias (INSS / Licença)">Mais de 15 dias (Perícia Médica)</option>
+            </select>
+          </div>
+
+          <div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Estatura (cm)</label>
+                <input type="number" name="altura_cm" id="ana_altura_cm" placeholder="Ex: 172" class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition font-medium">
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Peso (kg)</label>
+                <input type="number" name="peso_kg" id="ana_peso_kg" placeholder="Ex: 75" class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition font-medium">
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Ritmo e Pressão de Tempo no Setor</label>
+            <select name="ritmo_trabalho" id="ana_ritmo_trabalho" class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition">
+              <option value="Adequado / Confortável">Adequado / Confortável</option>
+              <option value="Moderado">Moderado</option>
+              <option value="Intenso / Pressão Contínua">Intenso / Sobrecarga Contínua</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bloco 3: Parâmetros Ocupacionais e Posturais -->
+      <div class="bg-slate-50 border border-slate-200/80 p-5 rounded-2xl">
+        <div class="flex items-center justify-between mb-4 border-b border-slate-200/60 pb-2">
+          <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">3. Parâmetros Ocupacionais e Posturais</h3>
+          <span class="text-[11px] text-slate-400">Rotina de Trabalho</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Cargo / Função <span class="text-rose-500">*</span></label>
+            <input type="text" id="ana_cargo" name="funcao_servidor" required placeholder="Ex: Técnico de Enfermagem, Enfermeiro, Médico"
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition font-medium"
+                   oninput="salvarLocal('cargo', this.value)">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Setor de Lotação <span class="text-rose-500">*</span></label>
+            <input type="text" id="ana_setor" name="setor_servidor" required placeholder="Ex: UTI Adulto, Centro Cirúrgico, Emergência"
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition font-medium"
+                   oninput="salvarLocal('setor', this.value)">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Tempo no Cargo Atual</label>
+            <input type="text" id="ana_tempo_cargo" name="tempo_cargo" placeholder="Ex: 3 anos e 6 meses"
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Carga Horária / Regime de Plantão</label>
+            <select id="ana_turno" name="regime_trabalho"
+                    class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition">
+              <option value="6h diárias">6 horas diárias</option>
+              <option value="8h diárias" selected>8 horas diárias</option>
+              <option value="12h x 36h">12h x 36h (Plantão)</option>
+              <option value="Outro regime">Outro regime</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Tempo em Sedestação (Sentado) no Turno <span class="text-rose-500">*</span></label>
+            <select id="ana_horas_sentado" name="tempo_sentado" required
+                    class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition">
+              <option value="Mais de 6 horas">Acima de 6 horas (Sedestação prolongada)</option>
+              <option value="4 a 6 horas">Entre 4 e 6 horas</option>
+              <option value="Menos de 4 horas">Inferior a 4 horas</option>
+              <option value="Raro / Não se aplica">Irrelevante / Raro</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Uso de Monitor / Computador <span class="text-rose-500">*</span></label>
+            <select id="ana_uso_computador" name="uso_computador" required
+                    class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition">
+              <option value="Contínuo (o dia todo)">Contínuo (Turno integral)</option>
+              <option value="Frequente (metade do dia)">Intermitente frequente</option>
+              <option value="Ocasional">Raro / Ocasional</option>
+              <option value="Não utiliza">Sem utilização técnica</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Tempo em Ortostatismo (Em Pé) <span class="text-rose-500">*</span></label>
+            <select id="ana_trabalho_em_pe" name="trabalho_em_pe" required
+                    class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition">
+              <option value="Pouco tempo em pé">Inferior a 3 horas</option>
+              <option value="3 a 6 horas em pé">Entre 3 e 6 horas contínuas</option>
+              <option value="Mais de 6 horas em pé">Acima de 6 horas</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Manuseio e Elevação de Cargas / Pacientes <span class="text-rose-500">*</span></label>
+            <select id="ana_movimenta_peso" name="movimenta_peso" required
+                    class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition">
+              <option value="Raro / Não movimenta peso">Irrelevante / Não movimenta peso</option>
+              <option value="Ocasional (caixas leves, pastas)">Ocasional / Cargas leves</option>
+              <option value="Frequente (transferência de pacientes, caixas pesadas)">Frequente e acentuado (Pacientes/Cargas)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bloco 3: Indicadores de Saúde e Queixa Laboral -->
+      <div class="bg-slate-50 border border-slate-200/80 p-5 rounded-2xl">
+        <div class="flex items-center justify-between mb-4 border-b border-slate-200/60 pb-2">
+          <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">4. Indicadores de Saúde e Queixa Laboral</h3>
+          <span class="text-[11px] text-slate-400">Histórico Clínico</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Prática Regular de Atividade Física</label>
+            <select id="ana_atividade_fisica" name="atividade_fisica"
+                    class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition">
+              <option value="Não pratica">Nenhuma atividade física</option>
+              <option value="1 a 2 vezes por semana">1 a 2 episódios semanais</option>
+              <option value="3 a 5 vezes por semana">3 a 5 episódios semanais</option>
+              <option value="Diariamente">Prática diária contínua</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Histórico Prévio de DORT / Tendinopatia</label>
+            <select id="ana_historico_ler" name="historico_ler"
+                    class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition">
+              <option value="Não">Ausente</option>
+              <option value="Sim, sintoma atual">Apresenta manifestação atual ativa</option>
+              <option value="Sim, em tratamento">Diagnóstico prévio sob tratamento</option>
+              <option value="Sim, já tratada">Remissão sintomática pregressa</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Cirurgias Ortopédicas / Articulares Pregressas</label>
+            <input type="text" id="ana_cirurgias" name="cirurgias" placeholder="Ex: Artroscopia de joelho, hérnia discal (ou 'Nenhuma')"
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Medicamentos de Uso Contínuo</label>
+            <input type="text" id="ana_medicamentos" name="medicamentos" placeholder="Ex: Anti-hipertensivo, analgésico frequente (ou 'Nenhum')"
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition">
+          </div>
+        </div>
+
+        <!-- Queixa Osteomuscular Principal com Ditado por Voz -->
+        <div class="mt-4 pt-3 border-t border-slate-200/60">
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="block text-xs font-bold text-slate-700">
+              Descrição da Queixa Osteomuscular Principal <span class="text-rose-500">*</span>
+            </label>
+            <button type="button" onclick="toggleDictation('ana_queixa', 'btn-dict-queixa')" id="btn-dict-queixa"
+                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-teal-50 text-teal-700 hover:bg-teal-100 transition border border-teal-200/60 shadow-sm">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+              </svg>
+              <span>Ditar Transcrição</span>
+            </button>
+          </div>
+          <textarea id="ana_queixa" name="queixa_principal" required rows="4"
+                    class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition resize-y font-medium"
+                    placeholder="Descreva a dor, desconforto, dormência ou limitação física percebida no plantão. Relate se há piora em posições específicas."></textarea>
+        </div>
+      </div>
+
+      <!-- Bloco 5: Termo de Consentimento Livre e Esclarecido (TCLE / NEP) -->
+      <div class="p-4 bg-emerald-50/70 border border-emerald-200 rounded-2xl">
+        <label class="flex items-start gap-3 cursor-pointer">
+          <input type="checkbox" required class="mt-0.5 w-4 h-4 accent-[#0F4C43] rounded border-slate-300 shrink-0">
+          <span class="text-xs text-slate-700 leading-relaxed font-medium">
+            Declaro que li e concordo com o <strong>Termo de Consentimento Livre e Esclarecido (TCLE Digital)</strong> nos termos da LGPD e das diretrizes de pesquisa do NEP/HGCR, autorizando o tratamento sigiloso das informações pela equipe de Fisioterapia do Trabalho da <strong>Plataforma Continuar</strong> para prevenção ergonômica e promoção da saúde funcional.
+          </span>
+        </label>
+        <div class="mt-2.5 text-right">
+          <button type="button" onclick="abrirModalTCLE()" class="text-xs font-bold text-[#0F4C43] hover:underline inline-flex items-center gap-1">
+            <span>📄</span> Ler Termo Completo (TCLE Digital / NEP)
+          </button>
+        </div>
+      </div>
+
+      <!-- Botão de Gravação -->
+      <button type="submit" id="btn-salvar-ana"
+              class="w-full bg-[#0F4C43] hover:bg-[#134e4a] text-white font-bold py-4 px-6 rounded-2xl shadow-lg shadow-emerald-950/15 flex justify-center items-center gap-2 transition-all hover:-translate-y-0.5 text-sm uppercase tracking-wide">
+        <span>Gravar Anamnese Ocupacional</span>
+        <div class="loader" id="load-ana"></div>
+      </button>
+    </form>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- TELA DE FEEDBACK / CONCLUSÃO                             -->
+  <!-- ======================================================== -->
+  <div id="feedback-container" class="hidden text-center py-12 px-6 max-w-lg mx-auto bg-white rounded-3xl shadow-xl border border-slate-200 my-auto">
+    <div class="w-16 h-16 bg-emerald-100 text-[#0F4C43] rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl font-black shadow-inner">
+      ✓
+    </div>
+    <h2 class="text-2xl font-black text-slate-900 mb-1">Anamnese Registrada!</h2>
+    <p class="text-slate-500 mb-6 text-xs leading-relaxed">
+      Os parâmetros biopsicossociais e ergonômicos foram salvos com sucesso na base de dados da Plataforma Continuar.
+    </p>
+
+    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 mb-6 text-xs space-y-2 text-left">
+      <div class="flex justify-between items-center border-b border-slate-200 pb-2">
+        <span class="text-slate-500 font-medium">Servidor:</span>
+        <strong id="res-nome" class="font-bold text-slate-900">--</strong>
+      </div>
+      <div class="flex justify-between items-center border-b border-slate-200 pb-2">
+        <span class="text-slate-500 font-medium">Matrícula SES/SC:</span>
+        <strong id="res-matricula" class="font-mono text-emerald-800 font-bold">--</strong>
+      </div>
+      <div class="flex justify-between items-center pt-1">
+        <span class="text-slate-500 font-medium">Setor / Função:</span>
+        <strong id="res-setor-funcao" class="font-bold text-slate-800">--</strong>
+      </div>
+      <p class="text-[10px] text-slate-400 text-left pt-2">
+        * Sua identificação agora está memorizada e sincronizada neste terminal para as próximas escalas de auditoria biomecânica.
+      </p>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      <a href="index.html" class="border border-slate-200 text-slate-700 font-bold py-3 px-6 rounded-xl hover:bg-slate-50 transition text-xs">
+        ← Voltar ao Portal
+      </a>
+      <a href="escalas.html" class="bg-[#0F4C43] text-white font-bold py-3 px-6 rounded-xl hover:bg-[#134e4a] transition text-xs shadow-md">
+        Ir para Escalas Clínicas →
+      </a>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL TCLE DIGITAL (LGPD & NEP / HGCR)                   -->
+  <!-- ======================================================== -->
+  <div id="modal-tcle" style="display: none; position: fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); z-index: 99999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box;">
+    <div style="background: #ffffff; max-width: 600px; width: 100%; max-height: 85vh; border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); border-top: 8px solid #0F4C43; padding: 25px 25px; box-sizing: border-box; position: relative; display: flex; flex-direction: column; text-align: left;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
+        <div>
+          <span style="font-size: 11px; font-weight: 800; color: #0F4C43; text-transform: uppercase;">NEP / HGCR • LGPD (Lei nº 13.709/2018)</span>
+          <h2 style="color: #0F4C43; margin: 2px 0 0 0; font-size: 18px; font-weight: 800;">Termo de Consentimento Livre e Esclarecido (TCLE)</h2>
+        </div>
+        <button type="button" onclick="fecharModalTCLE()" style="background: none; border: none; font-size: 22px; cursor: pointer; color: #64748b; font-weight: bold;">✕</button>
+      </div>
+
+      <div style="overflow-y: auto; flex-grow: 1; padding-right: 10px; margin-bottom: 16px; color: #475569; font-size: 13px; line-height: 1.6;">
+        <p style="margin-top:0;"><strong>Projeto:</strong> Implantação de Ferramenta Digital de Monitoramento Ergonômico e Educação Permanente para Prevenção de LER/DORT em Servidores do Hospital Governador Celso Ramos</p>
+        <p><strong>Pesquisador Responsável:</strong> Dr. Cleiton Gomes Façanha • Fisioterapeuta do Trabalho (CREFITO-10: 265.366-F)</p>
+        
+        <h4 style="color: #0F4C43; margin: 12px 0 4px 0; font-size: 13px; font-weight: bold;">1. Justificativa e Finalidade</h4>
+        <p style="margin: 0 0 8px 0;">Avaliar o impacto de intervenções de cinesioterapia laboral, mapa diário de desconforto osteomuscular e micro-pausas no ambiente hospitalar.</p>
+
+        <h4 style="color: #0F4C43; margin: 12px 0 4px 0; font-size: 13px; font-weight: bold;">2. Sigilo Absoluto dos Dados</h4>
+        <p style="margin: 0 0 8px 0;">Seus registros de dor, áudios e respostas clínicas não serão compartilhados individualmente com chefias ou colegas. O painel gerencial da UDSO e Direção exibe apenas dados estatísticos consolidados por setor (dados anonimizados).</p>
+
+        <h4 style="color: #0F4C43; margin: 12px 0 4px 0; font-size: 13px; font-weight: bold;">3. Voluntariedade e Sem Penalidade</h4>
+        <p style="margin: 0 0 8px 0;">A participação é totalmente voluntária. Você pode desistir a qualquer momento sem qualquer penalidade ou prejuízo funcional.</p>
+
+        <h4 style="color: #0F4C43; margin: 12px 0 4px 0; font-size: 13px; font-weight: bold;">4. Contato Institucional</h4>
+        <p style="margin: 0;">Unidade de Desempenho em Saúde Ocupacional (UDSO / HGCR) • cleitongfacanha@gmail.com</p>
+      </div>
+
+      <button type="button" onclick="fecharModalTCLE()" style="background: #0F4C43; color: #ffffff; border: none; padding: 12px 20px; font-size: 13px; font-weight: bold; border-radius: 8px; cursor: pointer; text-transform: uppercase; width: 100%; transition: background 0.2s;">
+        Entendido e Ciente
+      </button>
+    </div>
+  </div>
+
+  <footer class="text-center text-[11px] text-slate-400 py-6">
+    Plataforma Continuar • UDSO / HGCR
+  </footer>
+
+  <!-- ======================================================== -->
+  <!-- SCRIPTS: SINCRONIZAÇÃO, DITADO E GRAVAÇÃO                -->
+  <!-- ======================================================== -->
+  <script>
+    const API = "https://script.google.com/macros/s/AKfycbx_QkwiHI7nIzgBseEkbIk0mY33A2Uuqrq5Tn5X-v0BSLs3DmpUpn9cvInUUaPyOPV8rg/exec";
+
+    // Limpeza de cache para estações de uso coletivo
+    function limparDadosTerminal() {
+      localStorage.removeItem('hgcr_servidor_nome');
+      localStorage.removeItem('hgcr_servidor_mat');
+      localStorage.removeItem('hgcr_servidor_setor');
+      localStorage.removeItem('hgcr_user_nome');
+      localStorage.removeItem('hgcr_user_matricula');
+      localStorage.removeItem('hgcr_user_setor');
+      localStorage.removeItem('hgcr_user_cargo');
+      localStorage.removeItem('hgcr_submissions');
+      sessionStorage.clear();
+      alert('Identificação e parâmetros removidos com sucesso deste computador compartilhado.');
+      location.reload();
+    }
+
+    function salvarLocal(campo, val) {
+      if (campo === 'nome') {
+        localStorage.setItem('hgcr_servidor_nome', val);
+        localStorage.setItem('hgcr_user_nome', val);
+      } else if (campo === 'mat') {
+        localStorage.setItem('hgcr_servidor_mat', val);
+        localStorage.setItem('hgcr_user_matricula', val);
+      } else if (campo === 'setor') {
+        localStorage.setItem('hgcr_servidor_setor', val);
+        localStorage.setItem('hgcr_user_setor', val);
+      } else if (campo === 'cargo') {
+        localStorage.setItem('hgcr_user_cargo', val);
+      } else if (campo === 'lateralidade') {
+        localStorage.setItem('hgcr_servidor_lateralidade', val);
+        localStorage.setItem('hgcr_user_lateralidade', val);
+      }
+    }
+
+    function carregarDados() {
+      const nome = localStorage.getItem('hgcr_servidor_nome') || localStorage.getItem('hgcr_user_nome') || '';
+      const mat = localStorage.getItem('hgcr_servidor_mat') || localStorage.getItem('hgcr_user_matricula') || '';
+      const setor = localStorage.getItem('hgcr_servidor_setor') || localStorage.getItem('hgcr_user_setor') || '';
+      const cargo = localStorage.getItem('hgcr_user_cargo') || '';
+
+      if (nome) document.getElementById('ana_nome').value = nome;
+      if (mat) document.getElementById('ana_matricula').value = mat;
+      if (setor) document.getElementById('ana_setor').value = setor;
+      if (cargo) document.getElementById('ana_cargo').value = cargo;
+      const lat = localStorage.getItem('hgcr_servidor_lateralidade') || localStorage.getItem('hgcr_user_lateralidade') || '';
+      if (lat && document.getElementById('ana_lateralidade')) document.getElementById('ana_lateralidade').value = lat;
+
+      // Suporte a parâmetros de URL (?nome=...&matricula=...&setor=...)
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('nome')) document.getElementById('ana_nome').value = urlParams.get('nome');
+      if (urlParams.get('matricula')) document.getElementById('ana_matricula').value = urlParams.get('matricula');
+      if (urlParams.get('setor')) document.getElementById('ana_setor').value = urlParams.get('setor');
+    }
+
+    // Ditado por Voz (Web Speech API)
+    let activeRecognition = null;
+    function toggleDictation(fieldId, btnId) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert('Reconhecimento de voz não suportado neste navegador. Utilize o teclado.');
+        return;
+      }
+      const btn = document.getElementById(btnId);
+      const field = document.getElementById(fieldId);
+
+      if (activeRecognition) {
+        activeRecognition.stop();
+        activeRecognition = null;
+        if (btn) {
+          btn.classList.remove('bg-rose-600', 'text-white', 'animate-pulse');
+          btn.classList.add('bg-teal-50', 'text-teal-700');
+          btn.querySelector('span').innerText = 'Ditar Transcrição';
+        }
+        return;
+      }
+
+      const rec = new SpeechRecognition();
+      rec.lang = 'pt-BR';
+      rec.continuous = false;
+      rec.interimResults = false;
+
+      rec.onstart = () => {
+        activeRecognition = rec;
+        if (btn) {
+          btn.classList.remove('bg-teal-50', 'text-teal-700');
+          btn.classList.add('bg-rose-600', 'text-white', 'animate-pulse');
+          btn.querySelector('span').innerText = 'Ouvindo... Fale agora';
+        }
+      };
+
+      rec.onresult = (e) => {
+        const text = e.results[0][0].transcript;
+        field.value += (field.value ? ' ' : '') + text;
+      };
+
+      rec.onerror = () => {
+        alert('Não foi possível captar o áudio. Verifique as permissões de microfone.');
+      };
+
+      rec.onend = () => {
+        activeRecognition = null;
+        if (btn) {
+          btn.classList.remove('bg-rose-600', 'text-white', 'animate-pulse');
+          btn.classList.add('bg-teal-50', 'text-teal-700');
+          btn.querySelector('span').innerText = 'Ditar Transcrição';
+        }
+      };
+
+      rec.start();
+    }
+
+    // Modais TCLE
+    function abrirModalTCLE() {
+      const m = document.getElementById('modal-tcle');
+      if (m) m.style.display = 'flex';
+    }
+    function fecharModalTCLE() {
+      const m = document.getElementById('modal-tcle');
+      if (m) m.style.display = 'none';
+    }
+
+    // Gravação e Envio da Anamnese
+    function salvarAnamnese(e) {
+      e.preventDefault();
+      const form = document.getElementById('form-anamnese');
+      const btn = document.getElementById('btn-salvar-ana');
+      const loader = document.getElementById('load-ana');
+
+      const nome = document.getElementById('ana_nome').value.trim();
+      const mat = document.getElementById('ana_matricula').value.trim();
+      const setor = document.getElementById('ana_setor').value.trim();
+      const cargo = document.getElementById('ana_cargo').value.trim();
+      const horasSentado = document.getElementById('ana_horas_sentado').value;
+      const queixa = document.getElementById('ana_queixa').value.trim();
+
+      salvarLocal('nome', nome);
+      salvarLocal('mat', mat);
+      salvarLocal('setor', setor);
+      salvarLocal('cargo', cargo);
+
+      const fd = new FormData(form);
+      fd.append("TIPO_FORMULARIO", "Anamnese");
+      fd.append("origem", "ANAMNESE");
+      fd.append("acao", "anamnese");
+      fd.append("DATA_REGISTRO", new Date().toLocaleString('pt-BR'));
+      fd.append("timestamp", new Date().toLocaleString('pt-BR'));
+      fd.append("tcle_aceito", "Sim (NEP/LGPD)");
+
+      btn.disabled = true;
+      loader.style.display = 'block';
+
+      fetch(API, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: new URLSearchParams(fd)
+      }).then(() => {
+        btn.disabled = false;
+        loader.style.display = 'none';
+
+        // Gravação em log local para o painel
+        try {
+          const subs = JSON.parse(localStorage.getItem('hgcr_submissions') || '[]');
+          subs.unshift({
+            tipo: 'Anamnese',
+            nome: nome,
+            matricula: mat,
+            resumo: `${cargo} | Setor: ${setor} | Sentado: ${horasSentado}`,
+            data: new Date().toLocaleDateString('pt-BR')
+          });
+          localStorage.setItem('hgcr_submissions', JSON.stringify(subs));
+        } catch (_) {}
+
+        document.getElementById('res-nome').innerText = nome;
+        document.getElementById('res-matricula').innerText = mat;
+        document.getElementById('res-setor-funcao').innerText = `${setor} • ${cargo}`;
+
+        document.getElementById('form-container').style.display = 'none';
+        document.getElementById('feedback-container').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }).catch(() => {
+        btn.disabled = false;
+        loader.style.display = 'none';
+        alert("Erro na transmissão dos dados para a base da Continuar. Verifique sua conexão e tente novamente.");
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', carregarDados);
+  </script>
+</body>
+</html>

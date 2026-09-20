@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Questionário Roland-Morris (RMDQ) • Impacto Lombar Diário — Continuar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #0F4C43;
+      --primary-hover: #134e4a;
+      --bg: #f8fafc;
+    }
+    body {
+      background-color: var(--bg);
+      color: #0f172a;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .loader {
+      border: 2.5px solid #e2e8f0;
+      border-top: 2.5px solid var(--primary);
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      animation: spin 0.8s linear infinite;
+      display: none;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="p-3 md:p-6 lg:p-8 antialiased min-h-screen flex flex-col justify-between">
+
+  <div class="max-w-4xl mx-auto w-full bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden" id="form-container">
+    
+    <!-- Topbar Institucional -->
+    <header class="bg-gradient-to-r from-slate-900 to-[#0F4C43] text-white p-6 md:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2 mb-1.5">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-[11px] font-extrabold uppercase tracking-widest text-emerald-200">
+            UDSO • Hospital Governador Celso Ramos
+          </span>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-black tracking-tight">Roland-Morris (RMDQ)</h1>
+        <p class="text-xs md:text-sm text-emerald-100/80 mt-0.5 font-medium">
+          Impacto Funcional da Dor Lombar na Rotina Diária
+        </p>
+      </div>
+      <a href="index.html" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-xs font-bold transition border border-white/20 backdrop-blur-sm self-stretch sm:self-auto text-center">
+        ← Voltar ao Portal
+      </a>
+    </header>
+
+    <form id="form-rmdq" class="p-6 md:p-8 space-y-6" onsubmit="submitRMDQ(event)">
+      
+      <!-- Identificação do Servidor -->
+      <div class="bg-slate-50 border border-slate-200/80 p-5 rounded-2xl">
+        <div class="flex items-center justify-between mb-3 border-b border-slate-200/60 pb-2">
+          <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Identificação do Servidor</h3>
+          <span class="text-[11px] text-emerald-700 font-semibold">Sincronização Automática</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nome Completo *</label>
+            <input type="text" id="rm_nome" name="nome" required placeholder="Nome Completo" 
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition font-medium" 
+                   oninput="salvarLocal('nome', this.value)">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Matrícula SES/SC *</label>
+            <input type="text" id="rm_matricula" name="matricula" required placeholder="Ex: 123456-7" 
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs font-mono text-slate-900 transition" 
+                   oninput="salvarLocal('mat', this.value)">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Setor de Lotação *</label>
+            <input type="text" id="rm_setor" name="setor" required placeholder="Ex: UTI Adulto, Emergência" 
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition font-medium" 
+                   oninput="salvarLocal('setor', this.value)">
+          </div>
+        </div>
+      </div>
+
+      <!-- Instrução Clínica Baseada na CIF -->
+      <div class="bg-emerald-50/70 border-l-4 border-[#0F4C43] p-4 rounded-r-2xl text-xs space-y-1">
+        <p class="text-slate-800 font-bold flex items-center gap-1.5">
+          <span>📋</span> Instrução de Preenchimento:
+        </p>
+        <p class="text-slate-600 leading-relaxed">
+          Pense nas suas costas <strong>HOJE</strong>. Assinale a caixa das frases que descrevem exatamente a sua condição lombar no plantão de hoje (códigos CIF b28013, d410, d415). As frases que não se aplicarem à sua rotina atual, deixe em branco.
+        </p>
+      </div>
+
+      <!-- Container dos 24 Itens -->
+      <div class="space-y-2.5" id="rm-questions"></div>
+
+      <!-- Termo e Consentimento LGPD -->
+      <label class="flex items-start gap-3 text-xs text-slate-600 p-4 rounded-2xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100/70 transition">
+        <input type="checkbox" required class="mt-0.5 w-4 h-4 accent-[#0F4C43]"> 
+        <span class="leading-relaxed">
+          Autorizo o uso confidencial das informações para acompanhamento da saúde musculoesquelética pela equipe de Fisioterapia do Trabalho da <strong>Plataforma Continuar</strong>, em conformidade com a LGPD e as diretrizes institucionais de saúde do trabalhador.
+        </span>
+      </label>
+
+      <!-- Botão de Envio -->
+      <button type="submit" id="btn-submit-rm" 
+              class="w-full bg-[#0F4C43] hover:bg-[#134e4a] text-white font-bold py-4 px-6 rounded-2xl shadow-lg shadow-emerald-950/15 flex justify-center items-center gap-2 transition-all hover:-translate-y-0.5 text-sm uppercase tracking-wide">
+        <span>Gravar Avaliação Roland-Morris</span>
+        <div class="loader" id="load-rm"></div>
+      </button>
+    </form>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- TELA DE FEEDBACK / CONCLUSÃO                             -->
+  <!-- ======================================================== -->
+  <div id="feedback-container" class="hidden text-center py-12 px-6 max-w-lg mx-auto bg-white rounded-3xl shadow-xl border border-slate-200 my-auto">
+    <div class="w-16 h-16 bg-emerald-100 text-[#0F4C43] rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl font-black shadow-inner">
+      ✓
+    </div>
+    <h2 class="text-2xl font-black text-slate-900 mb-1">Avaliação Concluída!</h2>
+    <p class="text-slate-500 mb-6 text-xs leading-relaxed">
+      Suas respostas foram registradas com sucesso no sistema da UDSO/HGCR para acompanhamento da saúde do trabalhador.
+    </p>
+
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      <a href="index.html" class="border border-slate-200 text-slate-700 font-bold py-3 px-6 rounded-xl hover:bg-slate-50 transition text-xs">
+        Voltar ao Portal
+      </a>
+      <a href="escalas.html" class="bg-[#0F4C43] text-white font-bold py-3 px-6 rounded-xl hover:bg-[#134e4a] transition text-xs shadow-md">
+        Voltar às Avaliações →
+      </a>
+    </div>
+  </div>
+
+  <footer class="text-center text-[11px] text-slate-400 py-6">
+    Plataforma Continuar • UDSO / HGCR
+  </footer>
+
+  <!-- ======================================================== -->
+  <!-- MOTOR JAVASCRIPT: RENDERIZAÇÃO & CÁLCULO CLÍNICO         -->
+  <!-- ======================================================== -->
+  <script>
+    const API = "https://script.google.com/macros/s/AKfycbx_QkwiHI7nIzgBseEkbIk0mY33A2Uuqrq5Tn5X-v0BSLs3DmpUpn9cvInUUaPyOPV8rg/exec";
+
+    const rmQuestions = [
+      "1. Fico em casa a maior parte do tempo por causa das costas.",
+      "2. Mudo de posição frequentemente para tentar deixar as costas confortáveis.",
+      "3. Ando mais devagar do que o habitual por causa das costas.",
+      "4. Por causa das costas, não estou fazendo as tarefas habituais que geralmente faço no setor ou em casa.",
+      "5. Por causa das costas, uso o corrimão para subir escadas.",
+      "6. Por causa das costas, deito-me para descansar com mais frequência.",
+      "7. Por causa das costas, preciso me apoiar em algo para me levantar de uma cadeira.",
+      "8. Por causa das costas, peço a colegas ou familiares que façam tarefas para mim.",
+      "9. Visto-me mais lentamente do que o habitual por causa das costas.",
+      "10. Fico em pé apenas durante curtos períodos por causa das costas.",
+      "11. Por causa das costas, tento evitar me abaixar ou ajoelhar.",
+      "12. Tenho dificuldade em me levantar de uma cadeira por causa das costas.",
+      "13. As minhas costas doem quase o tempo todo.",
+      "14. Tenho dificuldade em me virar na cama por causa das costas.",
+      "15. O meu apetite não é muito bom por causa da dor nas costas.",
+      "16. Tenho dificuldade para calçar as meias ou sapatos por causa da dor nas costas.",
+      "17. Caminho apenas distâncias muito curtas por causa da dor nas costas.",
+      "18. Durmo menos do que o habitual por causa das costas.",
+      "19. Por causa da dor nas costas, visto-me com a ajuda de outra pessoa.",
+      "20. Passo a maior parte do dia sentado(a) por causa das costas.",
+      "21. Evito trabalhos pesados no setor ou em casa por causa das costas.",
+      "22. Por causa da dor nas costas, fico mais irritado(a) e com menos paciência com as pessoas.",
+      "23. Por causa das costas, subo escadas mais devagar do que o habitual.",
+      "24. Fico na cama a maior parte do tempo por causa das costas."
+    ];
+
+    function renderQuestions() {
+      const qBox = document.getElementById('rm-questions');
+      qBox.innerHTML = '';
+
+      rmQuestions.forEach((q, idx) => {
+        qBox.innerHTML += `
+          <label class="flex items-start gap-3 p-3.5 bg-slate-50/80 border border-slate-200/80 rounded-2xl hover:border-emerald-700/40 hover:bg-white cursor-pointer transition select-none group">
+            <input type="checkbox" name="q${idx+1}" value="1" 
+                   class="w-4 h-4 mt-0.5 accent-[#0F4C43] rounded border-slate-300 shrink-0">
+            <span class="text-xs text-slate-700 font-medium leading-relaxed group-hover:text-slate-900">${q}</span>
+          </label>`;
+      });
+    }
+
+    function salvarLocal(campo, val) {
+      if (campo === 'nome') {
+        localStorage.setItem('hgcr_servidor_nome', val);
+        localStorage.setItem('hgcr_user_nome', val);
+      } else if (campo === 'mat') {
+        localStorage.setItem('hgcr_servidor_mat', val);
+        localStorage.setItem('hgcr_user_matricula', val);
+      } else if (campo === 'setor') {
+        localStorage.setItem('hgcr_servidor_setor', val);
+        localStorage.setItem('hgcr_user_setor', val);
+      }
+    }
+
+    function carregarDados() {
+      document.getElementById('rm_nome').value = localStorage.getItem('hgcr_servidor_nome') || localStorage.getItem('hgcr_user_nome') || '';
+      document.getElementById('rm_matricula').value = localStorage.getItem('hgcr_servidor_mat') || localStorage.getItem('hgcr_user_matricula') || '';
+      document.getElementById('rm_setor').value = localStorage.getItem('hgcr_servidor_setor') || localStorage.getItem('hgcr_user_setor') || '';
+    }
+
+    function submitRMDQ(e) {
+      e.preventDefault();
+      const form = document.getElementById('form-rmdq');
+      const btn = document.getElementById('btn-submit-rm');
+      const loader = document.getElementById('load-rm');
+
+      let score = 0;
+      let marcadas = [];
+      for(let i = 1; i <= 24; i++) {
+        const el = form.querySelector(`input[name="q${i}"]`);
+        if(el && el.checked) {
+          score++;
+          marcadas.push(`Item_${i}`);
+        }
+      }
+
+      // Estratificação RMDQ Padrão Internacional (0 a 24)
+      let classificacao = "Impacto Mínimo (0 a 3 pts)";
+      if(score >= 14) classificacao = "Impacto Funcional Severo (≥ 14 pts)";
+      else if(score >= 9) classificacao = "Impacto Funcional Moderado (9 a 13 pts)";
+      else if(score >= 4) classificacao = "Impacto Funcional Leve (4 a 8 pts)";
+
+      const fd = new FormData(form);
+      fd.append("TIPO_FORMULARIO", "Roland-Morris");
+      fd.append("DATA_REGISTRO", new Date().toLocaleString('pt-BR'));
+      fd.append("score_roland", score);
+      fd.append("score_rmdq", score);
+      fd.append("classificacao_rmdq", classificacao);
+      fd.append("itens_assinalados", marcadas.join(', ') || "Nenhum item assinalado");
+
+      btn.disabled = true; 
+      loader.style.display = 'block';
+
+      fetch(API, { 
+        method: 'POST', 
+        mode: 'no-cors', 
+        body: new URLSearchParams(fd) 
+      }).then(() => {
+        btn.disabled = false; 
+        loader.style.display = 'none';
+        document.getElementById('form-container').style.display = 'none';
+        document.getElementById('feedback-container').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }).catch(() => {
+        btn.disabled = false; 
+        loader.style.display = 'none';
+        alert("Erro na transmissão dos dados para a base da Continuar. Verifique sua conexão e tente novamente.");
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderQuestions();
+      carregarDados();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+{
+  "data": "2026-09-08T23:45:53.6840984-03:00",
+  "backup": "D:\\Downloads\\Projeto Continuar\\portal_backup_20260908_234552_2c8a0d",
+  "testesAprovados": 37,
+  "versao": "2.0.0",
+  "arquivos": [
+    {
+      "sha256": "DCFD7F8E1335AF901C3CA30F94319D6AB2D1A49B13F8445F5CFB310ADF5A9AE1",
+      "arquivo": ".gitignore"
+    },
+    {
+      "sha256": "A9A7CED1FA05EE244EEF2D5567AB0FFAC5C6280472A10B6FF6FAEAEE815F9863",
+      "arquivo": "appsscript.json"
+    },
+    {
+      "sha256": "5F930B6DD7C555C5B653191291E6026D3F26378F2F29F5406049D2AA3C942117",
+      "arquivo": "CODIGO_APPS_SCRIPT_ATUALIZADO.js"
+    },
+    {
+      "sha256": "D080A99316B365FA342A92C2B0FFF74B96DBC5B42E6186EF60039B2665B2152F",
+      "arquivo": "compartilhado.html"
+    },
+    {
+      "sha256": "1E80A719A8F27AA6203CAC7A2C207098D83EF2CF8AE2DDAB3C4B7EDFC337DF69",
+      "arquivo": "CONFIGURACAO_EXEMPLO.json"
+    },
+    {
+      "sha256": "3D3B61652ACF21339117FCB04F19F3CD4C30CE9FF51D544C7420CFFA1E8EB84F",
+      "arquivo": "dash_hgcr.html"
+    },
+    {
+      "sha256": "3F3F3C551E8B995AF62B7064E74EEAFABF3CE066EC7F88C7DABAFFD1A9E6F897",
+      "arquivo": "estilos.html"
+    },
+    {
+      "sha256": "5AAF8BC0360A07445C5DF1074FD3453F7B882B03C8DF288CFEFD25CCD76FEC23",
+      "arquivo": "index.html"
+    },
+    {
+      "sha256": "B3F890E9BE260063987F2B0B8552AA814C8A36B4A953A817A2400EACEAAFE856",
+      "arquivo": "lefs_HGCR.html"
+    },
+    {
+      "sha256": "AE409C52E088D0FD2873A765524DC298A12FB20040832D7E57CD7230A2345825",
+      "arquivo": "LEIA-ME.md"
+    },
+    {
+      "sha256": "89964691766D0A87E8C28CEFC087CD62596F381D454FACDD6C1783D1CD13172B",
+      "arquivo": "oswestry_HGCR.html"
+    },
+    {
+      "sha256": "8FEF6278691883F1150A4CBEFEED28C8D72F6212C8BE2B26E53C950B1675DEB1",
+      "arquivo": "painel_gestor_udso.html"
+    },
+    {
+      "sha256": "B6D3BE16A7628EA2178D473C98043276E2D172FE2E16A84594F96591C38BA963",
+      "arquivo": "painel_script.html"
+    },
+    {
+      "sha256": "5BB7FE9EB400653DDF60DE4A6DF1AFE869D7E52D1AD3BD9EDA55938979A8E18D",
+      "arquivo": "PUBLICACAO_SEGURA.md"
+    },
+    {
+      "sha256": "6491CB6DD27AF285D354DA5447E991D196E7B88614AA17888E6B7D079FC8B5AC",
+      "arquivo": "QNSO_Digital_PROJETO_CONTINUAR_HGCR.html"
+    },
+    {
+      "sha256": "263181274FED638992046EFE35FD996CC168E242B25925CBF18446BF690D0936",
+      "arquivo": "roland_morris_HGCR.html"
+    },
+    {
+      "sha256": "DB9CF478F7C24F72B36EE1E4BC8A8960AF12356BB072DD816B4AFA217F009D6A",
+      "arquivo": "VALIDACAO.md"
+    }
+  ],
+  "publicacaoGoogle": "Pendente de configuração e homologação"
+}

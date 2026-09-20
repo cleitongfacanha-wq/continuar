@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Método REBA • Avaliação Postural de Campo — Continuar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #0F4C43;
+      --primary-hover: #134e4a;
+      --bg: #f8fafc;
+    }
+    body {
+      background-color: var(--bg);
+      color: #0f172a;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .loader {
+      border: 2.5px solid #e2e8f0;
+      border-top: 2.5px solid var(--primary);
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      animation: spin 0.8s linear infinite;
+      display: none;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="p-3 md:p-6 lg:p-8 antialiased min-h-screen flex flex-col justify-between">
+
+  <div class="max-w-4xl mx-auto w-full bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden" id="form-container">
+    
+    <!-- Topbar Institucional -->
+    <header class="bg-gradient-to-r from-slate-900 to-[#0F4C43] text-white p-6 md:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2 mb-1.5">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-[11px] font-extrabold uppercase tracking-widest text-emerald-200">
+            UDSO • Hospital Governador Celso Ramos
+          </span>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-black tracking-tight">Método REBA</h1>
+        <p class="text-xs md:text-sm text-emerald-100/80 mt-0.5 font-medium">
+          Rapid Entire Body Assessment (Hignett & McAtamney) • Auditoria de Campo Biomecânico
+        </p>
+      </div>
+      <a href="index.html" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-xs font-bold transition border border-white/20 backdrop-blur-sm self-stretch sm:self-auto text-center">
+        ← Voltar ao Portal
+      </a>
+    </header>
+
+    <form id="form-reba" class="p-6 md:p-8 space-y-8" onsubmit="submitREBA(event)">
+      
+      <!-- Identificação do Servidor e da Tarefa -->
+      <div class="bg-slate-50 border border-slate-200/80 p-5 rounded-2xl">
+        <div class="flex items-center justify-between mb-3 border-b border-slate-200/60 pb-2">
+          <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Dados da Auditoria Biomecânica</h3>
+          <span class="text-[11px] text-emerald-700 font-semibold">Sincronização Automática</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Servidor Avaliado *</label>
+            <input type="text" id="reba_nome" name="nome" required placeholder="Nome do Servidor" 
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition font-medium" 
+                   oninput="salvarLocal('nome', this.value)">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Matrícula SES/SC *</label>
+            <input type="text" id="reba_matricula" name="matricula" required placeholder="Ex: 123456-7" 
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs font-mono text-slate-900 transition" 
+                   oninput="salvarLocal('mat', this.value)">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Setor Auditado *</label>
+            <input type="text" id="reba_setor" name="setor" required placeholder="Ex: Bloco Cirúrgico, UTI" 
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition font-medium" 
+                   oninput="salvarLocal('setor', this.value)">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Tarefa / Atividade Analisada *</label>
+            <input type="text" id="reba_tarefa" name="tarefa" required placeholder="Ex: Banho de leito, transferência" 
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition font-medium">
+          </div>
+        </div>
+      </div>
+
+      <!-- Nota Técnica -->
+      <div class="bg-emerald-50/70 border-l-4 border-[#0F4C43] p-4 rounded-r-2xl text-xs space-y-1">
+        <p class="text-slate-800 font-bold flex items-center gap-1.5">
+          <span>🩺</span> Aplicação Clínica e Pericial no HGCR:
+        </p>
+        <p class="text-slate-600 leading-relaxed">
+          O método REBA é a ferramenta padrão para avaliar posturas dinâmicas e estáticas na enfermagem hospitalar (transferência de leitos, macas, higiene e apoio cirúrgico). Os escores de Grupo A (Tronco, Pescoço, Pernas) e Grupo B (Braços, Antebraços, Punhos) são cruzados com carga e pega para definir a urgência de intervenção ergonômica.
+        </p>
+      </div>
+
+      <!-- ================= GRUPO A ================= -->
+      <div class="border border-slate-200 rounded-2xl p-5 space-y-5 bg-white">
+        <div class="flex items-center gap-2 border-b border-slate-200 pb-3">
+          <span class="w-7 h-7 rounded-lg bg-emerald-100 text-[#0F4C43] font-black text-xs flex items-center justify-center">A</span>
+          <h2 class="text-base font-extrabold text-slate-900">Grupo A: Tronco, Pescoço e Pernas</h2>
+        </div>
+
+        <!-- 1. Tronco -->
+        <div>
+          <label class="block text-xs font-bold text-slate-800 mb-2">1. Postura do Tronco</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+            <label class="border border-slate-200 p-3 rounded-xl cursor-pointer hover:border-emerald-500 transition flex items-start gap-2 bg-slate-50">
+              <input type="radio" name="reba_tronco" value="1" required class="mt-0.5 accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <div>
+                <span class="font-bold text-slate-900 block">+1: Ereto</span>
+                <span class="text-slate-500 text-[11px]">0° a 20° de flexão ou neutro</span>
+              </div>
+            </label>
+            <label class="border border-slate-200 p-3 rounded-xl cursor-pointer hover:border-emerald-500 transition flex items-start gap-2 bg-slate-50">
+              <input type="radio" name="reba_tronco" value="2" class="mt-0.5 accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <div>
+                <span class="font-bold text-slate-900 block">+2: 0-20° ext / 20-60° flex</span>
+                <span class="text-slate-500 text-[11px]">Inclinação moderada</span>
+              </div>
+            </label>
+            <label class="border border-slate-200 p-3 rounded-xl cursor-pointer hover:border-emerald-500 transition flex items-start gap-2 bg-slate-50">
+              <input type="radio" name="reba_tronco" value="3" class="mt-0.5 accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <div>
+                <span class="font-bold text-slate-900 block">+3: > 60° de flexão</span>
+                <span class="text-slate-500 text-[11px]">Tronco muito inclinado</span>
+              </div>
+            </label>
+            <label class="border border-slate-200 p-3 rounded-xl cursor-pointer hover:border-emerald-500 transition flex items-start gap-2 bg-slate-50">
+              <input type="radio" name="reba_tronco" value="4" class="mt-0.5 accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <div>
+                <span class="font-bold text-slate-900 block">+4: > 20° de extensão</span>
+                <span class="text-slate-500 text-[11px]">Tronco fletido para trás</span>
+              </div>
+            </label>
+          </div>
+          <!-- Ajustes do Tronco -->
+          <div class="flex flex-wrap gap-4 mt-2 text-xs text-slate-700 bg-slate-100/70 p-2.5 rounded-xl">
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="checkbox" id="reba_tronco_torcao" class="accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <span>+1 se houver torção do tronco</span>
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="checkbox" id="reba_tronco_inclinacao" class="accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <span>+1 se houver inclinação lateral</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 2. Pescoço -->
+        <div>
+          <label class="block text-xs font-bold text-slate-800 mb-2">2. Postura do Pescoço</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+            <label class="border border-slate-200 p-3 rounded-xl cursor-pointer hover:border-emerald-500 transition flex items-start gap-2 bg-slate-50">
+              <input type="radio" name="reba_pescoco" value="1" required class="mt-0.5 accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <div>
+                <span class="font-bold text-slate-900 block">+1: 0° a 20° de flexão</span>
+                <span class="text-slate-500 text-[11px]">Alinhamento cervical neutro</span>
+              </div>
+            </label>
+            <label class="border border-slate-200 p-3 rounded-xl cursor-pointer hover:border-emerald-500 transition flex items-start gap-2 bg-slate-50">
+              <input type="radio" name="reba_pescoco" value="2" class="mt-0.5 accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <div>
+                <span class="font-bold text-slate-900 block">+2: > 20° de flexão ou qualquer extensão</span>
+                <span class="text-slate-500 text-[11px]">Cabeça inclinada para trás ou fletida para baixo</span>
+              </div>
+            </label>
+          </div>
+          <!-- Ajustes do Pescoço -->
+          <div class="flex flex-wrap gap-4 mt-2 text-xs text-slate-700 bg-slate-100/70 p-2.5 rounded-xl">
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="checkbox" id="reba_pescoco_torcao" class="accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <span>+1 se houver torção ou rotação da cabeça</span>
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="checkbox" id="reba_pescoco_inclinacao" class="accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <span>+1 se houver inclinação lateral</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 3. Pernas -->
+        <div>
+          <label class="block text-xs font-bold text-slate-800 mb-2">3. Postura das Pernas</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+            <label class="border border-slate-200 p-3 rounded-xl cursor-pointer hover:border-emerald-500 transition flex items-start gap-2 bg-slate-50">
+              <input type="radio" name="reba_pernas" value="1" required class="mt-0.5 accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <div>
+                <span class="font-bold text-slate-900 block">+1: Apoio bilateral simétrico</span>
+                <span class="text-slate-500 text-[11px]">Em pé com peso distribuído, andando ou sentado</span>
+              </div>
+            </label>
+            <label class="border border-slate-200 p-3 rounded-xl cursor-pointer hover:border-emerald-500 transition flex items-start gap-2 bg-slate-50">
+              <input type="radio" name="reba_pernas" value="2" class="mt-0.5 accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <div>
+                <span class="font-bold text-slate-900 block">+2: Apoio unilateral ou instável</span>
+                <span class="text-slate-500 text-[11px]">Peso em uma perna ou postura assimétrica</span>
+              </div>
+            </label>
+          </div>
+          <!-- Ajustes de Joelhos -->
+          <div class="flex flex-wrap gap-4 mt-2 text-xs text-slate-700 bg-slate-100/70 p-2.5 rounded-xl">
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="radio" name="reba_joelho" value="0" checked class="accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <span>Joelhos retos ou pouco flexionados</span>
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="radio" name="reba_joelho" value="1" class="accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <span>+1: Joelhos fletidos entre 30° e 60°</span>
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="radio" name="reba_joelho" value="2" class="accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <span>+2: Joelhos fletidos > 60° (agachado)</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 4. Carga / Força -->
+        <div>
+          <label class="block text-xs font-bold text-slate-800 mb-2">4. Carga e Força Aplicada</label>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+            <label class="border border-slate-200 p-3 rounded-xl cursor-pointer hover:border-emerald-500 transition flex items-start gap-2 bg-slate-50">
+              <input type="radio" name="reba_carga" value="0" checked class="mt-0.5 accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <div>
+                <span class="font-bold text-slate-900 block">+0: Carga < 5 kg</span>
+                <span class="text-slate-500 text-[11px]">Sem carga ou peso desprezível</span>
+              </div>
+            </label>
+            <label class="border border-slate-200 p-3 rounded-xl cursor-pointer hover:border-emerald-500 transition flex items-start gap-2 bg-slate-50">
+              <input type="radio" name="reba_carga" value="1" class="mt-0.5 accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <div>
+                <span class="font-bold text-slate-900 block">+1: Carga entre 5 e 10 kg</span>
+                <span class="text-slate-500 text-[11px]">Materiais médios, frascos pesados</span>
+              </div>
+            </label>
+            <label class="border border-slate-200 p-3 rounded-xl cursor-pointer hover:border-emerald-500 transition flex items-start gap-2 bg-slate-50">
+              <input type="radio" name="reba_carga" value="2" class="mt-0.5 accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <div>
+                <span class="font-bold text-slate-900 block">+2: Carga > 10 kg</span>
+                <span class="text-slate-500 text-[11px]">Movimentação manual de paciente</span>
+              </div>
+            </label>
+          </div>
+          <div class="mt-2 text-xs text-slate-700 bg-slate-100/70 p-2.5 rounded-xl">
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="checkbox" id="reba_forca_subita" class="accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <span>+1 se a força for exercida de forma súbita, brusca ou com choque (ex: segurar paciente que escorrega)</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= GRUPO B ================= -->
+      <div class="border border-slate-200 rounded-2xl p-5 space-y-5 bg-white">
+        <div class="flex items-center gap-2 border-b border-slate-200 pb-3">
+          <span class="w-7 h-7 rounded-lg bg-teal-100 text-[#0F4C43] font-black text-xs flex items-center justify-center">B</span>
+          <h2 class="text-base font-extrabold text-slate-900">Grupo B: Braços, Antebraços e Punhos</h2>
+        </div>
+
+        <!-- 5. Braço (Ombro) -->
+        <div>
+          <label class="block text-xs font-bold text-slate-800 mb-2">5. Postura do Braço (Ombro)</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+            <label class="border border-slate-200 p-3 rounded-xl cursor-pointer hover:border-emerald-500 transition flex items-start gap-2 bg-slate-50">
+              <input type="radio" name="reba_braco" value="1" required class="mt-0.5 accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <div>
+                <span class="font-bold text-slate-900 block">+1: 20° ext a 20° flex</span>
+                <span class="text-slate-500 text-[11px]">Braço ao lado do tronco</span>
+              </div>
+            </label>
+            <label class="border border-slate-200 p-3 rounded-xl cursor-pointer hover:border-emerald-500 transition flex items-start gap-2 bg-slate-50">
+              <input type="radio" name="reba_braco" value="2" class="mt-0.5 accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <div>
+                <span class="font-bold text-slate-900 block">+2: >20° ext / 20-45° flex</span>
+                <span class="text-slate-500 text-[11px]">Leve elevação anterior</span>
+              </div>
+            </label>
+            <label class="border border-slate-200 p-3 rounded-xl cursor-pointer hover:border-emerald-500 transition flex items-start gap-2 bg-slate-50">
+              <input type="radio" name="reba_braco" value="3" class="mt-0.5 accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <div>
+                <span class="font-bold text-slate-900 block">+3: 45° a 90° flexão</span>
+                <span class="text-slate-500 text-[11px]">Braço na altura do tórax</span>
+              </div>
+            </label>
+            <label class="border border-slate-200 p-3 rounded-xl cursor-pointer hover:border-emerald-500 transition flex items-start gap-2 bg-slate-50">
+              <input type="radio" name="reba_braco" value="4" class="mt-0.5 accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <div>
+                <span class="font-bold text-slate-900 block">+4: > 90° flexão</span>
+                <span class="text-slate-500 text-[11px]">Braço acima dos ombros</span>
+              </div>
+            </label>
+          </div>
+          <!-- Ajustes do Braço -->
+          <div class="flex flex-wrap gap-4 mt-2 text-xs text-slate-700 bg-slate-100/70 p-2.5 rounded-xl">
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="checkbox" id="reba_braco_ombro_elevado" class="accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <span>+1: Ombro elevado</span>
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="checkbox" id="reba_braco_abduzido" class="accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <span>+1: Braço abduzido ou rodado para fora</span>
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="checkbox" id="reba_braco_apoiado" class="accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <span>-1: Braço apoiado ou postura com peso suportado</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 6. Antebraço -->
+        <div>
+          <label class="block text-xs font-bold text-slate-800 mb-2">6. Postura do Antebraço</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+            <label class="border border-slate-200 p-3 rounded-xl cursor-pointer hover:border-emerald-500 transition flex items-start gap-2 bg-slate-50">
+              <input type="radio" name="reba_antebraco" value="1" required class="mt-0.5 accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <div>
+                <span class="font-bold text-slate-900 block">+1: 60° a 100° de flexão</span>
+                <span class="text-slate-500 text-[11px]">Ângulo reto / confortável</span>
+              </div>
+            </label>
+            <label class="border border-slate-200 p-3 rounded-xl cursor-pointer hover:border-emerald-500 transition flex items-start gap-2 bg-slate-50">
+              <input type="radio" name="reba_antebraco" value="2" class="mt-0.5 accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <div>
+                <span class="font-bold text-slate-900 block">+2: < 60° ou > 100° de flexão</span>
+                <span class="text-slate-500 text-[11px]">Braço muito estendido ou muito fletido</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- 7. Punho -->
+        <div>
+          <label class="block text-xs font-bold text-slate-800 mb-2">7. Postura do Punho</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+            <label class="border border-slate-200 p-3 rounded-xl cursor-pointer hover:border-emerald-500 transition flex items-start gap-2 bg-slate-50">
+              <input type="radio" name="reba_punho" value="1" required class="mt-0.5 accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <div>
+                <span class="font-bold text-slate-900 block">+1: 0° a 15° de flexão ou extensão</span>
+                <span class="text-slate-500 text-[11px]">Posição anatômica neutra</span>
+              </div>
+            </label>
+            <label class="border border-slate-200 p-3 rounded-xl cursor-pointer hover:border-emerald-500 transition flex items-start gap-2 bg-slate-50">
+              <input type="radio" name="reba_punho" value="2" class="mt-0.5 accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <div>
+                <span class="font-bold text-slate-900 block">+2: > 15° de flexão ou extensão</span>
+                <span class="text-slate-500 text-[11px]">Punho dobrado</span>
+              </div>
+            </label>
+          </div>
+          <!-- Ajuste do Punho -->
+          <div class="mt-2 text-xs text-slate-700 bg-slate-100/70 p-2.5 rounded-xl">
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="checkbox" id="reba_punho_desvio" class="accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <span>+1 se houver desvio ulnar/radial ou torção do punho</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 8. Pega / Acoplamento -->
+        <div>
+          <label class="block text-xs font-bold text-slate-800 mb-2">8. Qualidade da Pega / Acoplamento Manual</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+            <label class="border border-slate-200 p-3 rounded-xl cursor-pointer hover:border-emerald-500 transition flex items-start gap-2 bg-slate-50">
+              <input type="radio" name="reba_pega" value="0" checked class="mt-0.5 accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <div>
+                <span class="font-bold text-slate-900 block">+0: Boa</span>
+                <span class="text-slate-500 text-[11px]">Alças ergonômicas, pega firme</span>
+              </div>
+            </label>
+            <label class="border border-slate-200 p-3 rounded-xl cursor-pointer hover:border-emerald-500 transition flex items-start gap-2 bg-slate-50">
+              <input type="radio" name="reba_pega" value="1" class="mt-0.5 accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <div>
+                <span class="font-bold text-slate-900 block">+1: Regular</span>
+                <span class="text-slate-500 text-[11px]">Pegada aceitável, sem alças ideais</span>
+              </div>
+            </label>
+            <label class="border border-slate-200 p-3 rounded-xl cursor-pointer hover:border-emerald-500 transition flex items-start gap-2 bg-slate-50">
+              <input type="radio" name="reba_pega" value="2" class="mt-0.5 accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <div>
+                <span class="font-bold text-slate-900 block">+2: Ruim</span>
+                <span class="text-slate-500 text-[11px]">Pega difícil, escorregadia ou sem apoio</span>
+              </div>
+            </label>
+            <label class="border border-slate-200 p-3 rounded-xl cursor-pointer hover:border-emerald-500 transition flex items-start gap-2 bg-slate-50">
+              <input type="radio" name="reba_pega" value="3" class="mt-0.5 accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+              <div>
+                <span class="font-bold text-slate-900 block">+3: Inaceitável</span>
+                <span class="text-slate-500 text-[11px]">Pega perigosa de paciente sem suporte</span>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= PONTUAÇÃO DE ATIVIDADE ================= -->
+      <div class="border border-slate-200 rounded-2xl p-5 space-y-3 bg-white">
+        <h2 class="text-base font-extrabold text-slate-900 border-b border-slate-200 pb-2">9. Pontuação de Atividade Biomecânica</h2>
+        <div class="space-y-2 text-xs text-slate-700">
+          <label class="flex items-start gap-2 p-2 rounded-lg hover:bg-slate-50 cursor-pointer">
+            <input type="checkbox" id="reba_ativ_estatica" class="mt-0.5 accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+            <span><strong>+1 Postura Estática:</strong> 1 ou mais partes corporais mantidas estáticas por mais de 1 minuto contínuo (ex: sustentação estática em cirurgia).</span>
+          </label>
+          <label class="flex items-start gap-2 p-2 rounded-lg hover:bg-slate-50 cursor-pointer">
+            <input type="checkbox" id="reba_ativ_repetitiva" class="mt-0.5 accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+            <span><strong>+1 Movimentos Repetitivos:</strong> Ações repetidas mais de 4 vezes por minuto (excluindo marcha regular).</span>
+          </label>
+          <label class="flex items-start gap-2 p-2 rounded-lg hover:bg-slate-50 cursor-pointer">
+            <input type="checkbox" id="reba_ativ_instavel" class="mt-0.5 accent-[#0F4C43]" onchange="calcularPreviaREBA()">
+            <span><strong>+1 Instabilidade ou Amplitude Rápida:</strong> Ação provoca grandes variações posturais rápidas ou base de apoio instável.</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Botão de Envio -->
+      <div class="flex items-center justify-between pt-4 border-t border-slate-200">
+        <button type="button" onclick="limparFormulario()" class="text-xs font-semibold text-slate-500 hover:text-rose-600 transition">
+          Limpar Seleções
+        </button>
+        <button type="submit" id="btn-submit-reba" class="bg-[#0F4C43] hover:bg-[#134e4a] text-white px-8 py-3.5 rounded-2xl font-black text-xs uppercase tracking-wider transition shadow-sm flex items-center gap-2">
+          <span>Concluir Auditoria REBA</span>
+          <div class="loader" id="load-reba"></div>
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- FEEDBACK APÓS ENVIO -->
+  <div class="max-w-2xl mx-auto w-full bg-white rounded-3xl shadow-sm border border-slate-200/80 p-8 text-center space-y-6 hidden" id="feedback-container">
+    <div class="w-16 h-16 bg-emerald-100 text-[#0F4C43] rounded-full flex items-center justify-center mx-auto text-2xl font-black">
+      ✓
+    </div>
+    <div class="space-y-2">
+      <h2 class="text-2xl font-black text-slate-900">Auditoria REBA Registrada com Sucesso!</h2>
+      <p class="text-xs text-slate-600 max-w-md mx-auto">
+        Suas respostas foram registradas com sucesso no sistema da UDSO/HGCR para acompanhamento da saúde do trabalhador.
+      </p>
+    </div>
+
+    <div class="pt-4 flex flex-col sm:flex-row gap-3 justify-center">
+      <a href="index.html" class="bg-[#0F4C43] text-white px-6 py-3 rounded-xl text-xs font-bold hover:bg-[#134e4a] transition">
+        Voltar ao Portal Principal
+      </a>
+      <button onclick="reiniciarFormulario()" class="bg-slate-100 text-slate-700 px-6 py-3 rounded-xl text-xs font-bold hover:bg-slate-200 transition">
+        Nova Avaliação REBA
+      </button>
+    </div>
+  </div>
+
+  <footer class="mt-8 text-center text-[11px] text-slate-400">
+    Plataforma Continuar • UDSO / HGCR
+  </footer>
+
+  <script>
+    const API = "https://script.google.com/macros/s/AKfycbx_QkwiHI7nIzgBseEkbIk0mY33A2Uuqrq5Tn5X-v0BSLs3DmpUpn9cvInUUaPyOPV8rg/exec";
+
+    // Tabelas Oficiais REBA (Hignett & McAtamney, 2000)
+    // Tabela A: Trunk (1-5) x Neck (1-3) x Legs (1-4)
+    const tableA = [
+      // Trunk 1
+      [ [1, 2, 3, 4], [2, 3, 4, 5], [2, 4, 5, 6] ],
+      // Trunk 2
+      [ [2, 3, 4, 5], [3, 4, 5, 6], [4, 5, 6, 7] ],
+      // Trunk 3
+      [ [2, 4, 5, 6], [4, 5, 6, 7], [5, 6, 7, 8] ],
+      // Trunk 4
+      [ [3, 5, 6, 7], [5, 6, 7, 8], [6, 7, 8, 9] ],
+      // Trunk 5
+      [ [4, 6, 7, 8], [6, 7, 8, 9], [7, 8, 9, 9] ]
+    ];
+
+    // Tabela B: Upper Arm (1-6) x Lower Arm (1-2) x Wrist (1-3)
+    const tableB = [
+      // Upper Arm 1
+      [ [1, 2, 2], [1, 2, 3] ],
+      // Upper Arm 2
+      [ [1, 2, 3], [2, 3, 4] ],
+      // Upper Arm 3
+      [ [3, 4, 5], [4, 5, 5] ],
+      // Upper Arm 4
+      [ [4, 5, 5], [5, 6, 7] ],
+      // Upper Arm 5
+      [ [6, 7, 8], [7, 8, 8] ],
+      // Upper Arm 6
+      [ [7, 8, 8], [8, 9, 9] ]
+    ];
+
+    // Tabela C: Score A (1-12) x Score B (1-12)
+    const tableC = [
+      [1, 1, 1, 2, 3, 3, 4, 5, 6, 7, 7, 7],
+      [1, 2, 2, 3, 4, 4, 5, 6, 6, 7, 7, 8],
+      [2, 3, 3, 3, 4, 5, 6, 7, 7, 8, 8, 8],
+      [3, 4, 4, 4, 5, 6, 7, 8, 8, 9, 9, 9],
+      [4, 4, 4, 5, 6, 7, 8, 8, 9, 9, 9, 9],
+      [6, 6, 6, 7, 8, 8, 9, 9, 10, 10, 10, 10],
+      [7, 7, 7, 8, 9, 9, 9, 10, 10, 11, 11, 11],
+      [8, 8, 8, 9, 10, 10, 10, 10, 10, 11, 11, 11],
+      [9, 9, 9, 10, 10, 10, 11, 11, 11, 12, 12, 12],
+      [10, 10, 10, 11, 11, 11, 11, 12, 12, 12, 12, 12],
+      [11, 11, 11, 11, 12, 12, 12, 12, 12, 12, 12, 12],
+      [12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12]
+    ];
+
+    function calcularREBAValues() {
+      const getVal = (name) => {
+        const el = document.querySelector(`input[name="${name}"]:checked`);
+        return el ? parseInt(el.value, 10) : 0;
+      };
+
+      const troncoBase = getVal('reba_tronco');
+      const pescocoBase = getVal('reba_pescoco');
+      const pernasBase = getVal('reba_pernas');
+      const joelhoAdd = getVal('reba_joelho');
+      const cargaBase = getVal('reba_carga');
+
+      const bracoBase = getVal('reba_braco');
+      const antebracoBase = getVal('reba_antebraco');
+      const punhoBase = getVal('reba_punho');
+      const pegaBase = getVal('reba_pega');
+
+      if (!troncoBase || !pescocoBase || !pernasBase || !bracoBase || !antebracoBase || !punhoBase) {
+        return null;
+      }
+
+      // Ajustes Tronco
+      let tronco = troncoBase;
+      if (document.getElementById('reba_tronco_torcao').checked) tronco += 1;
+      if (document.getElementById('reba_tronco_inclinacao').checked) tronco += 1;
+      tronco = Math.min(5, Math.max(1, tronco));
+
+      // Ajustes Pescoço
+      let pescoco = pescocoBase;
+      if (document.getElementById('reba_pescoco_torcao').checked) pescoco += 1;
+      if (document.getElementById('reba_pescoco_inclinacao').checked) pescoco += 1;
+      pescoco = Math.min(3, Math.max(1, pescoco));
+
+      // Ajustes Pernas
+      let pernas = pernasBase + joelhoAdd;
+      pernas = Math.min(4, Math.max(1, pernas));
+
+      // Escore A Tabela
+      const scoreATable = tableA[tronco - 1][pescoco - 1][pernas - 1];
+      
+      // Ajustes Carga
+      let carga = cargaBase;
+      if (document.getElementById('reba_forca_subita').checked) carga += 1;
+      const scoreA = Math.min(12, scoreATable + carga);
+
+      // Ajustes Braço
+      let braco = bracoBase;
+      if (document.getElementById('reba_braco_ombro_elevado').checked) braco += 1;
+      if (document.getElementById('reba_braco_abduzido').checked) braco += 1;
+      if (document.getElementById('reba_braco_apoiado').checked) braco -= 1;
+      braco = Math.min(6, Math.max(1, braco));
+
+      // Ajustes Antebraço
+      let antebraco = Math.min(2, Math.max(1, antebracoBase));
+
+      // Ajustes Punho
+      let punho = punhoBase;
+      if (document.getElementById('reba_punho_desvio').checked) punho += 1;
+      punho = Math.min(3, Math.max(1, punho));
+
+      // Escore B Tabela
+      const scoreBTable = tableB[braco - 1][antebraco - 1][punho - 1];
+      const scoreB = Math.min(12, scoreBTable + pegaBase);
+
+      // Escore C
+      const scoreC = tableC[scoreA - 1][scoreB - 1];
+
+      // Escore de Atividade
+      let atividade = 0;
+      if (document.getElementById('reba_ativ_estatica').checked) atividade += 1;
+      if (document.getElementById('reba_ativ_repetitiva').checked) atividade += 1;
+      if (document.getElementById('reba_ativ_instavel').checked) atividade += 1;
+
+      const scoreFinal = Math.min(15, Math.max(1, scoreC + atividade));
+
+      // Nível de Ação e Risco
+      let nivel = 1, risco = "Desprezível", conduta = "Nenhuma ação ergonômica necessária no momento.";
+      if (scoreFinal >= 11) {
+        nivel = 5;
+        risco = "Muito Alto";
+        conduta = "Intervenção ergonômica e adequação do posto imediatas.";
+      } else if (scoreFinal >= 8) {
+        nivel = 4;
+        risco = "Alto";
+        conduta = "Ação necessária em curto prazo e revisão da rotina.";
+      } else if (scoreFinal >= 4) {
+        nivel = 3;
+        risco = "Médio";
+        conduta = "Ação necessária em breve (micro-pausas e cinesioterapia).";
+      } else if (scoreFinal >= 2) {
+        nivel = 2;
+        risco = "Baixo";
+        conduta = "Mudança pode ser necessária para prevenção de sobrecarga.";
+      }
+
+      return { scoreA, scoreB, scoreC, atividade, scoreFinal, nivel, risco, conduta };
+    }
+
+    function calcularPreviaREBA() {
+      const el = document.getElementById('reba-preview-score');
+      if (!el) return;
+      const res = calcularREBAValues();
+      if (!res) {
+        el.innerText = '-';
+        document.getElementById('reba-preview-nivel').innerText = 'Selecione todos os ângulos';
+        document.getElementById('reba-preview-a').innerText = '-';
+        document.getElementById('reba-preview-b').innerText = '-';
+        document.getElementById('reba-preview-ativ').innerText = '-';
+        return;
+      }
+      el.innerText = res.scoreFinal;
+      document.getElementById('reba-preview-nivel').innerText = `Nível ${res.nivel}: Risco ${res.risco}`;
+      document.getElementById('reba-preview-a').innerText = res.scoreA;
+      document.getElementById('reba-preview-b').innerText = res.scoreB;
+      document.getElementById('reba-preview-ativ').innerText = '+' + res.atividade;
+    }
+
+    function salvarLocal(campo, val) {
+      if (campo === 'nome') {
+        localStorage.setItem('hgcr_servidor_nome', val);
+        localStorage.setItem('hgcr_user_nome', val);
+      } else if (campo === 'mat') {
+        localStorage.setItem('hgcr_servidor_mat', val);
+        localStorage.setItem('hgcr_user_matricula', val);
+      } else if (campo === 'setor') {
+        localStorage.setItem('hgcr_servidor_setor', val);
+        localStorage.setItem('hgcr_user_setor', val);
+      }
+    }
+
+    function carregarDados() {
+      document.getElementById('reba_nome').value = localStorage.getItem('hgcr_servidor_nome') || localStorage.getItem('hgcr_user_nome') || '';
+      document.getElementById('reba_matricula').value = localStorage.getItem('hgcr_servidor_mat') || localStorage.getItem('hgcr_user_matricula') || '';
+      document.getElementById('reba_setor').value = localStorage.getItem('hgcr_servidor_setor') || localStorage.getItem('hgcr_user_setor') || '';
+    }
+
+    function submitREBA(e) {
+      e.preventDefault();
+      const res = calcularREBAValues();
+      if (!res) {
+        alert("Por favor, preencha todos os campos angulares dos Grupos A e B para calcular o escore REBA.");
+        return;
+      }
+
+      const form = document.getElementById('form-reba');
+      const btn = document.getElementById('btn-submit-reba');
+      const loader = document.getElementById('load-reba');
+
+      const fd = new FormData(form);
+      fd.append("TIPO_FORMULARIO", "REBA");
+      fd.append("DATA_REGISTRO", new Date().toLocaleString('pt-BR'));
+      fd.append("score_reba", res.scoreFinal);
+      fd.append("nivel_reba", res.nivel);
+      fd.append("risco_reba", res.risco);
+      fd.append("conduta_reba", res.conduta);
+
+      // Salvar histórico no localStorage
+      try {
+        const historico = JSON.parse(localStorage.getItem('continuar_reba_historico') || '[]');
+        historico.push({
+          data: new Date().toISOString(),
+          nome: fd.get('nome'),
+          mat: fd.get('matricula'),
+          setor: fd.get('setor'),
+          tarefa: fd.get('tarefa'),
+          score: res.scoreFinal,
+          nivel: res.nivel,
+          risco: res.risco
+        });
+        localStorage.setItem('continuar_reba_historico', JSON.stringify(historico));
+      } catch (err) {}
+
+      btn.disabled = true;
+      loader.style.display = 'block';
+
+      fetch(API, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: new URLSearchParams(fd)
+      }).then(() => {
+        btn.disabled = false;
+        loader.style.display = 'none';
+        document.getElementById('form-container').style.display = 'none';
+        document.getElementById('feedback-container').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }).catch(() => {
+        btn.disabled = false;
+        loader.style.display = 'none';
+        document.getElementById('form-container').style.display = 'none';
+        document.getElementById('feedback-container').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    function limparFormulario() {
+      document.getElementById('form-reba').reset();
+      carregarDados();
+      calcularPreviaREBA();
+    }
+
+    function reiniciarFormulario() {
+      document.getElementById('feedback-container').style.display = 'none';
+      document.getElementById('form-container').style.display = 'block';
+      limparFormulario();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      carregarDados();
+      calcularPreviaREBA();
+    });
+  </script>
+</body>
+</html>

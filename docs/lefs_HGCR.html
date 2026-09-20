@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Escala Funcional LEFS • Membros Inferiores (NR-17 & CIF) — Continuar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #0F4C43;
+      --primary-hover: #134e4a;
+      --bg: #f8fafc;
+    }
+    body {
+      background-color: var(--bg);
+      color: #0f172a;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .loader {
+      border: 2.5px solid #e2e8f0;
+      border-top: 2.5px solid var(--primary);
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      animation: spin 0.8s linear infinite;
+      display: none;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="p-3 md:p-6 lg:p-8 antialiased min-h-screen flex flex-col justify-between">
+
+  <div class="max-w-4xl mx-auto w-full bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden" id="form-container">
+    
+    <!-- Topbar Institucional -->
+    <header class="bg-gradient-to-r from-slate-900 to-[#0F4C43] text-white p-6 md:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2 mb-1.5">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-[11px] font-extrabold uppercase tracking-widest text-emerald-200">
+            UDSO • Hospital Governador Celso Ramos
+          </span>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-black tracking-tight">Escala Funcional LEFS</h1>
+        <p class="text-xs md:text-sm text-emerald-100/80 mt-0.5 font-medium">
+          Membros Inferiores (Quadril, Joelho, Tornozelo e Pé) • NR-17 & CIF
+        </p>
+      </div>
+      <a href="index.html" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-xs font-bold transition border border-white/20 backdrop-blur-sm self-stretch sm:self-auto text-center">
+        ← Voltar ao Portal
+      </a>
+    </header>
+
+    <form id="form-lefs" class="p-6 md:p-8 space-y-6" onsubmit="submitLEFS(event)">
+      
+      <!-- Identificação do Servidor -->
+      <div class="bg-slate-50 border border-slate-200/80 p-5 rounded-2xl">
+        <div class="flex items-center justify-between mb-3 border-b border-slate-200/60 pb-2">
+          <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Identificação do Servidor</h3>
+          <span class="text-[11px] text-emerald-700 font-semibold">Sincronização Automática</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nome Completo *</label>
+            <input type="text" id="lefs_nome" name="nome" required placeholder="Nome Completo" 
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition font-medium" 
+                   oninput="salvarLocal('nome', this.value)">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Matrícula SES/SC *</label>
+            <input type="text" id="lefs_matricula" name="matricula" required placeholder="Ex: 123456-7" 
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs font-mono text-slate-900 transition" 
+                   oninput="salvarLocal('mat', this.value)">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Setor de Lotação *</label>
+            <input type="text" id="lefs_setor" name="setor" required placeholder="Ex: UTI Adulto, Higienização" 
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition font-medium" 
+                   oninput="salvarLocal('setor', this.value)">
+          </div>
+        </div>
+      </div>
+
+      <!-- Instrução Clínica Baseada na CIF -->
+      <div class="bg-emerald-50/70 border-l-4 border-[#0F4C43] p-4 rounded-r-2xl text-xs space-y-1">
+        <p class="text-slate-800 font-bold flex items-center gap-1.5">
+          <span>📋</span> Instrução de Preenchimento:
+        </p>
+        <p class="text-slate-600 leading-relaxed">
+          Classifique qual o seu grau de dificuldade para realizar cada uma das atividades abaixo <strong>HOJE</strong> devido a problemas nos membros inferiores (códigos CIF d450 - Andar, d455 - Deslocar-se). Assinale uma alternativa para cada um dos 20 itens.
+        </p>
+      </div>
+
+      <!-- Container das 20 Questões -->
+      <div id="lefs-questions" class="space-y-4"></div>
+
+      <!-- Termo e Consentimento LGPD -->
+      <label class="flex items-start gap-3 text-xs text-slate-600 p-4 rounded-2xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100/70 transition">
+        <input type="checkbox" required class="mt-0.5 w-4 h-4 accent-[#0F4C43]"> 
+        <span class="leading-relaxed">
+          Autorizo a guarda e o processamento confidencial das minhas respostas pela equipe de Fisioterapia do Trabalho da <strong>Plataforma Continuar</strong>, nos termos da LGPD e para fins de proteção ergonômica (NR-17).
+        </span>
+      </label>
+
+      <!-- Botão de Envio -->
+      <button type="submit" id="btn-submit-lefs" 
+              class="w-full bg-[#0F4C43] hover:bg-[#134e4a] text-white font-bold py-4 px-6 rounded-2xl shadow-lg shadow-emerald-950/15 flex justify-center items-center gap-2 transition-all hover:-translate-y-0.5 text-sm uppercase tracking-wide">
+        <span>Gravar Avaliação LEFS</span>
+        <div class="loader" id="load-lefs"></div>
+      </button>
+    </form>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- TELA DE FEEDBACK / CONCLUSÃO                             -->
+  <!-- ======================================================== -->
+  <div id="feedback-container" class="hidden text-center py-12 px-6 max-w-lg mx-auto bg-white rounded-3xl shadow-xl border border-slate-200 my-auto">
+    <div class="w-16 h-16 bg-emerald-100 text-[#0F4C43] rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl font-black shadow-inner">
+      ✓
+    </div>
+    <h2 class="text-2xl font-black text-slate-900 mb-1">Avaliação Concluída!</h2>
+    <p class="text-slate-500 mb-6 text-xs leading-relaxed">
+      Os índices funcionais dos seus membros inferiores foram registrados com sucesso na base da Plataforma Continuar.
+    </p>
+
+    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 mb-6 text-xs space-y-2">
+      <div class="flex justify-between items-center border-b border-slate-200 pb-2">
+        <span class="text-slate-500 font-medium">Pontuação Bruta (0 a 80):</span>
+        <strong id="res-score" class="text-2xl font-black text-[#0F4C43]">--</strong>
+      </div>
+      <div class="flex justify-between items-center border-b border-slate-200 pb-2">
+        <span class="text-slate-500 font-medium">Capacidade Funcional Preservada:</span>
+        <strong id="res-pct" class="text-base font-bold text-slate-800">--</strong>
+      </div>
+      <div class="flex justify-between items-center pt-1">
+        <span class="text-slate-500 font-medium">Classificação Clínica:</span>
+        <strong id="res-class" class="text-xs font-bold text-emerald-800">--</strong>
+      </div>
+      <p class="text-[10px] text-slate-400 text-left pt-1">
+        * Escala LEFS: pontuações mais altas indicam maior capacidade funcional e menor restrição de marcha.
+      </p>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      <a href="index.html" class="border border-slate-200 text-slate-700 font-bold py-3 px-6 rounded-xl hover:bg-slate-50 transition text-xs">
+        Voltar ao Portal
+      </a>
+      <a href="index.html#escalas" class="bg-[#0F4C43] text-white font-bold py-3 px-6 rounded-xl hover:bg-[#134e4a] transition text-xs shadow-md">
+        Próxima Avaliação →
+      </a>
+    </div>
+  </div>
+
+  <footer class="text-center text-[11px] text-slate-400 py-6">
+    Plataforma Continuar • Gestão de Saúde Ocupacional & Ergonomia (NR-17 / CIF)
+  </footer>
+
+  <!-- ======================================================== -->
+  <!-- MOTOR JAVASCRIPT: RENDERIZAÇÃO & CÁLCULO CLÍNICO         -->
+  <!-- ======================================================== -->
+  <script>
+    const API = "https://script.google.com/macros/s/AKfycbx_QkwiHI7nIzgBseEkbIk0mY33A2Uuqrq5Tn5X-v0BSLs3DmpUpn9cvInUUaPyOPV8rg/exec";
+
+    const lefsQuestions = [
+      "1. Atividades habituais de trabalho ou tarefas domésticas.",
+      "2. Seus passatempos e atividades recreativas normais.",
+      "3. Entrar ou sair da banheira ou box de banho.",
+      "4. Andar entre os cômodos da sua casa ou setor hospitalar.",
+      "5. Calçar seus sapatos ou meias.",
+      "6. Agachar-se até o chão com flexão de joelhos.",
+      "7. Levantar um objeto com peso moderado do chão.",
+      "8. Realizar atividades leves em pé.",
+      "9. Realizar atividades pesadas em pé.",
+      "10. Entrar ou sair de um carro ou transporte coletivo.",
+      "11. Caminhar cerca de dois quarteirões.",
+      "12. Caminhar cerca de 1 km.",
+      "13. Subir ou descer cerca de 10 degraus de escada.",
+      "14. Ficar em pé durante cerca de 1 hora contínua.",
+      "15. Ficar sentado durante cerca de 1 hora contínua.",
+      "16. Correr em terreno plano.",
+      "17. Correr em terreno irregular ou com desníveis.",
+      "18. Fazer curvas rápidas enquanto caminha apressado(a) no setor.",
+      "19. Saltar ou pular no lugar.",
+      "20. Rolar ou mudar de posição na cama."
+    ];
+
+    const lefsOptions = [
+      { val: 0, label: "0", desc: "Impossível / Extrema" },
+      { val: 1, label: "1", desc: "Muita dificuldade" },
+      { val: 2, label: "2", desc: "Dificuldade moderada" },
+      { val: 3, label: "3", desc: "Pouca dificuldade" },
+      { val: 4, label: "4", desc: "Nenhuma dificuldade" }
+    ];
+
+    function renderQuestions() {
+      const container = document.getElementById('lefs-questions');
+      container.innerHTML = '';
+
+      lefsQuestions.forEach((q, idx) => {
+        let h = `
+          <div class="p-4 bg-slate-50/80 border border-slate-200/80 rounded-2xl hover:border-emerald-700/40 transition">
+            <p class="text-xs font-bold text-slate-800 mb-3">${q}</p>
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">`;
+        
+        lefsOptions.forEach(opt => {
+          h += `
+            <label class="cursor-pointer">
+              <input type="radio" name="q${idx+1}" value="${opt.val}" required class="sr-only peer">
+              <div class="p-2.5 border border-slate-200 rounded-xl text-center text-xs font-semibold peer-checked:bg-[#0F4C43] peer-checked:text-white peer-checked:border-[#0F4C43] peer-checked:shadow-sm bg-white text-slate-700 hover:bg-slate-100 transition-all">
+                <span class="block text-[11px] font-mono font-extrabold">${opt.label}</span>
+                <span class="block text-[10px] opacity-80 leading-tight mt-0.5">${opt.desc}</span>
+              </div>
+            </label>`;
+        });
+        
+        h += `</div></div>`;
+        container.innerHTML += h;
+      });
+    }
+
+    function salvarLocal(campo, val) {
+      if (campo === 'nome') {
+        localStorage.setItem('hgcr_servidor_nome', val);
+        localStorage.setItem('hgcr_user_nome', val);
+      } else if (campo === 'mat') {
+        localStorage.setItem('hgcr_servidor_mat', val);
+        localStorage.setItem('hgcr_user_matricula', val);
+      } else if (campo === 'setor') {
+        localStorage.setItem('hgcr_servidor_setor', val);
+        localStorage.setItem('hgcr_user_setor', val);
+      }
+    }
+
+    function carregarDados() {
+      document.getElementById('lefs_nome').value = localStorage.getItem('hgcr_servidor_nome') || localStorage.getItem('hgcr_user_nome') || '';
+      document.getElementById('lefs_matricula').value = localStorage.getItem('hgcr_servidor_mat') || localStorage.getItem('hgcr_user_matricula') || '';
+      document.getElementById('lefs_setor').value = localStorage.getItem('hgcr_servidor_setor') || localStorage.getItem('hgcr_user_setor') || '';
+    }
+
+    function submitLEFS(e) {
+      e.preventDefault();
+      const form = document.getElementById('form-lefs');
+      const btn = document.getElementById('btn-submit-lefs');
+      const loader = document.getElementById('load-lefs');
+
+      let soma = 0, respondidas = 0;
+      for(let i = 1; i <= 20; i++) {
+        const radio = form.querySelector(`input[name="q${i}"]:checked`);
+        if(radio) {
+          soma += parseInt(radio.value, 10);
+          respondidas++;
+        }
+      }
+
+      if(respondidas < 20) {
+        alert(`Por favor, responda todas as 20 questões da escala LEFS. Restam ${20 - respondidas} pendentes.`);
+        return;
+      }
+
+      // Cálculo LEFS oficial: Escore bruto (0 a 80) e percentual funcional
+      const pctVal = ((soma / 80) * 100);
+      const pctStr = pctVal.toFixed(1) + "%";
+
+      let classificacao = "Excelente Capacidade Funcional (≥ 90%)";
+      if(pctVal < 50) classificacao = "Incapacidade Funcional Grave (< 50%)";
+      else if(pctVal < 75) classificacao = "Incapacidade Moderada (50 a 74%)";
+      else if(pctVal < 90) classificacao = "Boa Capacidade com Leve Restrição (75 a 89%)";
+
+      const fd = new FormData(form);
+      fd.append("TIPO_FORMULARIO", "LEFS");
+      fd.append("DATA_REGISTRO", new Date().toLocaleString('pt-BR'));
+      fd.append("score_lefs", soma);
+      fd.append("funcionalidade_pct", pctStr);
+      fd.append("classificacao_lefs", classificacao);
+
+      btn.disabled = true; 
+      loader.style.display = 'block';
+
+      fetch(API, { 
+        method: 'POST', 
+        mode: 'no-cors', 
+        body: new URLSearchParams(fd) 
+      }).then(() => {
+        btn.disabled = false; 
+        loader.style.display = 'none';
+        document.getElementById('res-score').innerText = soma + ' pts';
+        document.getElementById('res-pct').innerText = pctStr;
+        document.getElementById('res-class').innerText = classificacao;
+        document.getElementById('form-container').style.display = 'none';
+        document.getElementById('feedback-container').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }).catch(() => {
+        btn.disabled = false; 
+        loader.style.display = 'none';
+        alert("Falha na sincronização dos dados com a base da Continuar.");
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderQuestions();
+      carregarDados();
+    });
+  </script>
+</body>
+</html>

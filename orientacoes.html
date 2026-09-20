@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Orientações e Autocuidado — Plataforma Continuar</title>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+          colors: {
+            teal: {
+              50: '#f0fdfa',
+              100: '#ccfbf1',
+              200: '#99f6e4',
+              300: '#5eead4',
+              400: '#2dd4bf',
+              500: '#14b8a6',
+              600: '#0d9488',
+              700: '#0f766e',
+              800: '#115e59',
+              900: '#134e4a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .card-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.05); }
+    .tab-btn.active { background-color: #0F4C43; color: #ffffff; border-color: #0F4C43; }
+    .tab-btn.btn-alert.active { background-color: #be123c; color: #ffffff; border-color: #be123c; }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900 flex flex-col">
+
+  <!-- CABEÇALHO GLASSMORPHISM -->
+  <header class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <a href="index.html" class="flex items-center gap-2.5 text-teal-700 font-bold text-lg hover:opacity-90 transition">
+          <div class="w-8 h-8 rounded-lg bg-teal-100 flex items-center justify-center text-teal-700">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+          </div>
+          <div class="text-left">
+            <div class="flex items-center gap-1.5">
+              <span class="block text-base leading-none font-extrabold text-[#0F4C43] tracking-tight">Continuar</span>
+              <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            </div>
+            <span class="block text-[10px] leading-none text-slate-500 font-medium mt-0.5">Fisioterapia do Trabalho</span>
+          </div>
+        </a>
+
+        <nav class="flex items-center gap-2">
+          <a href="index.html" class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-teal-50 hover:text-teal-700 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+            Voltar ao Portal
+          </a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
+
+    <!-- Topo da Seção -->
+    <div class="mb-8">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-teal-100 text-teal-800 uppercase tracking-wide mb-2">
+        PLATAFORMA CONTINUAR • CINESIOTERAPIA LABORAL
+      </div>
+      <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">Orientações e Autocuidado</h1>
+      <p class="text-sm md:text-base text-slate-600 mt-2 max-w-3xl leading-relaxed">
+        Seja bem-vindo ao seu espaço de cuidado funcional. Na Plataforma Continuar, proteger a sua saúde e prevenir o desgaste físico biomecânico é o nosso compromisso diário. <span class="font-bold text-[#0F4C43]">"Seu Corpo Foi Feito para se Mover. Nós Ajudamos Você a Continuar."</span> Encontre abaixo as condutas ideais baseadas na forma como você se movimenta e trabalha na sua jornada hospitalar.
+      </p>
+    </div>
+
+    <!-- Navegação por Abas Funcionais -->
+    <div class="flex flex-wrap gap-2 mb-8 border-b border-slate-200 pb-3">
+      <button onclick="alternarAba('postura')" id="btn-tab-postura" class="tab-btn active px-4 py-2.5 rounded-xl text-sm font-semibold transition border border-slate-200 bg-white text-slate-700 hover:border-teal-300">
+        🧘 Postura e Movimento
+      </button>
+      <button onclick="alternarAba('dispositivos')" id="btn-tab-dispositivos" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold transition border border-slate-200 bg-white text-slate-700 hover:border-teal-300">
+        📱 Uso de Celular e Escadas
+      </button>
+      <button onclick="alternarAba('acidentes')" id="btn-tab-acidentes" class="tab-btn btn-alert px-4 py-2.5 rounded-xl text-sm font-semibold transition border border-rose-200 bg-white text-rose-700 hover:border-rose-400">
+        🚨 Acidentes de Trabalho
+      </button>
+      <button onclick="alternarAba('normas')" id="btn-tab-normas" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold transition border border-slate-200 bg-white text-slate-700 hover:border-teal-300">
+        📋 Diretrizes e Fatores de Risco
+      </button>
+    </div>
+
+    <!-- ABA 1: POSTURA E MOVIMENTO -->
+    <section id="conteudo-postura" class="aba-conteudo block space-y-6">
+      
+      <!-- Perfil 1: Sentado e Tela -->
+      <div class="bg-white rounded-2xl card-shadow border border-slate-200 p-6 md:p-8">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center font-bold">
+            🪑
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Muito tempo sentado ou em tela (computador)</h2>
+            <p class="text-xs text-slate-500">Ajustes ergonômicos essenciais para coluna lombar, cervical, ombros e punhos</p>
+          </div>
+        </div>
+        <div class="grid md:grid-cols-3 gap-4 text-xs text-slate-600 leading-relaxed">
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+            <strong class="text-slate-900 block text-sm mb-1">Ajuste da Cadeira e Pernas</strong>
+            Pés totalmente apoiados no chão ou em suporte específico. Quadris e joelhos mantidos em ângulo reto de 90°. Região lombar bem apoiada no encosto, sem sentar na ponta do assento.
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+            <strong class="text-slate-900 block text-sm mb-1">Posicionamento de Monitor e Braços</strong>
+            O topo do monitor deve ficar na linha dos olhos, a uma distância de 50 a 70 cm. Teclado e mouse próximos ao corpo, mantendo punhos em posição neutra (reta) sem apoiar na quina da mesa.
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+            <strong class="text-slate-900 block text-sm mb-1">Pausas Ativas e Regra 20-20-20</strong>
+            A cada 50 minutos de digitação, levante-se por 2 minutos para estimular a circulação. A cada 20 minutos de tela, olhe para um ponto distante por 20 segundos para descanso visual.
+          </div>
+        </div>
+      </div>
+
+      <!-- Perfil 2: Em Pé Parado e em Movimento -->
+      <div class="bg-white rounded-2xl card-shadow border border-slate-200 p-6 md:p-8">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold">
+            🚶
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Em pé parado ou em movimento constante</h2>
+            <p class="text-xs text-slate-500">Cuidado com circulação em MMII, coluna vertebral e manuseio de pacientes/cargas</p>
+          </div>
+        </div>
+        <div class="grid md:grid-cols-3 gap-4 text-xs text-slate-600 leading-relaxed">
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+            <strong class="text-slate-900 block text-sm mb-1">Alívio e Retorno Venoso</strong>
+            Evite descarregar todo o peso em uma só perna. Alterne o apoio dos pés com frequência e faça pequenas flexões de joelho ou fique na ponta dos pés 10 vezes para bombear o sangue nas panturrilhas.
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+            <strong class="text-slate-900 block text-sm mb-1">Elevação e Manuseio de Cargas</strong>
+            Para erguer caixas, caldeirões ou sacos de resíduos, dobre os joelhos e mantenha as costas retas. Segure a carga rente ao abdômen, usando a força potente dos MMII e nunca a coluna solta.
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+            <strong class="text-slate-900 block text-sm mb-1">Regulagem de Leitos e Macas</strong>
+            Antes de qualquer procedimento assistencial, ajuste a altura da cama, maca ou mocho. Evite trabalhar com o tronco fletido para a frente. Peça ajuda de colegas e use lençóis de transferência.
+          </div>
+        </div>
+      </div>
+
+      <!-- Perfil 3: Subida e Descida de Escadas -->
+      <div class="bg-white rounded-2xl card-shadow border border-slate-200 p-6 md:p-8">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center font-bold">
+            🧗
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Subida e descida constante de escadas</h2>
+            <p class="text-xs text-slate-500">Preservação articular de joelhos, tornozelos e prevenção de quedas</p>
+          </div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-4 text-xs text-slate-600 leading-relaxed">
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+            <strong class="text-slate-900 block text-sm mb-1">Apoio Integral do Pé</strong>
+            Apoie a planta inteira do pé em cada degrau. Evite pisar apenas com a ponta dos pés, pois isso sobrecarrega o tendão de Aquiles e a fáscia plantar, gerando fascite e tendinite.
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+            <strong class="text-slate-900 block text-sm mb-1">Ritmo Firme e Cadenciado</strong>
+            Desloque-se com passos regulares. É proibido correr, pular degraus ou transportar volumes que bloqueiem a visão frontal dos pés.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABA 2: USO DE CELULAR E ESCADAS -->
+    <section id="conteudo-dispositivos" class="aba-conteudo hidden space-y-6">
+      <div class="bg-white rounded-2xl card-shadow border border-slate-200 p-6 md:p-8">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center font-bold">
+            📱
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Uso de Celular no Ambiente de Trabalho</h2>
+            <p class="text-xs text-slate-500">Prevenção do pescoço tecnológico (cervicalgia postural) e acidentes em corredores</p>
+          </div>
+        </div>
+        <div class="grid md:grid-cols-3 gap-4 text-xs text-slate-600 leading-relaxed">
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+            <strong class="text-slate-900 block text-sm mb-1">Altura da Tela nos Olhos</strong>
+            Ao ler ou responder mensagens, erga o aparelho até a linha do olhar. Inclinar o pescoço para baixo multiplica o peso sobre as vértebras cervicais de 5 kg para até 27 kg.
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+            <strong class="text-slate-900 block text-sm mb-1">Apoio dos Braços</strong>
+            Mantenha os cotovelos apoiados sobre a mesa ou junto ao tronco para evitar tensão estática nos músculos trapézios e ombros.
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+            <strong class="text-slate-900 block text-sm mb-1">Atenção ao Entorno</strong>
+            Nunca caminhe pelos corredores digitando ou lendo no celular. A distração é causa direta de colisões com macas, tropeços em cabos e quedas de mesmo nível.
+          </div>
+        </div>
+      </div>
+
+      <!-- Alerta Proibição em Escadas -->
+      <div class="bg-rose-50 border-2 border-rose-300 rounded-2xl p-6 md:p-8">
+        <div class="flex items-start gap-4">
+          <div class="p-3 bg-rose-600 text-white rounded-xl shadow-md">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold text-rose-900 uppercase tracking-wide">Regra de Segurança: Proibição de Celular em Escadas e Rampas</h2>
+            <p class="text-sm text-rose-800 mt-1 leading-relaxed">
+              O uso de telefone celular durante o deslocamento em escadas e rampas é uma das principais causas de acidentes graves no hospital.
+            </p>
+            <div class="grid sm:grid-cols-3 gap-4 mt-4 text-xs text-rose-900 leading-relaxed font-medium">
+              <div class="p-3 rounded-lg bg-white/70 border border-rose-200">
+                • <strong>Foco Total nos Degraus:</strong> Proibido digitar, ler notificações ou usar fones de ouvido durante a subida ou descida.
+              </div>
+              <div class="p-3 rounded-lg bg-white/70 border border-rose-200">
+                • <strong>Mão Livre no Corrimão:</strong> Mantenha sempre pelo menos uma mão livre para segurar firmemente o corrimão da escada.
+              </div>
+              <div class="p-3 rounded-lg bg-white/70 border border-rose-200">
+                • <strong>Parada Estática:</strong> Se precisar atender uma chamada urgente, afaste-se do fluxo, pare em piso plano e responda parado.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABA 3: ACIDENTES DE TRABALHO -->
+    <section id="conteudo-acidentes" class="aba-conteudo hidden space-y-6">
+      
+      <!-- Regra Universal Continuar -->
+      <div class="bg-teal-900 text-white rounded-2xl p-6 md:p-8 card-shadow">
+        <div class="flex items-start gap-4">
+          <div class="p-3 bg-teal-700 text-teal-100 rounded-xl">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          </div>
+          <div>
+            <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-teal-800 text-teal-200 uppercase tracking-wide mb-2">Protocolo Obrigatório</span>
+            <h2 class="text-2xl font-bold tracking-tight">Regra Universal em Caso de Acidente — HGCR / UDSO</h2>
+            <p class="text-sm text-teal-100 mt-2 leading-relaxed">
+              Qualquer acidente de trabalho ou lesão aguda deve ser relatado imediatamente à sua <strong>chefia direta</strong>, ao <strong>SESMT e à UDSO (Plataforma Continuar)</strong> para que a <strong>CAT (Comunicação de Acidente de Trabalho)</strong> seja emitida no prazo legal improrrogável de até <strong>24 horas</strong>.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Procedimentos Imediatos -->
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-2xl card-shadow border border-slate-200 p-6">
+          <div class="text-rose-700 font-extrabold text-2xl mb-2">01</div>
+          <h3 class="font-bold text-slate-900 text-base mb-1">Acidente Perfurocortante ou Biológico</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Lavar o local imediatamente com água e sabão em abundância (ou soro fisiológico em caso de mucosas). Seguir direto para o protocolo de profilaxia do hospital e notificar o SESMT e a UDSO (Plataforma Continuar) logo em seguida.
+          </p>
+        </div>
+
+        <div class="bg-white rounded-2xl card-shadow border border-slate-200 p-6">
+          <div class="text-amber-700 font-extrabold text-2xl mb-2">02</div>
+          <h3 class="font-bold text-slate-900 text-base mb-1">Caixa Coletora (Descarpack)</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            100% de atenção: nunca reencapar agulhas nem forçar o descarte. Atingiu a linha pontilhada? Feche, isole e troque a caixa. Coletores cheios aumentam o risco biológico.
+          </p>
+        </div>
+
+        <div class="bg-white rounded-2xl card-shadow border border-slate-200 p-6">
+          <div class="text-teal-700 font-extrabold text-2xl mb-2">03</div>
+          <h3 class="font-bold text-slate-900 text-base mb-1">Prevenção de Quedas e Traumatismos</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Uso obrigatório de calçado fechado e com solado antiderrapante. Redobre a atenção em pisos molhados pela higienização e mantenha rotas e corredores livres de caixas ou materiais.
+          </p>
+        </div>
+      </div>
+
+      <!-- Classificação Legal dos Acidentes -->
+      <div class="bg-white rounded-2xl card-shadow border border-slate-200 p-6 md:p-8">
+        <h3 class="text-lg font-bold text-slate-900 mb-4">Classificação e Tipos de Acidentes de Trabalho (Legislação Previdenciária)</h3>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs text-slate-600 leading-relaxed">
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+            <strong class="text-slate-900 block font-bold mb-1">Acidente Típico</strong>
+            Ocorre no local e durante o horário de trabalho, ligado à função executada. Exemplos: quedas de nível, cortes com bisturi, perfuração por agulha ou trauma mecânico.
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+            <strong class="text-slate-900 block font-bold mb-1">Acidente de Trajeto</strong>
+            Ocorre no percurso entre a residência e o hospital (ou vice-versa), qualquer que seja o meio de locomoção utilizado pelo servidor.
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+            <strong class="text-slate-900 block font-bold mb-1">Doença Profissional</strong>
+            Enfermidade produzida pelo exercício de atividade específica listada pelas normas vigentes.
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+            <strong class="text-slate-900 block font-bold mb-1">Doença do Trabalho (LER/DORT)</strong>
+            Adquirida ou desencadeada em decorrência das condições especiais em que o trabalho é realizado (sobrecarga biomecânica, repetitividade e falta de pausas).
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 sm:col-span-2 lg:col-span-2">
+            <strong class="text-slate-900 block font-bold mb-1">Acidentes por Equiparação (Art. 21 da Lei nº 8.213/91)</strong>
+            Situações equiparadas a acidente de trabalho: agressões físicas no local de trabalho por motivos laborais, desabamentos, contaminação acidental no exercício da função ou ocorrências no horário de descanso e refeição no hospital.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABA 4: NORMAS E FATORES DE RISCO -->
+    <section id="conteudo-normas" class="aba-conteudo hidden space-y-6">
+      
+      <!-- Aviso Celular Rolagem -->
+      <div class="p-3 bg-blue-50 border border-blue-200 rounded-xl text-xs text-blue-900 font-medium flex items-center gap-2">
+        <span>📱</span> <strong>Dica para Celular:</strong> Deslize as tabelas para o lado (esquerda ↔️ direita) para ver todas as colunas das normas.
+      </div>
+
+      <!-- Diretrizes de Segurança e Saúde -->
+      <div class="bg-white rounded-2xl card-shadow border border-slate-200 p-6">
+        <h3 class="text-base font-bold text-slate-900 mb-1">Diretrizes de Segurança e Saúde no Trabalho em Serviços de Saúde</h3>
+        <p class="text-xs text-slate-500 mb-4">Parâmetros normativos mandatórios para proteção biológica e física no hospital</p>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left border-collapse min-w-[620px]">
+            <thead>
+              <tr class="bg-slate-100 text-slate-800 font-bold border-b border-slate-300">
+                <th class="p-3">Critério Técnico</th>
+                <th class="p-3">Foco do Risco</th>
+                <th class="p-3">Medida Preventiva Obrigatória</th>
+                <th class="p-3">Aplicação Prática no Trabalho</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 text-slate-700">
+              <tr>
+                <td class="p-3 font-semibold text-slate-900">Adornos e Perfurocortantes</td>
+                <td class="p-3">Risco Biológico</td>
+                <td class="p-3">Proibição total de adornos e do reencape de agulhas.</td>
+                <td class="p-3">Retirar anéis, relógios, pulseiras e brincos antes do plantão.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-slate-900">Recipientes de Descarte</td>
+                <td class="p-3">Perfurocortantes</td>
+                <td class="p-3">Uso de recipientes coletores rígidos com trava de segurança.</td>
+                <td class="p-3">Descartar materiais estritamente até a linha pontilhada da caixa.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-slate-900">Imunização Ocupacional</td>
+                <td class="p-3">Imunização Ativa</td>
+                <td class="p-3">Fornecimento gratuito e carteira vacinal em dia.</td>
+                <td class="p-3">Manter em dia vacinas de Hepatite B, Tétano e Difteria junto ao SESMT / UDSO.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-slate-900">Agentes Químicos</td>
+                <td class="p-3">Risco Químico</td>
+                <td class="p-3">Manuseio seguro de medicamentos e produtos de higienização.</td>
+                <td class="p-3">Uso obrigatório de EPIs específicos em Farmácia, CME e setores.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-slate-900">Radiações Ionizantes</td>
+                <td class="p-3">Radiações Ionizantes</td>
+                <td class="p-3">Dosimetria individual e proteção radiológica.</td>
+                <td class="p-3">Uso do dosímetro individual no setor de radiodiagnóstico.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Diretrizes de Ergonomia -->
+      <div class="bg-white rounded-2xl card-shadow border border-slate-200 p-6">
+        <h3 class="text-base font-bold text-slate-900 mb-1">Diretrizes de Ergonomia e Carga de Trabalho</h3>
+        <p class="text-xs text-slate-500 mb-4">Adaptação das condições de trabalho às características psicofisiológicas dos servidores</p>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left border-collapse min-w-[620px]">
+            <thead>
+              <tr class="bg-slate-100 text-slate-800 font-bold border-b border-slate-300">
+                <th class="p-3">Aspecto da Norma</th>
+                <th class="p-3">Critério Ergonômico</th>
+                <th class="p-3">Impacto Ocupacional</th>
+                <th class="p-3">Recomendação da Fisioterapia do Trabalho</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 text-slate-700">
+              <tr>
+                <td class="p-3 font-semibold text-slate-900">Mobiliário dos Postos</td>
+                <td class="p-3">Mesas, bancadas e assentos reguláveis e adaptados ao corpo.</td>
+                <td class="p-3">Prevenção de cervicalgias e lombalgias crônicas.</td>
+                <td class="p-3">Topo do monitor na altura dos olhos e pés firmes em base estável.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-slate-900">Movimentação de Cargas</td>
+                <td class="p-3">Uso de auxílios mecânicos ou técnicas de transporte em equipe.</td>
+                <td class="p-3">Redução drástica de lesões discais agudas e crônicas.</td>
+                <td class="p-3">Usar lençóis de transferência e auxílio de colegas no leito.</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-slate-900">Organização do Trabalho</td>
+                <td class="p-3">Inclusão de pausas de descanso e controle de ritmo.</td>
+                <td class="p-3">Alívio de sobrecarga muscular estática e fadiga mental.</td>
+                <td class="p-3">Realizar micro-pausas ativas de descompressão no plantão.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Gestão Contínua de Riscos Psicossociais no PGR -->
+      <div class="bg-white rounded-2xl card-shadow border border-slate-200 p-6 md:p-8">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-9 h-9 rounded-lg bg-teal-100 text-teal-800 flex items-center justify-center font-bold">
+            🧠
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-slate-900">Gestão Contínua de Riscos Psicossociais (PGR)</h3>
+            <p class="text-xs text-slate-500">Aplicação plena desde maio de 2026 no Programa de Gerenciamento de Riscos</p>
+          </div>
+        </div>
+        <div class="grid md:grid-cols-3 gap-4 text-xs text-slate-600 leading-relaxed mt-4">
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+            <strong class="text-slate-900 block font-bold mb-1">Mapeamento com Instrumentos Validados</strong>
+            A gestão do trabalho exige a identificação, avaliação e controle de riscos psicossociais usando escalas validadas (como COPSOQ), integrando contexto organizacional e afastamentos no PGR do hospital.
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+            <strong class="text-slate-900 block font-bold mb-1">Proteção e Recorte Coletivo</strong>
+            A leitura é realizada por recorte populacional (setor, turno, atividade), sem exposição individual de nenhum trabalhador, garantindo segurança ética e jurídica ao servidor.
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+            <strong class="text-slate-900 block font-bold mb-1">Nexo e Prevenção de Doenças</strong>
+            Fatores como ritmo acelerado, falta de pausas e pressão mental interagem diretamente com a sobrecarga física, agravando episódios de LER/DORT e esgotamento profissional.
+          </div>
+        </div>
+      </div>
+
+      <!-- Evidências Científicas Integradas -->
+      <div class="bg-slate-100 rounded-2xl p-6 text-xs text-slate-600 leading-relaxed border border-slate-200">
+        <h4 class="font-bold text-slate-900 text-sm mb-2">Fundamentação Científica e Prática Clínica Integrada:</h4>
+        <ul class="space-y-1.5 list-disc list-inside">
+          <li><strong>Protocolo UNICAMP/CEREST (Pleutim et al., 2025):</strong> Protocolo multidimensional para avaliação de capacidade e retorno laboral em LER/DORT, integrando acolhimento, exame de amplitude de movimento articular (ADM), Índice de Capacidade para o Trabalho (ICT) e categorias da CIF.</li>
+          <li><strong>Avaliação de Riscos (Serranheira & Sousa Uva, 2010):</strong> Seleção criteriosa entre métodos observacionais (OCRA, RULA, Strain Index e Hand Activity Level) conforme a presença dos fatores primários de risco: repetitividade, força e postura estática.</li>
+          <li><strong>Norma Técnica INSS/DORT:</strong> O nexo causal é indissociável da anamnese ocupacional fidedigna, análise dos postos de trabalho e notificação imediata via CAT para proteção do trabalhador.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Card de Ação Rápida no Rodapé -->
+    <div class="mt-12 bg-white rounded-2xl card-shadow border border-slate-200 p-6 flex items-center justify-between flex-wrap gap-4">
+      <div>
+        <p class="font-bold text-slate-900 text-sm">Sentiu algum desconforto muscular ou sobrecarga no plantão?</p>
+        <p class="text-xs text-slate-500 mt-0.5">Registre seu relato ou procure o SESMT com o Dr. Cleiton Gomes Façanha.</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-semibold text-xs hover:bg-slate-50 transition">
+          Portal Inicial
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="bg-slate-900 text-slate-400 py-8 border-t border-slate-800 text-xs text-center">
+    <p class="font-semibold text-slate-300">Plataforma Continuar • Vigilância Ergonômica Preditiva & Cinesioterapia Laboral</p>
+    <p class="mt-1 text-slate-400 font-medium">"Seu Corpo Foi Feito para se Mover. Nós Ajudamos Você a Continuar."</p>
+    <p class="mt-1 text-slate-500">UDSO / HGCR • Fisioterapia do Trabalho • Dr. Cleiton Gomes Façanha (CREFITO-10: 265.366-F)</p>
+    <p class="mt-1 text-slate-500">Ambiente em conformidade com a LGPD (Lei nº 13.709/2018) • Sigilo e Proteção de Dados</p>
+  </footer>
+
+  <script>
+    function alternarAba(idAba) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.aba-conteudo').forEach(bloco => {
+        bloco.classList.add('hidden');
+        bloco.classList.remove('block');
+      });
+
+      const btn = document.getElementById('btn-tab-' + idAba);
+      if (btn) btn.classList.add('active');
+
+      const alvo = document.getElementById('conteudo-' + idAba);
+      if (alvo) {
+        alvo.classList.remove('hidden');
+        alvo.classList.add('block');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const abaParam = urlParams.get('aba');
+      if (abaParam && ['postura', 'dispositivos', 'acidentes', 'normas'].includes(abaParam)) {
+        alternarAba(abaParam);
+      }
+    });
+  </script>
+</body>
+</html>

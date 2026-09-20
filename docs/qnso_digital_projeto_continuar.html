@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Questionário Nórdico (QNSO) • Mapeamento Musculoesquelético (NR-17 & CIF) — Continuar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #0F4C43;
+      --primary-hover: #134e4a;
+      --bg: #f8fafc;
+    }
+    body {
+      background-color: var(--bg);
+      color: #0f172a;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .loader {
+      border: 2.5px solid #e2e8f0;
+      border-top: 2.5px solid var(--primary);
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      animation: spin 0.8s linear infinite;
+      display: none;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="p-3 md:p-6 lg:p-8 antialiased min-h-screen flex flex-col justify-between">
+
+  <div class="max-w-5xl mx-auto w-full bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden" id="form-container">
+    
+    <!-- Topbar Institucional -->
+    <header class="bg-gradient-to-r from-slate-900 to-[#0F4C43] text-white p-6 md:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2 mb-1.5">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-[11px] font-extrabold uppercase tracking-widest text-emerald-200">
+            UDSO • Hospital Governador Celso Ramos
+          </span>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-black tracking-tight">Questionário Nórdico (QNSO)</h1>
+        <p class="text-xs md:text-sm text-emerald-100/80 mt-0.5 font-medium">
+          Mapeamento Topográfico de Sintomas Osteomusculares • NR-17 & CIF
+        </p>
+      </div>
+      <a href="index.html" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-xs font-bold transition border border-white/20 backdrop-blur-sm self-stretch sm:self-auto text-center">
+        ← Voltar ao Portal
+      </a>
+    </header>
+
+    <form id="form-qnso" class="p-6 md:p-8 space-y-6" onsubmit="submitQNSO(event)">
+      
+      <!-- Identificação do Servidor -->
+      <div class="bg-slate-50 border border-slate-200/80 p-5 rounded-2xl">
+        <div class="flex items-center justify-between mb-3 border-b border-slate-200/60 pb-2">
+          <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Identificação do Servidor</h3>
+          <span class="text-[11px] text-emerald-700 font-semibold">Sincronização Automática</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nome Completo *</label>
+            <input type="text" id="qnso_nome" name="nome" required placeholder="Nome Completo" 
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition font-medium" 
+                   oninput="salvarLocal('nome', this.value)">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Matrícula SES/SC *</label>
+            <input type="text" id="qnso_matricula" name="matricula" required placeholder="Ex: 123456-7" 
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs font-mono text-slate-900 transition" 
+                   oninput="salvarLocal('mat', this.value)">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Setor de Lotação *</label>
+            <input type="text" id="qnso_setor" name="setor" required placeholder="Ex: UTI Adulto, CME" 
+                   class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0F4C43] outline-none text-xs text-slate-900 transition font-medium" 
+                   oninput="salvarLocal('setor', this.value)">
+          </div>
+        </div>
+      </div>
+
+      <!-- Instrução Clínica Baseada na CIF -->
+      <div class="bg-emerald-50/70 border-l-4 border-[#0F4C43] p-4 rounded-r-2xl text-xs space-y-1">
+        <p class="text-slate-800 font-bold flex items-center gap-1.5">
+          <span>📋</span> Instrução de Preenchimento:
+        </p>
+        <p class="text-slate-600 leading-relaxed">
+          Para cada uma das 9 regiões anatômicas abaixo, indique se teve dor ou desconforto nos <strong>últimos 12 meses</strong>, se essa condição <strong>impediu suas atividades</strong> habituais e se sentiu sintomas na <strong>última semana (últimos 7 dias)</strong>.
+        </p>
+      </div>
+
+      <!-- Grid das 9 Regiões Anatômicas -->
+      <div class="space-y-4" id="qnso-grid"></div>
+
+      <!-- Campo de Relato de Incidente / Ocorrência com Voz -->
+      <div class="p-5 bg-slate-50 border border-slate-200/80 rounded-2xl relative">
+        <div class="flex items-center justify-between mb-1.5">
+          <label class="block text-xs font-bold text-slate-700">
+            Relato de Incidente Causador ou Comentário Específico do Posto (Opcional)
+          </label>
+          <button type="button" onclick="startDictation('inc_qnso', this)" 
+                  class="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-800 hover:text-emerald-950 transition">
+            <span>🎤 Ditar por Voz</span>
+          </button>
+        </div>
+        <input type="text" id="inc_qnso" name="incidente_relato" 
+               placeholder="Ex: Trauma em transferência de paciente, entorse de tornozelo em escada, sobrecarga em plantão..." 
+               class="w-full p-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#0F4C43] text-xs text-slate-900 transition">
+      </div>
+
+      <!-- Termo e Consentimento LGPD -->
+      <label class="flex items-start gap-3 text-xs text-slate-600 p-4 rounded-2xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100/70 transition">
+        <input type="checkbox" required class="mt-0.5 w-4 h-4 accent-[#0F4C43]"> 
+        <span class="leading-relaxed">
+          Autorizo o processamento sigiloso dos dados pela equipe de Fisioterapia do Trabalho da <strong>Plataforma Continuar</strong> para mapeamento ergonômico coletivo, planejamento cinesioterapêutico e cumprimento da NR-17, nos termos da LGPD.
+        </span>
+      </label>
+
+      <!-- Botão de Envio -->
+      <button type="submit" id="btn-submit-qnso" 
+              class="w-full bg-[#0F4C43] hover:bg-[#134e4a] text-white font-bold py-4 px-6 rounded-2xl shadow-lg shadow-emerald-950/15 flex justify-center items-center gap-2 transition-all hover:-translate-y-0.5 text-sm uppercase tracking-wide">
+        <span>Gravar Questionário Nórdico (QNSO)</span>
+        <div class="loader" id="load-qnso"></div>
+      </button>
+    </form>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- TELA DE FEEDBACK / CONCLUSÃO                             -->
+  <!-- ======================================================== -->
+  <div id="feedback-container" class="hidden text-center py-12 px-6 max-w-lg mx-auto bg-white rounded-3xl shadow-xl border border-slate-200 my-auto">
+    <div class="w-16 h-16 bg-emerald-100 text-[#0F4C43] rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl font-black shadow-inner">
+      ✓
+    </div>
+    <h2 class="text-2xl font-black text-slate-900 mb-1">Mapeamento Concluído!</h2>
+    <p class="text-slate-500 mb-6 text-xs leading-relaxed">
+      Os dados epidemiológicos do Questionário Nórdico foram sincronizados com sucesso na base da Plataforma Continuar.
+    </p>
+
+    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 mb-6 text-xs space-y-2.5">
+      <div class="flex justify-between items-center border-b border-slate-200 pb-2">
+        <span class="text-slate-500 font-medium">Regiões com Queixas (12 meses):</span>
+        <strong id="res-12m" class="text-base font-black text-slate-900">0</strong>
+      </div>
+      <div class="flex justify-between items-center border-b border-slate-200 pb-2">
+        <span class="text-slate-500 font-medium">Regiões com Impedimento de Atividades:</span>
+        <strong id="res-imp" class="text-base font-black text-rose-700">0</strong>
+      </div>
+      <div class="flex justify-between items-center pt-1">
+        <span class="text-slate-500 font-medium">Regiões com Sintomas Recentes (7 dias):</span>
+        <strong id="res-7d" class="text-base font-black text-amber-700">0</strong>
+      </div>
+      <p class="text-[10px] text-slate-400 text-left pt-2">
+        * As informações subsidiam ações preventivas e intervenções ergonômicas no seu posto de trabalho.
+      </p>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      <a href="index.html" class="border border-slate-200 text-slate-700 font-bold py-3 px-6 rounded-xl hover:bg-slate-50 transition text-xs">
+        Voltar ao Portal
+      </a>
+      <a href="index.html#escalas" class="bg-[#0F4C43] text-white font-bold py-3 px-6 rounded-xl hover:bg-[#134e4a] transition text-xs shadow-md">
+        Próxima Avaliação →
+      </a>
+    </div>
+  </div>
+
+  <footer class="text-center text-[11px] text-slate-400 py-6">
+    Plataforma Continuar • Gestão de Saúde Ocupacional & Ergonomia (NR-17 / CIF)
+  </footer>
+
+  <!-- ======================================================== -->
+  <!-- MOTOR JAVASCRIPT: RENDERIZAÇÃO & PROCESSAMENTO           -->
+  <!-- ======================================================== -->
+  <script>
+    const API = "https://script.google.com/macros/s/AKfycbx_QkwiHI7nIzgBseEkbIk0mY33A2Uuqrq5Tn5X-v0BSLs3DmpUpn9cvInUUaPyOPV8rg/exec";
+
+    const regioes = [
+      { id: "Pescoco", label: "1. Pescoço / Coluna Cervical", icon: "🧣" },
+      { id: "Ombros", label: "2. Ombros (Cíngulo do Membro Superior)", icon: "💪" },
+      { id: "Toracica", label: "3. Coluna Torácica (Costas Superior)", icon: "🦴" },
+      { id: "Cotovelos", label: "4. Articulação do Cotovelo", icon: "📐" },
+      { id: "Punhos", label: "5. Punhos e Mãos (Túnel do Carpo)", icon: "✋" },
+      { id: "Lombar", label: "6. Coluna Lombar (Costas Inferior)", icon: "🩺" },
+      { id: "Quadril", label: "7. Quadril e Coxas", icon: "🦵" },
+      { id: "Joelhos", label: "8. Articulação do Joelho", icon: "⚡" },
+      { id: "Tornozelos", label: "9. Tornozelos e Pés", icon: "🦶" }
+    ];
+
+    function renderQNSOGrid() {
+      const grid = document.getElementById('qnso-grid');
+      grid.innerHTML = '';
+
+      regioes.forEach(r => {
+        grid.innerHTML += `
+          <div class="p-5 bg-slate-50/80 border border-slate-200/80 rounded-2xl hover:border-emerald-700/40 transition space-y-3">
+            <div class="flex items-center gap-2 font-bold text-slate-900 text-xs border-b border-slate-200/60 pb-2">
+              <span class="text-sm">${r.icon}</span>
+              <span>${r.label}</span>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div>
+                <label class="block font-semibold text-slate-600 mb-1">1. Dor nos últimos 12 meses?</label>
+                <select name="${r.id}_12m" class="w-full bg-white border border-slate-200 p-2.5 rounded-xl text-xs text-slate-800 focus:ring-2 focus:ring-[#0F4C43] outline-none transition font-medium">
+                  <option value="Não">Não</option>
+                  <option value="Sim">Sim (Geral)</option>
+                  <option value="Sim (Dir)">Sim (Lado Direito)</option>
+                  <option value="Sim (Esq)">Sim (Lado Esquerdo)</option>
+                  <option value="Sim (Ambos)">Sim (Ambos os Lados)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block font-semibold text-slate-600 mb-1">2. Impediu tarefas no ano?</label>
+                <select name="${r.id}_imp" class="w-full bg-white border border-slate-200 p-2.5 rounded-xl text-xs text-slate-800 focus:ring-2 focus:ring-[#0F4C43] outline-none transition font-medium">
+                  <option value="Não">Não impediu</option>
+                  <option value="Sim">Sim, impediu</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block font-semibold text-slate-600 mb-1">3. Dor nos últimos 7 dias?</label>
+                <select name="${r.id}_7d" class="w-full bg-white border border-slate-200 p-2.5 rounded-xl text-xs text-slate-800 focus:ring-2 focus:ring-[#0F4C43] outline-none transition font-medium">
+                  <option value="Não">Não</option>
+                  <option value="Sim">Sim (Geral)</option>
+                  <option value="Sim (Dir)">Sim (Lado Direito)</option>
+                  <option value="Sim (Esq)">Sim (Lado Esquerdo)</option>
+                  <option value="Sim (Ambos)">Sim (Ambos os Lados)</option>
+                </select>
+              </div>
+            </div>
+          </div>`;
+      });
+    }
+
+    function salvarLocal(campo, val) {
+      if (campo === 'nome') {
+        localStorage.setItem('hgcr_servidor_nome', val);
+        localStorage.setItem('hgcr_user_nome', val);
+      } else if (campo === 'mat') {
+        localStorage.setItem('hgcr_servidor_mat', val);
+        localStorage.setItem('hgcr_user_matricula', val);
+      } else if (campo === 'setor') {
+        localStorage.setItem('hgcr_servidor_setor', val);
+        localStorage.setItem('hgcr_user_setor', val);
+      }
+    }
+
+    function carregarDados() {
+      document.getElementById('qnso_nome').value = localStorage.getItem('hgcr_servidor_nome') || localStorage.getItem('hgcr_user_nome') || '';
+      document.getElementById('qnso_matricula').value = localStorage.getItem('hgcr_servidor_mat') || localStorage.getItem('hgcr_user_matricula') || '';
+      document.getElementById('qnso_setor').value = localStorage.getItem('hgcr_servidor_setor') || localStorage.getItem('hgcr_user_setor') || '';
+    }
+
+    function startDictation(id, btn) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if(!SpeechRecognition) return alert("Gravação de voz indisponível neste navegador.");
+      const sr = new SpeechRecognition();
+      sr.lang = "pt-BR";
+      const orig = btn.innerText; 
+      btn.innerText = "🔴 Gravando...";
+      sr.onresult = e => { document.getElementById(id).value += (document.getElementById(id).value ? ' ' : '') + e.results[0][0].transcript; };
+      sr.onerror = () => { btn.innerText = orig; };
+      sr.onend = () => { btn.innerText = orig; };
+      try { sr.start(); } catch(e) { btn.innerText = orig; }
+    }
+
+    function submitQNSO(e) {
+      e.preventDefault();
+      const form = document.getElementById('form-qnso');
+      const btn = document.getElementById('btn-submit-qnso');
+      const loader = document.getElementById('load-qnso');
+
+      let c12m = 0, cImp = 0, c7d = 0;
+      regioes.forEach(r => {
+        const v12m = form.querySelector(`select[name="${r.id}_12m"]`).value;
+        const vImp = form.querySelector(`select[name="${r.id}_imp"]`).value;
+        const v7d = form.querySelector(`select[name="${r.id}_7d"]`).value;
+        if(v12m !== "Não") c12m++;
+        if(vImp === "Sim") cImp++;
+        if(v7d !== "Não") c7d++;
+      });
+
+      const fd = new FormData(form);
+      fd.append("TIPO_FORMULARIO", "QNSO");
+      fd.append("DATA_REGISTRO", new Date().toLocaleString('pt-BR'));
+      fd.append("dor_pescoco", form.querySelector('select[name="Pescoco_12m"]').value);
+      fd.append("dor_ombros", form.querySelector('select[name="Ombros_12m"]').value);
+      fd.append("dor_costas_sup", form.querySelector('select[name="Toracica_12m"]').value);
+      fd.append("dor_lombar", form.querySelector('select[name="Lombar_12m"]').value);
+      fd.append("dor_cotovelos", form.querySelector('select[name="Cotovelos_12m"]').value);
+      fd.append("dor_punhos", form.querySelector('select[name="Punhos_12m"]').value);
+      fd.append("dor_quadril", form.querySelector('select[name="Quadril_12m"]').value);
+      fd.append("dor_joelhos", form.querySelector('select[name="Joelhos_12m"]').value);
+      fd.append("dor_tornozelos", form.querySelector('select[name="Tornozelos_12m"]').value);
+      fd.append("total_regioes_12m", c12m);
+      fd.append("total_regioes_impedimento", cImp);
+      fd.append("total_regioes_7d", c7d);
+
+      btn.disabled = true; 
+      loader.style.display = 'block';
+
+      fetch(API, { 
+        method: 'POST', 
+        mode: 'no-cors', 
+        body: new URLSearchParams(fd) 
+      }).then(() => {
+        btn.disabled = false; 
+        loader.style.display = 'none';
+        document.getElementById('res-12m').innerText = c12m;
+        document.getElementById('res-imp').innerText = cImp;
+        document.getElementById('res-7d').innerText = c7d;
+        document.getElementById('form-container').style.display = 'none';
+        document.getElementById('feedback-container').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }).catch(() => {
+        btn.disabled = false; 
+        loader.style.display = 'none';
+        alert("Falha no envio das informações do QNSO. Tente novamente.");
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderQNSOGrid();
+      carregarDados();
+    });
+  </script>
+</body>
+</html>

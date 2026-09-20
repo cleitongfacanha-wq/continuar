@@ -1,0 +1,2030 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Continuar • Painel de Gestão Ergonômica & Vigilância Ocupacional</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Identity Services -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <!-- Fonte Inter do Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0F4C43;
+      --primary-hover: #134e4a;
+      --primary-light: #f0fdfa;
+      --accent: #10b981;
+      --background: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --muted: #64748b;
+    }
+    body {
+      background-color: var(--background);
+      color: #0f172a;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .loader {
+      border: 2.5px solid #e2e8f0;
+      border-top: 2.5px solid var(--primary);
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      animation: spin 0.8s linear infinite;
+      display: none;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    @media print {
+      body { background: #ffffff !important; color: #000000 !important; padding: 10mm !important; }
+      #modal, header, nav, button, .tabs-container, #modal-script, a, #btn-sync, #btn-toggle-demo { display: none !important; }
+      #painel { display: block !important; }
+      .tab-content { display: none !important; }
+      #tab-readaptacao { display: block !important; }
+      .bg-white, .bg-slate-50 { background: #ffffff !important; }
+      .shadow-sm, .shadow-xl, .shadow-2xl { box-shadow: none !important; }
+      .border { border-color: #cbd5e1 !important; }
+    }
+  </style>
+</head>
+<body class="antialiased min-h-screen p-3 md:p-6 lg:p-8">
+
+  <!-- ======================================================== -->
+  <!-- MODAL DE AUTENTICAÇÃO SEGURA -->
+  <!-- ======================================================== -->
+  <div id="modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
+    <div class="bg-white p-8 md:p-10 rounded-3xl w-full max-w-md text-center shadow-2xl ring-1 ring-slate-900/10 border border-slate-100">
+      <div class="w-16 h-16 bg-emerald-50 text-emerald-800 rounded-2xl flex items-center justify-center mx-auto mb-5 text-2xl font-bold shadow-inner border border-emerald-100">
+        🔐
+      </div>
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-bold uppercase tracking-wider mb-2 border border-emerald-200">
+        UDSO • HGCR
+      </div>
+      <h3 class="text-2xl font-black text-slate-900 tracking-tight">Plataforma Continuar</h3>
+      <p class="text-xs text-slate-500 mt-1 mb-6">Acesso restrito ao Painel Gestor & Fisioterapia do Trabalho</p>
+      
+      <div class="relative mb-4">
+        <input type="password" id="pwd" placeholder="Chave de acesso do gestor" class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-center font-bold text-slate-800 text-sm focus:ring-2 focus:ring-emerald-700 focus:bg-white focus:border-transparent outline-none transition" onkeypress="if(event.key==='Enter') login()">
+        <button type="button" onclick="togglePwd()" class="absolute right-3.5 top-3.5 text-xs font-semibold text-slate-400 hover:text-slate-600 transition">Ver</button>
+      </div>
+
+      <div id="login-error" class="hidden text-rose-600 text-xs font-semibold mb-4 bg-rose-50 border border-rose-200 py-2 px-3 rounded-lg">Chave incorreta. Acesso restrito à equipe técnica da UDSO.</div>
+      
+      <button id="btn-login-submit" onclick="login()" class="w-full bg-[#0F4C43] hover:bg-[#134e4a] text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-emerald-950/20 transition-all flex items-center justify-center gap-2 hover:-translate-y-0.5">
+        <span>Desbloquear Painel</span>
+      </button>
+
+      <!-- Google Identity Services -->
+      <div class="mt-6 pt-5 border-t border-slate-100">
+        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-3">Ou acesse com e-mail institucional</p>
+        <div id="g_id_onload"
+             data-client_id="845244516624-placeholder.apps.googleusercontent.com"
+             data-callback="onGoogleSignIn"
+             data-auto_prompt="false">
+        </div>
+        <div class="flex justify-center">
+          <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline" data-text="signin_with" data-size="large" data-logo_alignment="left"></div>
+        </div>
+        <div id="google-error" class="hidden text-rose-600 text-xs font-semibold mt-2">E-mail não autorizado para acesso ao painel gerencial.</div>
+      </div>
+
+      <div class="mt-6 pt-4 flex justify-between items-center text-xs text-slate-400 border-t border-slate-100">
+        <a href="index.html" class="font-bold text-slate-600 hover:text-emerald-800 transition flex items-center gap-1">
+          ← Portal do Servidor
+        </a>
+        <span>Sessão segura de 20 min</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- CONTAINER PRINCIPAL DO DASHBOARD -->
+  <!-- ======================================================== -->
+  <div id="painel" class="hidden max-w-7xl mx-auto space-y-6">
+    
+    <!-- Barra Superior / Header Executivo -->
+    <header class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="text-xs font-extrabold uppercase tracking-widest text-emerald-900">Hospital Governador Celso Ramos • UDSO</span>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold border border-slate-200">CIF</span>
+        </div>
+        <h1 class="text-2xl lg:text-3xl font-black tracking-tight text-slate-900">
+          Plataforma Continuar <span class="text-slate-400 font-normal text-xl">| Painel Gestor</span>
+        </h1>
+        <p class="text-xs md:text-sm text-slate-500 mt-0.5">
+          Vigilância Ergonômica Preditiva e Cinesioterapia Laboral • Resp. Técnico: Dr. Cleiton Gomes Façanha (CREFITO-10: 265.366-F)
+        </p>
+      </div>
+
+      <!-- Barra de Ações Rápidas -->
+      <div class="flex items-center gap-2.5 flex-wrap self-stretch lg:self-auto">
+        <a href="index.html" class="flex items-center gap-1.5 text-xs font-bold bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 px-3.5 py-2.5 rounded-xl transition shadow-sm hover:border-slate-300" title="Retornar ao Portal do Servidor">
+          ← Portal
+        </a>
+        <button onclick="sincronizarComGoogle()" id="btn-sync" class="flex items-center gap-2 text-xs font-bold bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 px-4 py-2.5 rounded-xl transition shadow-sm hover:border-slate-300">
+          <span id="sync-icon">🔄</span> Sincronizar Dados
+        </button>
+        <button onclick="abrirModalAppsScript()" class="text-xs font-semibold bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 px-3.5 py-2.5 rounded-xl transition" title="Configurações Técnicas da API">
+          ⚙️ Conexão
+        </button>
+        <button onclick="exportarDadosRNDS()" class="flex items-center gap-1.5 text-xs font-bold bg-[#0F4C43] hover:bg-[#134e4a] text-white px-3.5 py-2.5 rounded-xl transition shadow-sm" title="Exportar Dados Estruturados no Padrão RNDS / e-SUS (JSON-LD)">
+          <span>📥</span> Exportar RNDS / JSON
+        </button>
+        <div id="badge-status" class="bg-amber-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold shadow-sm flex items-center gap-2">
+          <span id="badge-status-dot" class="inline-block w-2 h-2 rounded-full bg-white animate-pulse"></span>
+          <span id="badge-status-text">Base Demonstrativa</span>
+        </div>
+        <button id="btn-toggle-demo" onclick="toggleModoDemonstracao()" class="hidden text-xs font-bold border border-slate-200 text-slate-700 bg-white hover:bg-slate-50 px-3.5 py-2.5 rounded-xl transition shadow-sm">
+          👁️ Alternar Visão
+        </button>
+        <button onclick="encerrarSessao()" class="text-xs font-bold text-rose-700 hover:bg-rose-50 border border-rose-200 bg-white px-3.5 py-2.5 rounded-xl transition flex items-center gap-1.5 shadow-sm" title="Sair da sessão">
+          🔒 Sair
+        </button>
+      </div>
+    </header>
+
+    <!-- ======================================================== -->
+    <!-- CARDS DE KPIS E MÉTRICAS CHAVE -->
+    <!-- ======================================================== -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <!-- Card 1: Total -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:border-emerald-600/50 transition relative overflow-hidden group">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Mapeamentos Totais</span>
+          <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-800 flex items-center justify-center text-sm font-bold">📋</div>
+        </div>
+        <div class="text-3xl font-black mt-2 text-slate-900 tracking-tight" id="kpi-total">342</div>
+        <div class="flex items-center gap-1 text-[11px] text-emerald-700 font-semibold mt-2">
+          <span>↑ 12%</span>
+          <span class="text-slate-400 font-normal">vs. ciclo anterior</span>
+        </div>
+      </div>
+
+      <!-- Card 2: EVA -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:border-amber-600/50 transition relative overflow-hidden group">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Média de Dor (EVA)</span>
+          <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center text-sm font-bold">⚡</div>
+        </div>
+        <div class="text-3xl font-black mt-2 text-amber-600 tracking-tight" id="kpi-eva">
+          5.8 <span class="text-xs font-bold text-slate-400">/ 10</span>
+        </div>
+        <div class="text-[11px] text-amber-800 font-semibold mt-2">
+          Gravidade: <span class="font-normal text-slate-600">Sobrecarga Moderada</span>
+        </div>
+      </div>
+
+      <!-- Card 3: Lombar -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:border-emerald-600/50 transition relative overflow-hidden group">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Queixas Lombares</span>
+          <div class="w-8 h-8 rounded-lg bg-teal-50 text-teal-800 flex items-center justify-center text-sm font-bold">🩺</div>
+        </div>
+        <div class="text-3xl font-black mt-2 text-[#0F4C43] tracking-tight" id="kpi-lombar">68.4%</div>
+        <div class="text-[11px] text-slate-500 font-medium mt-2">
+          Maior foco anatômico no hospital
+        </div>
+      </div>
+
+      <!-- Card 4: Setor Crítico -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:border-rose-600/50 transition relative overflow-hidden group">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Setor Mais Crítico</span>
+          <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-700 flex items-center justify-center text-sm font-bold">🚨</div>
+        </div>
+        <div class="text-2xl font-black mt-2 text-rose-700 tracking-tight truncate" id="kpi-setor">UTI Adulto</div>
+        <div class="text-[11px] text-rose-800 font-semibold mt-2">
+          Prioridade 1 em Cinesioterapia
+        </div>
+      </div>
+
+      <!-- Card 5: ROI e Retorno Econômico do Absenteísmo -->
+      <div class="bg-gradient-to-br from-emerald-900 to-[#0F4C43] text-white rounded-2xl p-5 shadow-sm border border-emerald-700/50 relative overflow-hidden group">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-200">ROI do Absenteísmo</span>
+          <div class="w-8 h-8 rounded-lg bg-white/10 text-white flex items-center justify-center text-sm font-bold">💰</div>
+        </div>
+        <div class="text-3xl font-black mt-2 text-white tracking-tight" id="kpi-roi-valor">R$ 47.600</div>
+        <div class="flex items-center gap-1 text-[11px] text-emerald-200 font-semibold mt-2">
+          <span id="kpi-roi-afastamentos">7 Afastamentos Evitados</span>
+          <span class="text-emerald-300/70 font-normal">(SES-SC)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- NAVEGAÇÃO DE ABAS EM SEGMENTED CONTROL -->
+    <!-- ======================================================== -->
+    <div class="bg-slate-100/80 p-1.5 rounded-2xl border border-slate-200/80 flex gap-1.5 overflow-x-auto text-xs font-semibold">
+      <button onclick="switchTab('overview')" id="tab-overview" class="px-4 py-2.5 rounded-xl transition-all whitespace-nowrap bg-white text-emerald-950 font-bold shadow-sm">
+        📊 Visão Geral
+      </button>
+      <button onclick="switchTab('topografia')" id="tab-topografia" class="px-4 py-2.5 rounded-xl transition-all whitespace-nowrap text-slate-600 hover:text-slate-900 hover:bg-white/60 font-medium">
+        🗺️ Topografia & QNSO (9)
+      </button>
+      <button onclick="switchTab('setores')" id="tab-setores" class="px-4 py-2.5 rounded-xl transition-all whitespace-nowrap text-slate-600 hover:text-slate-900 hover:bg-white/60 font-medium">
+        🏢 Setores Auditados (13)
+      </button>
+      <button onclick="switchTab('escalas')" id="tab-escalas" class="px-4 py-2.5 rounded-xl transition-all whitespace-nowrap text-slate-600 hover:text-slate-900 hover:bg-white/60 font-medium">
+        📏 Escalas Clínicas (DASH / ODI / RMDQ / LEFS)
+      </button>
+      <button onclick="switchTab('servidores')" id="tab-servidores" class="px-4 py-2.5 rounded-xl transition-all whitespace-nowrap text-slate-600 hover:text-slate-900 hover:bg-white/60 font-medium">
+        👥 Servidores & Triagens
+      </button>
+      <button onclick="switchTab('acoes')" id="tab-acoes" class="px-4 py-2.5 rounded-xl transition-all whitespace-nowrap text-slate-600 hover:text-slate-900 hover:bg-white/60 font-medium">
+        ⚡ Ações & Agendamento
+      </button>
+      <button onclick="switchTab('readaptacao')" id="tab-readaptacao" class="px-4 py-2.5 rounded-xl transition-all whitespace-nowrap text-emerald-800 hover:bg-emerald-50 font-bold border border-emerald-200/60">
+        ⚖️ Reabilitação vs. Readaptação (Lei 6.745/85)
+      </button>
+      <button onclick="switchTab('aet')" id="tab-aet" class="px-4 py-2.5 rounded-xl transition-all whitespace-nowrap text-teal-800 hover:bg-teal-50 font-bold border border-teal-200/80">
+        🔬 Ergonomia & AET (REBA / ICT / Corlett / NASA-TLX)
+      </button>
+    </div>
+
+    <!-- MÓDULO ESTRATÉGICO: CALCULADORA DE RETORNO ECONÔMICO (ROI DO ABSENTEÍSMO) -->
+    <div class="bg-gradient-to-r from-slate-900 via-[#0F4C43] to-slate-900 text-white rounded-3xl p-6 shadow-sm border border-slate-200/80">
+      <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 pb-4 border-b border-white/10">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-[10px] font-extrabold uppercase tracking-widest text-emerald-300 bg-white/10 px-2.5 py-0.5 rounded-full border border-white/10">
+              Impacto Econômico Auditável • SUS / SES-SC
+            </span>
+            <span class="text-xs text-emerald-200 font-semibold">Inovação em Gestão Pública</span>
+          </div>
+          <h2 class="text-xl font-black tracking-tight text-white">Calculadora de ROI do Absenteísmo Hospitalar</h2>
+          <p class="text-xs text-emerald-100/80 mt-0.5">
+            Estimativa de economia em passivos trabalhistas, horas extras de substituição e desfalques de plantão por LER/DORT (B91)
+          </p>
+        </div>
+        <div class="flex items-center gap-3 bg-white/10 p-2 rounded-2xl border border-white/10 text-xs">
+          <span class="text-emerald-200 font-bold">Custo Estimado por Afastamento:</span>
+          <select id="roi-custo-unitario" onchange="calcularRoiAbsenteismo()" class="bg-slate-900 text-white font-bold p-2 rounded-xl border border-emerald-500/40 outline-none text-xs">
+            <option value="4500">R$ 4.500 (Afastamento Curto / Apoio)</option>
+            <option value="6800" selected>R$ 6.800 (Padrão SES-SC / Enfermagem)</option>
+            <option value="12000">R$ 12.000 (Afastamento Prolongado / Perícia)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 pt-5 text-center">
+        <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
+          <div class="text-xs text-emerald-200 font-medium">Intervenções Precoces Realizadas</div>
+          <div class="text-2xl font-black text-white mt-1" id="roi-intervencoes">10 Casos</div>
+          <div class="text-[10px] text-emerald-300/70 mt-1">Mapeamento em Posto</div>
+        </div>
+        <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
+          <div class="text-xs text-emerald-200 font-medium">Taxa de Eficácia Preventiva</div>
+          <div class="text-2xl font-black text-emerald-300 mt-1">70.0%</div>
+          <div class="text-[10px] text-emerald-300/70 mt-1">Literatura Fisioterapêutica</div>
+        </div>
+        <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
+          <div class="text-xs text-emerald-200 font-medium">Afastamentos Prováveis Evitados</div>
+          <div class="text-2xl font-black text-white mt-1" id="roi-evitados">7 Servidores</div>
+          <div class="text-[10px] text-emerald-300/70 mt-1">Escala Mantida Ativa</div>
+        </div>
+        <div class="bg-emerald-500/20 p-4 rounded-2xl border border-emerald-400/30">
+          <div class="text-xs text-emerald-200 font-bold uppercase tracking-wider">Economia Direta ao Hospital</div>
+          <div class="text-2xl font-black text-emerald-300 mt-1" id="roi-economia-total">R$ 47.600,00</div>
+          <div class="text-[10px] text-emerald-200 font-semibold mt-1">Recursos Públicos Preservados</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- 1. ABA: VISÃO GERAL (GRÁFICO + SUMÁRIO) -->
+    <!-- ======================================================== -->
+    <div id="content-overview" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Gráfico de Evolução -->
+      <div class="lg:col-span-2 bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
+        <div class="flex justify-between items-start">
+          <div>
+            <h2 class="text-base font-bold text-slate-900">Frequência Mensal de Mapeamentos (2026)</h2>
+            <p class="text-xs text-slate-500">Volume de avaliações ocupacionais realizadas nos setores assistenciais</p>
+          </div>
+          <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+            Mapeamento Ativo
+          </span>
+        </div>
+        
+        <!-- Área do Gráfico SVG com Gradiente Esmeralda -->
+        <div class="h-64 mt-6 w-full relative">
+          <svg viewBox="0 0 800 240" class="w-full h-full" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="areaGradHGCR" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#0F4C43" stop-opacity="0.25"/>
+                <stop offset="100%" stop-color="#0F4C43" stop-opacity="0.0"/>
+              </linearGradient>
+            </defs>
+            <line x1="0" y1="40" x2="800" y2="40" stroke="#f1f5f9" stroke-width="1.5" stroke-dasharray="4,4"/>
+            <line x1="0" y1="100" x2="800" y2="100" stroke="#f1f5f9" stroke-width="1.5" stroke-dasharray="4,4"/>
+            <line x1="0" y1="160" x2="800" y2="160" stroke="#f1f5f9" stroke-width="1.5" stroke-dasharray="4,4"/>
+            <line x1="0" y1="220" x2="800" y2="220" stroke="#e2e8f0" stroke-width="2"/>
+            
+            <path d="M 50,185 L 150,145 L 250,160 L 350,115 L 450,95 L 550,80 L 650,65 L 750,50 L 750,220 L 50,220 Z" fill="url(#areaGradHGCR)"/>
+            <path d="M 50,185 L 150,145 L 250,160 L 350,115 L 450,95 L 550,80 L 650,65 L 750,50" fill="none" stroke="#0F4C43" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="50" cy="185" r="5" fill="#0F4C43" stroke="#ffffff" stroke-width="2"/>
+            <circle cx="150" cy="145" r="5" fill="#0F4C43" stroke="#ffffff" stroke-width="2"/>
+            <circle cx="250" cy="160" r="5" fill="#0F4C43" stroke="#ffffff" stroke-width="2"/>
+            <circle cx="350" cy="115" r="5" fill="#0F4C43" stroke="#ffffff" stroke-width="2"/>
+            <circle cx="450" cy="95" r="5" fill="#0F4C43" stroke="#ffffff" stroke-width="2"/>
+            <circle cx="550" cy="80" r="5" fill="#0F4C43" stroke="#ffffff" stroke-width="2"/>
+            <circle cx="650" cy="65" r="5" fill="#0F4C43" stroke="#ffffff" stroke-width="2"/>
+            <circle cx="750" cy="50" r="5" fill="#0F4C43" stroke="#ffffff" stroke-width="2"/>
+          </svg>
+          <div class="flex justify-between text-[11px] font-bold text-slate-400 px-4 mt-3">
+            <span>Jan (18)</span>
+            <span>Fev (32)</span>
+            <span>Mar (27)</span>
+            <span>Abr (45)</span>
+            <span>Mai (54)</span>
+            <span>Jun (62)</span>
+            <span>Jul (71)</span>
+            <span>Ago (33)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sumário do Serviço -->
+      <div class="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
+        <div>
+          <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-100">
+            Escopo Hospitalar
+          </span>
+          <h2 class="text-base font-bold text-slate-900 mt-2">Serviço de Fisioterapia do Trabalho</h2>
+          <p class="text-xs text-slate-500">Resumo dos dados epidemiológicos integrados</p>
+        </div>
+        
+        <div class="space-y-4 my-6">
+          <div class="flex items-center gap-3.5 p-3 rounded-2xl bg-slate-50 border border-slate-100">
+            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-[#0F4C43] flex items-center justify-center font-bold">🏢</div>
+            <div>
+              <div class="text-xs font-bold text-slate-900">13 Setores Sob Vigilância</div>
+              <div class="text-[11px] text-slate-500">Unidades críticas, enfermarias e apoio</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-3.5 p-3 rounded-2xl bg-slate-50 border border-slate-100">
+            <div class="w-10 h-10 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center font-bold">📏</div>
+            <div>
+              <div class="text-xs font-bold text-slate-900">4 Escalas Clínicas (CIF/OMS)</div>
+              <div class="text-[11px] text-slate-500">QNSO, QuickDASH, ODI, RMDQ e LEFS</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-3.5 p-3 rounded-2xl bg-slate-50 border border-slate-100">
+            <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold">⏱️</div>
+            <div>
+              <div class="text-xs font-bold text-slate-900">Pausas Ativas de 15 Minutos</div>
+              <div class="text-[11px] text-slate-500">Mecanotransdução e descompressão axial</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="text-[11px] text-slate-500 border-t border-slate-100 pt-3 flex justify-between items-center">
+          <span>Relatórios em conformidade com diretrizes da Fisioterapia do Trabalho</span>
+          <button onclick="window.print()" class="text-emerald-800 font-bold hover:underline">Imprimir 🖨️</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- 2. ABA: TOPOGRAFIA & QNSO -->
+    <!-- ======================================================== -->
+    <div id="content-topografia" class="hidden">
+      <div class="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm space-y-4">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+          <div>
+            <h2 class="text-base font-bold text-slate-900">Incidência por Região Anatômica (QNSO / EVA)</h2>
+            <p class="text-xs text-slate-500">Mapeamento da dor nas 9 regiões corporais avaliadas</p>
+          </div>
+          <div class="w-full md:w-80">
+            <input type="text" id="topo-search" oninput="filterTopografia()" placeholder="Buscar região anatômica..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:bg-white transition">
+          </div>
+        </div>
+        
+        <div class="overflow-x-auto border border-slate-200/80 rounded-2xl">
+          <table class="w-full text-xs text-left">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider text-[11px]">
+              <tr>
+                <th class="px-5 py-3.5">Região Anatômica</th>
+                <th class="px-5 py-3.5 text-right">Queixas (12m)</th>
+                <th class="px-5 py-3.5 text-right">Prevalência</th>
+                <th class="px-5 py-3.5 text-right">Dor nos Últimos 7d</th>
+                <th class="px-5 py-3.5 text-right">Impediu Atividades</th>
+                <th class="px-5 py-3.5 text-center">Classificação de Risco</th>
+              </tr>
+            </thead>
+            <tbody id="topo-table-body" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+        <div class="text-xs text-slate-400 flex justify-between pt-1">
+          <span id="topo-summary">Mostrando 9 regiões corporais</span>
+          <span>Critério Técnico: Questionário Nórdico de Sintomas Osteomusculares (QNSO)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- 3. ABA: SETORES AUDITADOS -->
+    <!-- ======================================================== -->
+    <div id="content-setores" class="hidden">
+      <div class="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm space-y-4">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+          <div>
+            <h2 class="text-base font-bold text-slate-900">Setores Hospitalares Monitorados (13)</h2>
+            <p class="text-xs text-slate-500">Mapeamento ergonômico por setor assistencial, crítico e de apoio</p>
+          </div>
+          <div class="w-full md:w-80">
+            <input type="text" id="setor-search" oninput="filterSetores()" placeholder="Buscar setor ou topografia..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:bg-white transition">
+          </div>
+        </div>
+        
+        <div class="overflow-x-auto border border-slate-200/80 rounded-2xl">
+          <table class="w-full text-xs text-left">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider text-[11px]">
+              <tr>
+                <th class="px-5 py-3.5">Setor / Unidade</th>
+                <th class="px-5 py-3.5 text-right">Servidores</th>
+                <th class="px-5 py-3.5 text-right">Média EVA</th>
+                <th class="px-5 py-3.5">Topografia Predominante</th>
+                <th class="px-5 py-3.5 text-center">Nível de Risco</th>
+                <th class="px-5 py-3.5">Conduta Cinesioterapêutica Recomendada</th>
+              </tr>
+            </thead>
+            <tbody id="setor-table-body" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+        <div class="text-xs text-slate-400 flex justify-between pt-1">
+          <span id="setor-summary">Mostrando 13 setores</span>
+          <span>Estratificação de Risco Biomecânico</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- 4. ABA: ESCALAS CLÍNICAS -->
+    <!-- ======================================================== -->
+    <!-- MÓDULO CIENTÍFICO: DIFERENÇA MÍNIMA CLINICAMENTE IMPORTANTE (MCID) -->
+    <div id="content-escalas-header" class="hidden lg:col-span-2 bg-slate-50 border border-slate-200/80 rounded-3xl p-6 shadow-sm mb-2">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 pb-3 border-b border-slate-200/60">
+        <div>
+          <span class="text-[10px] font-extrabold uppercase tracking-widest text-[#0F4C43] bg-emerald-100/70 px-2.5 py-0.5 rounded-full border border-emerald-200">
+            Rigor Científico & Prática Baseada em Evidências (PBE)
+          </span>
+          <h2 class="text-lg font-bold text-slate-900 mt-1">Diferença Mínima Clinicamente Importante (MCID)</h2>
+        </div>
+        <span class="text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-xl">
+          ✓ Limiares Oficiais Parametrizados
+        </span>
+      </div>
+      <p class="text-xs text-slate-600 leading-relaxed mb-4">
+        A avaliação de eficácia da cinesioterapia laboral adota o conceito internacional de <strong>MCID (Minimal Clinically Important Difference)</strong>. Apenas alterações superiores ao limiar estatístico comprovam benefício clínico real na capacidade funcional do servidor:
+      </p>
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center text-xs">
+        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
+          <div class="font-bold text-slate-700">Escala EVA</div>
+          <div class="text-base font-black text-emerald-700 mt-0.5">≥ 2.0 pts</div>
+          <div class="text-[10px] text-slate-400">Redução da Dor</div>
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
+          <div class="font-bold text-slate-700">QuickDASH</div>
+          <div class="text-base font-black text-emerald-700 mt-0.5">≥ 11.0 pts</div>
+          <div class="text-[10px] text-slate-400">Mintken et al.</div>
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
+          <div class="font-bold text-slate-700">Roland-Morris</div>
+          <div class="text-base font-black text-emerald-700 mt-0.5">≥ 4.0 pts</div>
+          <div class="text-[10px] text-slate-400">Stratford et al.</div>
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
+          <div class="font-bold text-slate-700">Escala LEFS</div>
+          <div class="text-base font-black text-emerald-700 mt-0.5">≥ +9.0 pts</div>
+          <div class="text-[10px] text-slate-400">Binkley et al.</div>
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
+          <div class="font-bold text-slate-700">Oswestry (ODI)</div>
+          <div class="text-base font-black text-emerald-700 mt-0.5">≥ 10.0 pts</div>
+          <div class="text-[10px] text-slate-400">Ostelo et al.</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="content-escalas" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- QuickDASH -->
+      <div class="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-widest text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded border border-blue-200">
+              Membros Superiores
+            </span>
+            <h3 class="text-lg font-bold text-slate-900 mt-1">QuickDASH (11 Itens)</h3>
+          </div>
+          <span class="text-xs text-slate-400 font-medium">Janela de 7 dias</span>
+        </div>
+        <div class="grid grid-cols-3 gap-3 text-center">
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+            <div class="text-[11px] text-slate-500 font-medium">Escore Médio</div>
+            <div class="text-2xl font-black text-slate-900 mt-0.5" id="kpi-dash-media">34.2</div>
+            <div class="text-[10px] text-slate-400">Escala 0-100</div>
+          </div>
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+            <div class="text-[11px] text-slate-500 font-medium">Casos Graves</div>
+            <div class="text-2xl font-black text-rose-700 mt-0.5" id="kpi-dash-graves">28.4%</div>
+            <div class="text-[10px] text-slate-400">Score &gt; 40</div>
+          </div>
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+            <div class="text-[11px] text-slate-500 font-medium">Total Triado</div>
+            <div class="text-2xl font-black text-slate-900 mt-0.5" id="kpi-dash-total">187</div>
+            <div class="text-[10px] text-slate-400">Envios</div>
+          </div>
+        </div>
+        <p class="text-xs text-slate-600 bg-blue-50/60 p-3.5 rounded-xl border border-blue-100 leading-relaxed">
+          <strong>Achado Clínico:</strong> Dificuldade acentuada na elevação acima do nível do ombro e manuseio de instrumentais na CME e no Bloco Cirúrgico.
+        </p>
+      </div>
+
+      <!-- Oswestry -->
+      <div class="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-widest text-rose-700 bg-rose-50 px-2.5 py-0.5 rounded border border-rose-200">
+              Coluna Lombar
+            </span>
+            <h3 class="text-lg font-bold text-slate-900 mt-1">Oswestry Disability Index (ODI)</h3>
+          </div>
+          <span class="text-xs text-slate-400 font-medium">Incapacidade Severa</span>
+        </div>
+        <div class="grid grid-cols-3 gap-3 text-center">
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+            <div class="text-[11px] text-slate-500 font-medium">Índice Médio</div>
+            <div class="text-2xl font-black text-slate-900 mt-0.5" id="kpi-oswestry-media">38.6%</div>
+            <div class="text-[10px] text-slate-400">Incapacidade Média</div>
+          </div>
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+            <div class="text-[11px] text-slate-500 font-medium">Graves (&gt;40%)</div>
+            <div class="text-2xl font-black text-rose-700 mt-0.5" id="kpi-oswestry-graves">31.2%</div>
+            <div class="text-[10px] text-slate-400">Risco Crítico</div>
+          </div>
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+            <div class="text-[11px] text-slate-500 font-medium">Total Triado</div>
+            <div class="text-2xl font-black text-slate-900 mt-0.5" id="kpi-oswestry-total">234</div>
+            <div class="text-[10px] text-slate-400">Envios</div>
+          </div>
+        </div>
+        <p class="text-xs text-slate-600 bg-rose-50/60 p-3.5 rounded-xl border border-rose-100 leading-relaxed">
+          <strong>Achado Clínico:</strong> Restrição severa no manuseio de pacientes acamados e transferências em decúbito nos plantões da Emergência e UTI.
+        </p>
+      </div>
+
+      <!-- Roland-Morris -->
+      <div class="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200">
+              Lombar Diária
+            </span>
+            <h3 class="text-lg font-bold text-slate-900 mt-1">Roland-Morris (RMDQ)</h3>
+          </div>
+          <span class="text-xs text-slate-400 font-medium">24 Itens Funcionais</span>
+        </div>
+        <div class="grid grid-cols-3 gap-3 text-center">
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+            <div class="text-[11px] text-slate-500 font-medium">Escore Médio</div>
+            <div class="text-2xl font-black text-slate-900 mt-0.5" id="kpi-roland-media">9.4</div>
+            <div class="text-[10px] text-slate-400">Escala 0 a 24</div>
+          </div>
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+            <div class="text-[11px] text-slate-500 font-medium">Severos (≥14)</div>
+            <div class="text-2xl font-black text-amber-600 mt-0.5" id="kpi-roland-graves">22.8%</div>
+            <div class="text-[10px] text-slate-400">Comprometidos</div>
+          </div>
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+            <div class="text-[11px] text-slate-500 font-medium">Total Triado</div>
+            <div class="text-2xl font-black text-slate-900 mt-0.5" id="kpi-roland-total">198</div>
+            <div class="text-[10px] text-slate-400">Envios</div>
+          </div>
+        </div>
+        <p class="text-xs text-slate-600 bg-emerald-50/60 p-3.5 rounded-xl border border-emerald-100 leading-relaxed">
+          <strong>Achado Clínico:</strong> Queixa de lentidão ao levantar de cadeiras operacionais e necessidade frequente de alterar decúbito no plantão.
+        </p>
+      </div>
+
+      <!-- LEFS -->
+      <div class="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-widest text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded border border-indigo-200">
+              Membros Inferiores
+            </span>
+            <h3 class="text-lg font-bold text-slate-900 mt-1">Escala Funcional LEFS</h3>
+          </div>
+          <span class="text-xs text-slate-400 font-medium">Quadril, Joelho e Tornozelo</span>
+        </div>
+        <div class="grid grid-cols-3 gap-3 text-center">
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+            <div class="text-[11px] text-slate-500 font-medium">Média Funcional</div>
+            <div class="text-2xl font-black text-slate-900 mt-0.5" id="kpi-lefs-media">74.2%</div>
+            <div class="text-[10px] text-slate-400">Preservada</div>
+          </div>
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+            <div class="text-[11px] text-slate-500 font-medium">Restrição (&lt;60)</div>
+            <div class="text-2xl font-black text-rose-700 mt-0.5" id="kpi-lefs-graves">19.5%</div>
+            <div class="text-[10px] text-slate-400">Limitação</div>
+          </div>
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+            <div class="text-[11px] text-slate-500 font-medium">Total Triado</div>
+            <div class="text-2xl font-black text-slate-900 mt-0.5" id="kpi-lefs-total">142</div>
+            <div class="text-[10px] text-slate-400">Envios</div>
+          </div>
+        </div>
+        <p class="text-xs text-slate-600 bg-indigo-50/60 p-3.5 rounded-xl border border-indigo-100 leading-relaxed">
+          <strong>Achado Clínico:</strong> Fadiga e peso em panturrilhas decorrentes de ortostatismo contínuo superior a 2 horas em enfermarias.
+        </p>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- 5. ABA: SERVIDORES & TRIAGENS -->
+    <!-- ======================================================== -->
+    <div id="content-servidores" class="hidden">
+      <div class="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm space-y-4">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+          <div>
+            <h2 class="text-base font-bold text-slate-900">Relação de Servidores & Estratificação Clínica</h2>
+            <p class="text-xs text-slate-500">Histórico de queixas registradas e nível de prioridade para atendimento</p>
+          </div>
+          <div class="w-full md:w-80">
+            <input type="text" id="serv-search" oninput="filterServidores()" placeholder="Buscar por nome, matrícula ou setor..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:bg-white transition">
+          </div>
+        </div>
+        
+        <div class="overflow-x-auto border border-slate-200/80 rounded-2xl max-h-[480px]">
+          <table class="w-full text-xs text-left">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider text-[11px] sticky top-0 z-10">
+              <tr>
+                <th class="px-5 py-3.5">Servidor(a)</th>
+                <th class="px-5 py-3.5">Matrícula</th>
+                <th class="px-5 py-3.5">Setor de Lotação</th>
+                <th class="px-5 py-3.5">Queixa Principal</th>
+                <th class="px-5 py-3.5 text-center">Dor EVA</th>
+                <th class="px-5 py-3.5 text-center">Escore Escala</th>
+                <th class="px-5 py-3.5 text-center">Prioridade</th>
+                <th class="px-5 py-3.5 text-right">Data</th>
+              </tr>
+            </thead>
+            <tbody id="serv-table-body" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+        <div class="text-xs text-slate-400 flex justify-between pt-1">
+          <span id="serv-summary">Mostrando servidores</span>
+          <span>Dados com sigilo garantido nos termos da LGPD</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- 6. ABA: AÇÕES & AGENDAMENTO -->
+    <!-- ======================================================== -->
+    <div id="content-acoes" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Agendamento -->
+      <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
+        <div class="border-b border-slate-100 pb-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-800">Intervenção Setorial</span>
+          <h2 class="font-black text-lg text-slate-900 mt-0.5">Agendar Visita / Pausa</h2>
+          <p class="text-xs text-slate-500">Gravação direta na planilha de controle</p>
+        </div>
+        <form id="f-ag" onsubmit="enviarGestao(event, 'f-ag', 'Agendamento')" class="space-y-3 text-xs">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Setor Alvo *</label>
+            <input type="text" name="setor" required placeholder="Ex: UTI Adulto, CME, Emergência" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-emerald-700 outline-none transition">
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Data Prevista *</label>
+              <input type="date" name="data" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-emerald-700 outline-none transition">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Horário *</label>
+              <input type="time" name="horario" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-emerald-700 outline-none transition">
+            </div>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Fisioterapeuta do Trabalho *</label>
+            <input type="text" name="fisioterapeuta" value="Dr. Cleiton Gomes Façanha" required class="w-full p-3 bg-slate-100 border border-slate-200 rounded-xl font-medium outline-none">
+          </div>
+          <button type="submit" class="w-full bg-[#0F4C43] hover:bg-[#134e4a] text-white font-bold p-3.5 rounded-xl shadow transition-all flex items-center justify-center gap-2">
+            <span>Gravar Agendamento</span>
+            <div class="loader" id="load-ag"></div>
+          </button>
+        </form>
+      </div>
+
+      <!-- Evolução -->
+      <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
+        <div class="border-b border-slate-100 pb-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-800">Prontuário Ocupacional</span>
+          <h2 class="font-black text-lg text-slate-900 mt-0.5">Evolução Cinesiológica</h2>
+          <p class="text-xs text-slate-500">Registro de condutas e participantes</p>
+        </div>
+        <form id="f-evo" onsubmit="enviarGestao(event, 'f-evo', 'Evolução')" class="space-y-3 text-xs">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Setor *</label>
+              <input type="text" name="setor_evolucao" required placeholder="Ex: Farmácia Central" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-emerald-700 outline-none transition">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Nº Participantes *</label>
+              <input type="number" name="participantes" min="1" required placeholder="Qtd." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-emerald-700 outline-none transition">
+            </div>
+          </div>
+          <div class="relative">
+            <label class="block font-bold text-slate-700 mb-1">Protocolo Aplicado *</label>
+            <textarea id="p" name="protocolo_aplicado" required rows="2" placeholder="Ex: Descompressão axial e rotação externa..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl pr-8 focus:bg-white focus:ring-2 focus:ring-emerald-700 outline-none transition"></textarea>
+            <button type="button" onclick="startDictation('p', this)" class="absolute right-2.5 top-7 p-1 text-slate-400 hover:text-rose-600">🎤</button>
+          </div>
+          <div class="relative">
+            <label class="block font-bold text-slate-700 mb-1">Orientações Ergonômicas *</label>
+            <textarea id="o" name="obs_ergonomica" required rows="2" placeholder="Ex: Regulação da altura de telas no balcão..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl pr-8 focus:bg-white focus:ring-2 focus:ring-emerald-700 outline-none transition"></textarea>
+            <button type="button" onclick="startDictation('o', this)" class="absolute right-2.5 top-7 p-1 text-slate-400 hover:text-rose-600">🎤</button>
+          </div>
+          <button type="submit" class="w-full bg-[#0F4C43] hover:bg-[#134e4a] text-white font-bold p-3.5 rounded-xl shadow transition-all flex items-center justify-center gap-2">
+            <span>Salvar Evolução</span>
+            <div class="loader" id="load-evo"></div>
+          </button>
+        </form>
+      </div>
+
+      <!-- Adaptação e Readaptação -->
+      <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
+        <div class="border-b border-slate-100 pb-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-amber-800">Perícia & Fisioterapia do Trabalho</span>
+          <h2 class="font-black text-lg text-slate-900 mt-0.5">Adaptação / Readaptação</h2>
+          <p class="text-xs text-slate-500">Parecer técnico • Lei Estadual nº 6.745/85</p>
+        </div>
+        <form id="f-readap" onsubmit="enviarGestao(event, 'f-readap', 'Readaptacao')" class="space-y-3 text-xs">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Tipo de Intervenção *</label>
+            <select name="tipo_intervencao" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-emerald-700 outline-none transition">
+              <option value="Adequação Ergonômica do Posto">Adequação Ergonômica do Posto</option>
+              <option value="Mapeamento de Posto Compatível">Mapeamento de Posto Compatível</option>
+              <option value="Parecer para Perícia Médica SES-SC">Parecer Técnico para Perícia Médica SES-SC</option>
+            </select>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Setor Atual *</label>
+              <input type="text" name="setor_atual" required placeholder="Ex: UTI Adulto" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white outline-none">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Matrícula *</label>
+              <input type="text" name="servidor_mat" required placeholder="Matrícula" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white outline-none">
+            </div>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Restrição Biomecânica *</label>
+            <input type="text" name="restricao_motivo" required placeholder="Ex: Restrição para flexão lombar e tração" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white outline-none">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Setor Compatível Sugerido</label>
+            <input type="text" name="setor_compativel" placeholder="Ex: Acolhimento / NIR / Farmácia" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white outline-none">
+          </div>
+          <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold p-3 rounded-xl shadow transition-all flex items-center justify-center gap-2">
+            <span>Emitir Registro Técnico</span>
+            <div class="loader" id="load-readap"></div>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- 7. ABA: REABILITAÇÃO vs. READAPTAÇÃO -->
+    <!-- ======================================================== -->
+    <div id="content-readaptacao" class="hidden space-y-6">
+      <!-- Cabeçalho Institucional -->
+      <div class="bg-gradient-to-r from-slate-900 to-[#0F4C43] text-white p-8 rounded-3xl shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <span class="inline-block px-3 py-1 bg-white/10 text-emerald-300 text-xs font-bold uppercase rounded-full tracking-wider mb-2 border border-white/10">
+            Marco Regulatório • Lei Estadual nº 6.745/85
+          </span>
+          <h2 class="text-2xl font-black tracking-tight">Reabilitação Funcional & Readaptação de Servidores</h2>
+          <p class="text-xs text-slate-300 mt-1 max-w-3xl leading-relaxed">
+            Critérios objetivos para diferenciar a recuperação clínica da capacidade física (reabilitação) da necessidade de adequação do posto ou lotação compatível (readaptação funcional).
+          </p>
+        </div>
+        <button onclick="window.print()" class="px-5 py-3 bg-white text-slate-950 font-bold text-xs rounded-xl shadow hover:bg-slate-100 transition flex items-center gap-2 whitespace-nowrap">
+          <span>🖨️</span> Imprimir Parecer Pericial
+        </button>
+      </div>
+
+      <!-- Dois Blocos Conceituais -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-3">
+          <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-[#0F4C43] flex items-center justify-center font-bold text-lg">🩺</div>
+            <div>
+              <h3 class="font-bold text-base text-slate-900">1. Reabilitação Funcional</h3>
+              <p class="text-xs text-slate-500">Âmbito Clínico-Terapêutico • Recuperação da Função</p>
+            </div>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Processo de reabilitação e cinesioterapia laboral voltado para o servidor com queixas musculoesqueléticas. O objetivo é restaurar a amplitude articular, a força e a tolerância mecânica para que ele permaneça em seu cargo original.
+          </p>
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs space-y-1">
+            <div class="font-bold text-slate-800">Parâmetro Numérico de Reavaliação:</div>
+            <p class="text-slate-600">Aplicação seriada das escalas clínicas (EVA, QuickDASH e Roland-Morris) no início e após 60 dias de intervenção para atestar resposta terapêutica.</p>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-3">
+          <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-800 flex items-center justify-center font-bold text-lg">⚖️</div>
+            <div>
+              <h3 class="font-bold text-base text-slate-900">2. Adaptação & Readaptação</h3>
+              <p class="text-xs text-slate-500">Âmbito Ergonômico & Estatutário • Lei Estadual nº 6.745/85</p>
+            </div>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            <strong>Adaptação do Posto:</strong> Ajuste do ambiente físico (altura de telas, suportes e pausas) sem mudar o servidor de cargo.<br>
+            <strong>Readaptação Funcional:</strong> Processo pericial junto à SES-SC para transferência formal quando a limitação do servidor é permanente.
+          </p>
+          <div class="bg-amber-50/60 p-4 rounded-2xl border border-amber-200 text-xs space-y-1">
+            <div class="font-bold text-amber-950">Suporte Técnico à Perícia Oficial:</div>
+            <p class="text-slate-700">Evita readaptações precipitadas comprovando tentativas prévias de adaptação no próprio setor do hospital.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Simulador de Alta e Mapeamento -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Simulador de Alta Funcional -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
+          <div class="border-b border-slate-100 pb-3">
+            <h3 class="font-bold text-base text-slate-900">Simulador de Alta Funcional (Critério Clínico)</h3>
+            <p class="text-xs text-slate-500">Cálculo baseado nos parâmetros combinados de dor e escalas funcionais</p>
+          </div>
+
+          <div class="space-y-3 text-xs">
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Nível de Dor Atual (EVA 0 a 10):</label>
+              <div class="flex items-center gap-3">
+                <input type="range" min="0" max="10" value="2" id="sim-eva" oninput="atualizarSimuladorAlta()" class="w-full accent-[#0F4C43] cursor-pointer">
+                <span id="sim-eva-val" class="font-black text-sm w-8 text-center text-emerald-900">2</span>
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Escore de Membros Superiores (QuickDASH 0-100):</label>
+              <input type="number" min="0" max="100" value="12" id="sim-dash" oninput="atualizarSimuladorAlta()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold text-xs">
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Escore de Incapacidade Lombar (Roland-Morris 0-24):</label>
+              <input type="number" min="0" max="24" value="3" id="sim-rm" oninput="atualizarSimuladorAlta()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold text-xs">
+            </div>
+
+            <div id="sim-resultado-box" class="p-4 rounded-2xl border bg-emerald-50 border-emerald-300 text-emerald-950 transition-all">
+              <div class="font-bold text-xs flex items-center gap-1.5" id="sim-res-status">
+                <span>✅</span> APTO PARA ALTA COM CARGA INTEGRAL
+              </div>
+              <p class="text-[11px] text-slate-700 mt-1" id="sim-res-desc">
+                Servidor recuperou a capacidade física funcional (EVA ≤ 2, QuickDASH ≤ 15 e RMDQ ≤ 4).
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mapeamento de Postos Compatíveis -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
+          <div class="border-b border-slate-100 pb-3">
+            <h3 class="font-bold text-base text-slate-900">Mapeamento de Postos Compatíveis no HGCR</h3>
+            <p class="text-xs text-slate-500">Cruza a restrição física com a exigência ergonômica de cada setor</p>
+          </div>
+
+          <div class="space-y-3 text-xs">
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Restrição Biomecânica Diagnosticada:</label>
+              <select id="filtro-restricao-hgcr" onchange="filtrarPostosCompatíveis()" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none font-semibold text-slate-800 text-xs">
+                <option value="lombar">Restrição 1: Proibição de levantamento de peso e manuseio de leito (Lombar)</option>
+                <option value="mmss">Restrição 2: Proibição de movimentos repetitivos acima de 60° (Ombro / Punho)</option>
+                <option value="ortostatismo">Restrição 3: Proibição de ortostatismo contínuo > 2 horas (MMII)</option>
+                <option value="todas">Restrição 4: Limitação severa (Apenas trabalho estritamente sentado)</option>
+              </select>
+            </div>
+
+            <div class="space-y-2 max-h-60 overflow-y-auto pr-1" id="lista-compatibilidade-setores">
+              <!-- Renderizado dinamicamente via JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Laudo Circunstanciado Pericial -->
+      <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
+        <div class="border-b border-slate-100 pb-3 flex justify-between items-center">
+          <div>
+            <h3 class="font-bold text-base text-slate-900">Laudo Circunstanciado de Tentativas de Manejo e Readaptação (SES-SC)</h3>
+            <p class="text-xs text-slate-500">Documento técnico pericial para instrução de processos estatutários (Art. 34 da Lei nº 6.745/85)</p>
+          </div>
+          <button onclick="window.print()" class="px-3.5 py-1.5 bg-[#0F4C43] text-white font-bold text-xs rounded-xl hover:bg-[#134e4a] transition">
+            Imprimir Laudo
+          </button>
+        </div>
+        <div class="p-5 border border-slate-200 rounded-2xl bg-slate-50 space-y-3 text-xs text-slate-700 leading-relaxed font-mono">
+          <div class="text-center font-bold text-slate-900 pb-2 border-b border-slate-200">
+            HOSPITAL GOVERNADOR CELSO RAMOS • UNIDADE DE DESEMPENHO EM SAÚDE OCUPACIONAL (UDSO)<br>
+            PARECER TÉCNICO DE CONDUTA ERGONÔMICA E CAPACIDADE RESIDUAL • LEI Nº 6.745/85
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div><strong>Servidor:</strong> Maria Helena dos Santos</div>
+            <div><strong>Matrícula:</strong> 14892-0 • SES/SC</div>
+            <div><strong>Cargo:</strong> Técnico de Enfermagem</div>
+            <div><strong>Lotação Original:</strong> UTI Adulto</div>
+          </div>
+          <div class="pt-2 border-t border-slate-200">
+            <strong>1. Histórico de Reabilitação na UDSO:</strong><br>
+            Servidora realizou 24 sessões de cinesioterapia laboral no período de 90 dias. Manteve índice de incapacidade lombar Roland-Morris = 15 (Severo) e EVA média = 6.8 em tarefas de transporte de leito, sem resposta terapêutica suficiente para atividades de alta sobrecarga.
+          </div>
+          <div>
+            <strong>2. Tentativas de Adaptação do Posto de Trabalho:</strong><br>
+            Foram implementadas adequações de pausas ativas e orientações de biomecânica de transferência. Contudo, as exigências intrínsecas da UTI Adulto demandam levantamento de cargas superiores a 25 kg, gerando risco de agravamento da lesão discal.
+          </div>
+          <div>
+            <strong>3. Conclusão da Fisioterapia do Trabalho & Mapeamento de Compatibilidade:</strong><br>
+            Atesta-se a incompatibilidade definitiva para atribuições assistenciais de leito. Com base no mapeamento ergonômico setorial do HGCR, sugere-se a <strong>READAPTAÇÃO FUNCIONAL</strong> para setores com exigência biomecânica compatível com a capacidade residual (sugestão: <em>Acolhimento com Classificação de Risco / NIR / Apoio de Farmácia Hospitalar</em>), nos termos do Art. 34 da Lei Estadual nº 6.745/85.
+          </div>
+          <div class="pt-4 flex justify-between items-end text-[11px] text-slate-600 font-sans">
+            <div>Florianópolis (SC), 12 de Setembro de 2026.</div>
+            <div class="text-center">
+              ____________________________________________________<br>
+              <strong>Dr. Cleiton Gomes Façanha</strong><br>
+              Fisioterapeuta do Trabalho • CREFITO-10: 265.366-F<br>
+              Responsável Técnico — UDSO / HGCR
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Modal do Código doGet() -->
+  <div id="modal-script" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div class="bg-white p-6 md:p-8 rounded-3xl w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex justify-between items-center border-b pb-3">
+        <div>
+          <h3 class="text-lg font-bold text-slate-900">Integração com Google Sheets (doGet)</h3>
+          <p class="text-xs text-slate-500">Script de leitura segura das abas ANAMNESE, EVA, QNSO, DASH, OSWESTRY, ROLAND e LEFS</p>
+        </div>
+        <button onclick="fecharModalAppsScript()" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
+      </div>
+
+      <div class="bg-slate-900 text-emerald-400 p-4 rounded-2xl text-xs font-mono overflow-x-auto select-all">
+<pre>// Função de leitura segura para alimentar o Dashboard
+function doGet(e) {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    function lerAba(nomeAba) {
+      var sh = ss.getSheetByName(nomeAba);
+      if(!sh) return [];
+      var data = sh.getDataRange().getValues();
+      if(data.length <= 1) return [];
+      var headers = data[0];
+      var lista = [];
+      for(var i = 1; i < data.length; i++) {
+        var item = {};
+        for(var j = 0; j < headers.length; j++) {
+          item[headers[j]] = data[i][j];
+        }
+        lista.push(item);
+      }
+      return lista;
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "sucesso",
+      timestamp: new Date().toISOString(),
+      anamnese: lerAba("ANAMNESE"),
+      eva: lerAba("EVA"),
+      qnso: lerAba("QNSO"),
+      dash: lerAba("DASH"),
+      oswestry: lerAba("OSWESTRY"),
+      roland: lerAba("ROLAND"),
+      lefs: lerAba("LEFS"),
+      agendamento: lerAba("AGENDAMENTO"),
+      evolucao: lerAba("EVOLUCAO")
+    })).setMimeType(ContentService.MimeType.JSON);
+  } catch(erro) {
+    return ContentService.createTextOutput(JSON.stringify({ status: "erro", detalhe: erro.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}</pre>
+      </div>
+
+      <div class="text-right">
+        <button onclick="fecharModalAppsScript()" class="bg-[#0F4C43] text-white font-bold px-6 py-2.5 rounded-xl text-xs">Concluído</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT LÓGICO COMPLETO DO PAINEL GESTOR -->
+  <script>
+    const API = "https://script.google.com/macros/s/AKfycbx_QkwiHI7nIzgBseEkbIk0mY33A2Uuqrq5Tn5X-v0BSLs3DmpUpn9cvInUUaPyOPV8rg/exec";
+
+    // Base Demonstrativa
+    const DEMO_TOPOGRAFIA = [
+      { regiao: "Coluna Lombar", queixas: 234, perc: 68.4, d7: 112, imp: 58, risco: "Crítico (Severo)", cor: "text-rose-700 font-bold bg-rose-50 border border-rose-200" },
+      { regiao: "Cervical / Pescoço", queixas: 201, perc: 58.7, d7: 94, imp: 41, risco: "Alto", cor: "text-amber-700 font-bold bg-amber-50 border border-amber-200" },
+      { regiao: "Ombros (Manguito Rotador)", queixas: 178, perc: 52.0, d7: 81, imp: 36, risco: "Alto", cor: "text-amber-700 font-bold bg-amber-50 border border-amber-200" },
+      { regiao: "Punhos e Mãos", queixas: 145, perc: 42.4, d7: 64, imp: 29, risco: "Moderado", cor: "text-yellow-700 font-semibold bg-yellow-50 border border-yellow-200" },
+      { regiao: "Coluna Torácica", queixas: 122, perc: 35.6, d7: 52, imp: 18, risco: "Moderado", cor: "text-yellow-700 font-semibold bg-yellow-50 border border-yellow-200" },
+      { regiao: "Joelhos", queixas: 109, perc: 31.8, d7: 48, imp: 22, risco: "Moderado", cor: "text-yellow-700 font-semibold bg-yellow-50 border border-yellow-200" },
+      { regiao: "Pés e Tornozelos", queixas: 98, perc: 28.6, d7: 43, imp: 19, risco: "Baixo / Moderado", cor: "text-emerald-700 font-medium bg-emerald-50 border border-emerald-200" },
+      { regiao: "Quadril e Coxas", queixas: 74, perc: 21.6, d7: 31, imp: 14, risco: "Baixo", cor: "text-emerald-700 font-medium bg-emerald-50 border border-emerald-200" },
+      { regiao: "Cotovelos", queixas: 53, perc: 15.5, d7: 22, imp: 9, risco: "Baixo", cor: "text-emerald-700 font-medium bg-emerald-50 border border-emerald-200" }
+    ];
+
+    const DEMO_SETORES = [
+      { setor: "UTI Adulto (Geral)", servidores: 48, mediaEva: 7.2, pred: "Lombar / Ombros", risco: "Crítico", conduta: "Pausa Ativa Imediata (3x/sem)" },
+      { setor: "Emergência Geral & Trauma", servidores: 52, mediaEva: 6.9, pred: "Lombar / Cervical", risco: "Crítico", conduta: "Mecanotransdução e Descompressão" },
+      { setor: "Central de Material e Esterilização (CME)", servidores: 34, mediaEva: 6.8, pred: "Punhos / Ombros / Pés", risco: "Alto", conduta: "Exercícios de Punho e Bomba Muscular" },
+      { setor: "Centro Cirúrgico (Bloco)", servidores: 41, mediaEva: 6.5, pred: "Cervical / Torácica", risco: "Alto", conduta: "Retração Escapular e Isometria" },
+      { setor: "Internação Cirúrgica", servidores: 33, mediaEva: 6.1, pred: "Lombar / Joelhos", risco: "Alto", conduta: "Descompressão Isquiática e Core" },
+      { setor: "UTI Neonatal / Pediátrica", servidores: 26, mediaEva: 5.9, pred: "Cervical / Lombar", risco: "Moderado", conduta: "Pausas Posturais na Incubadora" },
+      { setor: "Internação Clínica", servidores: 29, mediaEva: 5.7, pred: "Lombar / Trapézio", risco: "Moderado", conduta: "Alongamento Cadeia Posterior" },
+      { setor: "Farmácia Central & Dispensação", servidores: 22, mediaEva: 5.4, pred: "Punhos / Pés / Cervical", risco: "Moderado", conduta: "Rotação Externa e Punho Excêntrico" },
+      { setor: "Serviço de Higienização Hospitalar", servidores: 28, mediaEva: 5.8, pred: "Ombros / Lombar / Pés", risco: "Alto", conduta: "Ergonomia no Manejo de Cargas" },
+      { setor: "Serviço de Imagem (RX / Tomografia)", servidores: 16, mediaEva: 4.8, pred: "Ombros / Lombar", risco: "Moderado", conduta: "Liberação Miofascial Superior" },
+      { setor: "Nutrição e Dietética (SND)", servidores: 19, mediaEva: 5.2, pred: "Punhos / Pés / Lombar", risco: "Moderado", conduta: "Exercícios de Retorno Venoso" },
+      { setor: "Ambulatório Geral de Especialidades", servidores: 21, mediaEva: 4.2, pred: "Cervical / Trapézio", risco: "Baixo", conduta: "Reeducação Postural Sentado" },
+      { setor: "Setor Administrativo & Faturamento", servidores: 31, mediaEva: 4.6, pred: "Cervical / Lombar Leve", risco: "Baixo", conduta: "Pausa Ativa de Deslocamento Zero" }
+    ];
+
+    const DEMO_SERVIDORES = [
+      { nome: "MARIA EDUARDA SILVA", mat: "109823-4", setor: "UTI Adulto (Geral)", queixa: "Lombar / Ciatalgia", eva: 9, escala: "Oswestry: 62.2%", prio: "Alta", prioCor: "text-rose-700 font-bold bg-rose-50 border border-rose-200", date: "08/09/2026" },
+      { nome: "CARLOS ALBERTO NUNES", mat: "88712-1", setor: "Emergência Geral & Trauma", queixa: "Ombro Dir. / Manguito", eva: 8, escala: "QuickDASH: 56.8", prio: "Alta", prioCor: "text-rose-700 font-bold bg-rose-50 border border-rose-200", date: "07/09/2026" },
+      { nome: "PATRICIA HELENA SOUZA", mat: "94510-8", setor: "Central de Material (CME)", queixa: "Punhos Bilat. / Túnel Carpo", eva: 8, escala: "QuickDASH: 47.7", prio: "Alta", prioCor: "text-rose-700 font-bold bg-rose-50 border border-rose-200", date: "06/09/2026" },
+      { nome: "JOAO PAULO GOMES", mat: "112340-2", setor: "Centro Cirúrgico (Bloco)", queixa: "Cervicalgia Severa", eva: 7, escala: "EVA: 7/10", prio: "Alta", prioCor: "text-rose-700 font-bold bg-rose-50 border border-rose-200", date: "06/09/2026" },
+      { nome: "FERNANDA CRISTINA LIMA", mat: "76543-9", setor: "Internação Cirúrgica", queixa: "Lombar / Esforço de Leito", eva: 7, escala: "Roland-Morris: 16/24", prio: "Alta", prioCor: "text-rose-700 font-bold bg-rose-50 border border-rose-200", date: "05/09/2026" },
+      { nome: "MARCOS VINICIUS DIAS", mat: "65412-3", setor: "UTI Adulto (Geral)", queixa: "Lombalgia Aguda pós-plantão", eva: 8, escala: "Oswestry: 48.9%", prio: "Alta", prioCor: "text-rose-700 font-bold bg-rose-50 border border-rose-200", date: "05/09/2026" },
+      { nome: "ANA LUCIA FERREIRA", mat: "103219-5", setor: "Farmácia Central", queixa: "Ombros / Trapézio Superior", eva: 6, escala: "QuickDASH: 34.1", prio: "Média", prioCor: "text-amber-700 font-semibold bg-amber-50 border border-amber-200", date: "04/09/2026" },
+      { nome: "ROBERTO SOUZA ANDRADE", mat: "89123-0", setor: "Emergência Geral & Trauma", queixa: "Joelho Esq. / Meniscopatia", eva: 6, escala: "LEFS: 65.0%", prio: "Média", prioCor: "text-amber-700 font-semibold bg-amber-50 border border-amber-200", date: "04/09/2026" },
+      { nome: "JULIANA CARDOSO PAES", mat: "115672-1", setor: "UTI Neonatal", queixa: "Cervical / Torácica", eva: 5, escala: "QNSO Positivo", prio: "Média", prioCor: "text-amber-700 font-semibold bg-amber-50 border border-amber-200", date: "03/09/2026" },
+      { nome: "LUCAS TADEU MARTINS", mat: "98741-6", setor: "Serviço de Higienização", queixa: "Fadiga Lombar / Pés", eva: 6, escala: "LEFS: 68.8%", prio: "Média", prioCor: "text-amber-700 font-semibold bg-amber-50 border border-amber-200", date: "02/09/2026" }
+    ];
+
+    const DEMO_KPIS = { total: '342', eva: '5.8', lombar: '68.4%', setor: 'UTI Adulto' };
+
+    let topografiaDados = [...DEMO_TOPOGRAFIA];
+    let setoresDados = [...DEMO_SETORES];
+    let servidoresLista = [...DEMO_SERVIDORES];
+    let dadosReaisCarregados = false;
+    let cacheDadosGoogle = null;
+    let modoAtual = 'demo';
+
+    function renderTopografia(filterText = '') {
+      const tbody = document.getElementById('topo-table-body');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      const filtered = topografiaDados.filter(t => t.regiao.toLowerCase().includes(filterText.toLowerCase()));
+      filtered.forEach(t => {
+        const row = document.createElement('tr');
+        row.className = "hover:bg-slate-50/80 transition";
+        row.innerHTML = `
+          <td class="px-5 py-3.5 text-slate-900 font-bold">${t.regiao}</td>
+          <td class="px-5 py-3.5 text-right font-black text-emerald-900">${t.queixas}</td>
+          <td class="px-5 py-3.5 text-right font-semibold text-slate-700">${t.perc}%</td>
+          <td class="px-5 py-3.5 text-right text-slate-500">${t.d7}</td>
+          <td class="px-5 py-3.5 text-right text-rose-700 font-bold">${t.imp}</td>
+          <td class="px-5 py-3.5 text-center"><span class="px-2.5 py-1 rounded-full text-[11px] ${t.cor}">${t.risco}</span></td>
+        `;
+        tbody.appendChild(row);
+      });
+      const summary = document.getElementById('topo-summary');
+      if (summary) summary.innerText = `Mostrando ${filtered.length} de ${topografiaDados.length} regiões`;
+    }
+
+    function renderSetores(filterText = '') {
+      const tbody = document.getElementById('setor-table-body');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      const filtered = setoresDados.filter(s => s.setor.toLowerCase().includes(filterText.toLowerCase()) || s.pred.toLowerCase().includes(filterText.toLowerCase()));
+      filtered.forEach(s => {
+        const row = document.createElement('tr');
+        row.className = "hover:bg-slate-50/80 transition";
+        let riscoBadge = 'text-emerald-800 bg-emerald-50 border border-emerald-200 font-bold';
+        if(s.risco === 'Crítico') riscoBadge = 'text-rose-800 bg-rose-50 border border-rose-200 font-black';
+        else if(s.risco === 'Alto') riscoBadge = 'text-amber-800 bg-amber-50 border border-amber-200 font-bold';
+        else if(s.risco === 'Moderado') riscoBadge = 'text-yellow-800 bg-yellow-50 border border-yellow-200 font-semibold';
+
+        row.innerHTML = `
+          <td class="px-5 py-3.5 text-slate-900 font-bold">${s.setor}</td>
+          <td class="px-5 py-3.5 text-right font-bold text-slate-700">${s.servidores}</td>
+          <td class="px-5 py-3.5 text-right font-black text-amber-700">${s.mediaEva}</td>
+          <td class="px-5 py-3.5 text-xs font-semibold text-slate-600">${s.pred}</td>
+          <td class="px-5 py-3.5 text-center"><span class="px-2.5 py-1 rounded-full text-[11px] ${riscoBadge}">${s.risco}</span></td>
+          <td class="px-5 py-3.5 text-xs text-slate-600 font-medium">${s.conduta}</td>
+        `;
+        tbody.appendChild(row);
+      });
+      const summary = document.getElementById('setor-summary');
+      if (summary) summary.innerText = `Mostrando ${filtered.length} de ${setoresDados.length} setores`;
+    }
+
+    function renderServidores(filterText = '') {
+      const tbody = document.getElementById('serv-table-body');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      const filtered = servidoresLista.filter(s => s.nome.toLowerCase().includes(filterText.toLowerCase()) || s.mat.toLowerCase().includes(filterText.toLowerCase()) || s.setor.toLowerCase().includes(filterText.toLowerCase()));
+      filtered.forEach(s => {
+        const row = document.createElement('tr');
+        row.className = "hover:bg-slate-50/80 transition";
+        let evaColor = 'text-emerald-700 font-bold';
+        if(typeof s.eva === 'number') {
+          if(s.eva >= 8) evaColor = 'text-rose-700 font-black';
+          else if(s.eva >= 6) evaColor = 'text-amber-700 font-bold';
+        }
+
+        row.innerHTML = `
+          <td class="px-5 py-3.5 text-slate-900 font-bold">${s.nome}</td>
+          <td class="px-5 py-3.5 text-slate-500 font-mono text-[11px]">${s.mat}</td>
+          <td class="px-5 py-3.5 text-slate-700 font-medium">${s.setor}</td>
+          <td class="px-5 py-3.5 text-slate-600">${s.queixa}</td>
+          <td class="px-5 py-3.5 text-center ${evaColor}">${s.eva !== '-' ? s.eva + ' / 10' : '-'}</td>
+          <td class="px-5 py-3.5 text-center font-bold text-emerald-900">${s.escala}</td>
+          <td class="px-5 py-3.5 text-center"><span class="px-2.5 py-0.5 rounded-full text-[11px] ${s.prioCor}">${s.prio}</span></td>
+          <td class="px-5 py-3.5 text-right text-slate-400 text-[11px]">${s.date}</td>
+        `;
+        tbody.appendChild(row);
+      });
+      const summary = document.getElementById('serv-summary');
+      if (summary) summary.innerText = `Mostrando ${filtered.length} de ${servidoresLista.length} servidores`;
+    }
+
+    function filterTopografia() { renderTopografia(document.getElementById('topo-search').value); }
+    function filterSetores() { renderSetores(document.getElementById('setor-search').value); }
+    function filterServidores() { renderServidores(document.getElementById('serv-search').value); }
+
+    function switchTab(tabId) {
+      const tabs = ['overview', 'topografia', 'setores', 'escalas', 'servidores', 'acoes', 'readaptacao', 'aet'];
+      tabs.forEach(t => {
+        const content = document.getElementById('content-' + t);
+        const btn = document.getElementById('tab-' + t);
+        if(content) content.classList.add('hidden');
+        if(btn) {
+          if(t === 'readaptacao') {
+            btn.className = "px-4 py-2.5 rounded-xl transition-all whitespace-nowrap text-emerald-800 hover:bg-emerald-50 font-bold border border-emerald-200/60";
+          } else {
+            btn.className = "px-4 py-2.5 rounded-xl transition-all whitespace-nowrap text-slate-600 hover:text-slate-900 hover:bg-white/60 font-medium";
+          }
+        }
+      });
+      
+      const activeContent = document.getElementById('content-' + tabId);
+      const activeBtn = document.getElementById('tab-' + tabId);
+      if(activeContent) activeContent.classList.remove('hidden');
+      if(activeBtn) {
+        if(tabId === 'readaptacao') {
+          activeBtn.className = "px-4 py-2.5 rounded-xl transition-all whitespace-nowrap bg-[#0F4C43] text-white font-bold shadow-sm";
+        } else {
+          activeBtn.className = "px-4 py-2.5 rounded-xl transition-all whitespace-nowrap bg-white text-emerald-950 font-bold shadow-sm";
+        }
+      }
+
+      if (tabId === 'topografia') renderTopografia();
+      else if (tabId === 'setores') renderSetores();
+      else if (tabId === 'servidores') renderServidores();
+      else if (tabId === 'readaptacao') renderReadaptacaoModulo();
+      else if (tabId === 'aet') renderAetModulo();
+    }
+
+    // --- MÓDULO DE REABILITAÇÃO vs. READAPTAÇÃO (LEI 6.745/85) ---
+    const MATRIZ_SETORES_HGCR = [
+      {
+        setor: "Triagem com Classificação de Risco (Acolhimento / NIR)",
+        tipo: "Assistencial Leve / Triagem",
+        cargaFisica: "Baixa",
+        restricaoLombar: true,
+        restricaoMmss: true,
+        restricaoOrtostatismo: true,
+        compativelGeral: true,
+        motivo: "Posto sentado a maior parte do tempo, sem movimentação de pacientes graves ou leitos."
+      },
+      {
+        setor: "Farmácia Hospitalar (Dispensação Fracionada & Satélite)",
+        tipo: "Apoio Diagnóstico/Terapêutico",
+        cargaFisica: "Baixa a Média",
+        restricaoLombar: true,
+        restricaoMmss: false,
+        restricaoOrtostatismo: true,
+        compativelGeral: false,
+        motivo: "Sem transferência de leito. Incompatível para restrição severa de punhos/ombros."
+      },
+      {
+        setor: "Ambulatório Geral de Especialidades",
+        tipo: "Assistencial Ambulatorial",
+        cargaFisica: "Baixa",
+        restricaoLombar: true,
+        restricaoMmss: true,
+        restricaoOrtostatismo: true,
+        compativelGeral: true,
+        motivo: "Pacientes deambulando de forma independente, sem necessidade de transferências em decúbito."
+      },
+      {
+        setor: "Central de Material e Esterilização (CME - Área de Preparo Sentado)",
+        tipo: "Apoio Cirúrgico",
+        cargaFisica: "Média",
+        restricaoLombar: true,
+        restricaoMmss: false,
+        restricaoOrtostatismo: true,
+        compativelGeral: false,
+        motivo: "Posto permite trabalhar sentado na dobragem de compressas, mas exige esforço repetitivo de MMSS."
+      },
+      {
+        setor: "Faturamento Hospitalar & Regulação Interna",
+        tipo: "Administrativo Hospitalar",
+        cargaFisica: "Sedentária / Nula",
+        restricaoLombar: true,
+        restricaoMmss: true,
+        restricaoOrtostatismo: true,
+        compativelGeral: true,
+        motivo: "Trabalho 100% sentado em terminal informatizado, pausas livres para descompressão discal."
+      },
+      {
+        setor: "UTI Geral / Emergência / Internação Cirúrgica",
+        tipo: "Assistencial de Alta Exigência",
+        cargaFisica: "Muito Alta (Crítica)",
+        restricaoLombar: false,
+        restricaoMmss: false,
+        restricaoOrtostatismo: false,
+        compativelGeral: false,
+        motivo: "Incompatível para qualquer restrição ativa de coluna ou membros superiores."
+      }
+    ];
+
+    function filtrarPostosCompatíveis() {
+      const select = document.getElementById('filtro-restricao-hgcr');
+      const container = document.getElementById('lista-compatibilidade-setores');
+      if (!select || !container) return;
+      const val = select.value;
+
+      container.innerHTML = '';
+
+      MATRIZ_SETORES_HGCR.forEach(s => {
+        let compativel = false;
+        if (val === 'lombar') compativel = s.restricaoLombar;
+        else if (val === 'mmss') compativel = s.restricaoMmss;
+        else if (val === 'ortostatismo') compativel = s.restricaoOrtostatismo;
+        else if (val === 'todas') compativel = s.compativelGeral && s.cargaFisica.includes('Sedentária');
+
+        const card = document.createElement('div');
+        card.className = `p-3.5 rounded-2xl border flex flex-col md:flex-row justify-between md:items-center gap-2 ${
+          compativel ? 'bg-emerald-50/70 border-emerald-300' : 'bg-rose-50/60 border-rose-200 opacity-70'
+        }`;
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="${compativel ? 'text-emerald-800' : 'text-rose-700'} font-black text-xs">
+                ${compativel ? '✅ COMPATÍVEL' : '❌ INCOMPATÍVEL'}
+              </span>
+              <span class="font-bold text-slate-800 text-xs">${s.setor}</span>
+            </div>
+            <p class="text-[11px] text-slate-600 mt-0.5">${s.motivo}</p>
+          </div>
+          <div class="text-right">
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${
+              compativel ? 'bg-emerald-200 text-emerald-950' : 'bg-rose-200 text-rose-950'
+            }">${s.cargaFisica}</span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function atualizarSimuladorAlta() {
+      const evaEl = document.getElementById('sim-eva');
+      const evaValEl = document.getElementById('sim-eva-val');
+      const dashEl = document.getElementById('sim-dash');
+      const rmEl = document.getElementById('sim-rm');
+      const box = document.getElementById('sim-resultado-box');
+      const status = document.getElementById('sim-res-status');
+      const desc = document.getElementById('sim-res-desc');
+
+      if (!evaEl || !dashEl || !rmEl || !box || !status || !desc) return;
+
+      const eva = parseFloat(evaEl.value) || 0;
+      if (evaValEl) evaValEl.innerText = eva;
+      const dash = parseFloat(dashEl.value) || 0;
+      const rm = parseFloat(rmEl.value) || 0;
+
+      if (eva <= 2 && dash <= 15 && rm <= 4) {
+        box.className = "p-4 rounded-2xl border bg-emerald-50 border-emerald-300 text-emerald-950 transition-all";
+        status.innerHTML = "<span>✅</span> APTO PARA ALTA COM CARGA INTEGRAL";
+        desc.innerHTML = `Servidor com remissão sintomática e controle biomecânico satisfatório (EVA: ${eva}/10, QuickDASH: ${dash} pts, Roland-Morris: ${rm}/24). Critério numérico de alta atingido. Retorno seguro ao posto habitual com cinesioterapia de manutenção.`;
+      } else if (eva <= 4 && dash <= 30 && rm <= 8) {
+        box.className = "p-4 rounded-2xl border bg-amber-50 border-amber-300 text-amber-950 transition-all";
+        status.innerHTML = "<span>⚠️</span> ALTA CONDICIONADA A ADAPTAÇÃO ERGONÔMICA";
+        desc.innerHTML = `Servidor apresenta capacidade residual funcional média (EVA: ${eva}/10, QuickDASH: ${dash} pts, Roland-Morris: ${rm}/24). Recomendada adaptação imediata do posto (pausas programadas e restrição temporária de cargas acima de 10 kg) por 45 dias.`;
+      } else {
+        box.className = "p-4 rounded-2xl border bg-rose-50 border-rose-300 text-rose-950 transition-all";
+        status.innerHTML = "<span>⚖️</span> INDICAÇÃO DE INVESTIGAÇÃO PARA READAPTAÇÃO (LEI 6.745/85)";
+        desc.innerHTML = `Incapacidade funcional persistente mesmo em acompanhamento (EVA: ${eva}/10, QuickDASH: ${dash} pts, Roland-Morris: ${rm}/24). Sugere-se encaminhamento à Perícia Médica Oficial da SES-SC com emissão do Laudo Circunstanciado de Incompatibilidade de Posto.`;
+      }
+    }
+
+    function renderReadaptacaoModulo() {
+      atualizarSimuladorAlta();
+      filtrarPostosCompatíveis();
+    }
+
+    // --- GESTÃO DE SESSÃO SEGURA (20 MIN INATIVIDADE / VOLÁTIL) ---
+    const CONTAS_AUTORIZADAS = ["cleitongfacanha@gmail.com", "ssohgcr@gmail.com"];
+    let inactivityTimer = null;
+
+    function salvarSessao(tipoAuth, emailUser = '') {
+      try {
+        sessionStorage.setItem('udso_session_v2', JSON.stringify({
+          auth: true,
+          tipo: tipoAuth,
+          email: emailUser,
+          expires: Date.now() + 20 * 60 * 1000
+        }));
+      } catch(_) {}
+    }
+
+    function renovarSessao() {
+      try {
+        const raw = sessionStorage.getItem('udso_session_v2');
+        if (raw) {
+          const s = JSON.parse(raw);
+          s.expires = Date.now() + 20 * 60 * 1000;
+          sessionStorage.setItem('udso_session_v2', JSON.stringify(s));
+        }
+      } catch(_) {}
+    }
+
+    function verificarSessaoAtiva() {
+      try {
+        const raw = sessionStorage.getItem('udso_session_v2');
+        if (raw) {
+          const s = JSON.parse(raw);
+          if (s && s.auth === true && Date.now() < s.expires) {
+            desbloquearPainel();
+            return true;
+          }
+        }
+      } catch(_) {}
+      return false;
+    }
+
+    function resetarInatividade() {
+      if (sessionStorage.getItem('udso_session_v2')) {
+        clearTimeout(inactivityTimer);
+        renovarSessao();
+        inactivityTimer = setTimeout(() => {
+          encerrarSessao("Sua sessão foi encerrada por atingir 20 minutos de inatividade.");
+        }, 20 * 60 * 1000);
+      }
+    }
+
+    ['click', 'mousemove', 'keypress', 'touchstart'].forEach(evt => {
+      window.addEventListener(evt, resetarInatividade, { passive: true });
+    });
+
+    function desbloquearPainel() {
+      document.getElementById('modal').style.display = 'none';
+      document.getElementById('painel').style.display = 'block';
+      switchTab('overview');
+      sincronizarComGoogle(true);
+      resetarInatividade();
+    }
+
+    // --- AUTENTICAÇÃO CRIPTOGRÁFICA SEGURA ---
+    const HASH_SALT = "hgcr_udso_continuar_salt_";
+    const HASH_AUTH = "61b1bc91e4145ac549f14b1a29549a850efc6cdd54a958be505e89e74139f351";
+
+    async function calcularSha256(texto) {
+      const buffer = new TextEncoder().encode(texto);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+      return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    async function login() {
+      const pwd = document.getElementById('pwd').value.trim();
+      if (!pwd) return;
+
+      const err = document.getElementById('login-error');
+      const btn = document.getElementById('btn-login-submit');
+      if (err) err.classList.add('hidden');
+
+      try {
+        const hashDigitado = await calcularSha256(HASH_SALT + pwd);
+        if (hashDigitado === HASH_AUTH) {
+          salvarSessao('hash_criptografico');
+          desbloquearPainel();
+          return;
+        }
+      } catch(_) {}
+
+      if (btn) { btn.disabled = true; btn.innerText = "Verificando..."; }
+      try {
+        const res = await fetch(`${API}?action=autenticar_gestor&senha=${encodeURIComponent(pwd)}`);
+        const data = await res.json();
+        if (data && data.status === 'sucesso') {
+          salvarSessao('servidor_auth', data.token || 'ok');
+          desbloquearPainel();
+          return;
+        }
+      } catch(_) {}
+      finally {
+        if (btn) { btn.disabled = false; btn.innerText = "Desbloquear Painel"; }
+      }
+
+      if (err) {
+        err.innerText = "Chave de acesso incorreta. Acesso restrito à equipe técnica da UDSO.";
+        err.classList.remove('hidden');
+      }
+    }
+
+    function encerrarSessao(motivo = '') {
+      try { sessionStorage.removeItem('udso_session_v2'); } catch(_) {}
+      clearTimeout(inactivityTimer);
+      document.getElementById('painel').style.display = 'none';
+      document.getElementById('modal').style.display = 'flex';
+      document.getElementById('pwd').value = '';
+      if (motivo) {
+        const err = document.getElementById('login-error');
+        if (err) {
+          err.innerText = motivo;
+          err.classList.remove('hidden');
+        }
+      }
+    }
+
+    function onGoogleSignIn(response) {
+      try {
+        const payload = JSON.parse(atob(response.credential.split('.')[1]));
+        const email = (payload.email || '').toLowerCase().trim();
+        if (CONTAS_AUTORIZADAS.includes(email)) {
+          salvarSessao('google_oauth', email);
+          desbloquearPainel();
+        } else {
+          const gErr = document.getElementById('google-error');
+          if (gErr) {
+            gErr.innerText = `O e-mail ${email} não possui autorização gerencial.`;
+            gErr.classList.remove('hidden');
+          }
+        }
+      } catch(e) {
+        alert("Não foi possível validar as credenciais do Google.");
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      calcularRoiAbsenteismo();
+      verificarSessaoAtiva();
+    });
+
+    function togglePwd() {
+      const inp = document.getElementById('pwd');
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+    }
+
+    function abrirModalAppsScript() {
+      document.getElementById('modal-script').classList.remove('hidden');
+    }
+
+    function fecharModalAppsScript() {
+      document.getElementById('modal-script').classList.add('hidden');
+    }
+
+    // Processamento de dados reais da planilha
+    function processarDadosReais(data) {
+      const novaListaServidores = [];
+      const setoresMap = {};
+      const regiaoCount = {
+        "Coluna Lombar": 0,
+        "Cervical / Pescoço": 0,
+        "Ombros (Manguito Rotador)": 0,
+        "Punhos e Mãos": 0,
+        "Coluna Torácica": 0,
+        "Joelhos": 0,
+        "Pés e Tornozelos": 0,
+        "Quadril e Coxas": 0,
+        "Cotovelos": 0
+      };
+      let totalEvas = [];
+
+      function extrair(obj, ...chaves) {
+        if (!obj) return '';
+        for (let c of chaves) {
+          if (obj[c] !== undefined && obj[c] !== null && String(obj[c]).trim() !== '') {
+            return String(obj[c]).trim();
+          }
+        }
+        const cleanKeys = Object.keys(obj);
+        for (let c of chaves) {
+          const match = cleanKeys.find(k => k.toLowerCase().replace(/[^a-z0-9]/g, '') === c.toLowerCase().replace(/[^a-z0-9]/g, ''));
+          if (match && obj[match] !== undefined && obj[match] !== null && String(obj[match]).trim() !== '') {
+            return String(obj[match]).trim();
+          }
+        }
+        return '';
+      }
+
+      if (Array.isArray(data.anamnese)) {
+        data.anamnese.forEach(r => {
+          const nome = extrair(r, 'nome_servidor', 'Nome', 'nome') || 'Servidor(a) Não Identificado';
+          const mat = extrair(r, 'matricula_servidor', 'Matrícula', 'matricula') || 'S/M';
+          const setor = extrair(r, 'setor_servidor', 'Setor', 'setor') || 'Geral HGCR';
+          const cargo = extrair(r, 'funcao_servidor', 'Função', 'Cargo', 'cargo') || 'Função Hospitalar';
+          const tempoSentado = extrair(r, 'tempo_sentado', 'Tempo Sentado', 'horas_sentado');
+          const queixa = extrair(r, 'queixa_principal', 'Queixa Principal', 'queixa') || 'Anamnese Ocupacional';
+          const dataReg = extrair(r, 'timestamp', 'Data Registro', 'DATA_REGISTRO') || new Date().toLocaleDateString('pt-BR');
+          const lateralidade = extrair(r, 'lateralidade', 'Dominância Motora');
+          const afastamento = extrair(r, 'historico_afastamento', 'Afastamento');
+
+          let prio = 'Baixa';
+          let prioCor = 'text-emerald-700 font-medium bg-emerald-50 border border-emerald-200';
+          const qLower = queixa.toLowerCase();
+          const afLower = (afastamento || '').toLowerCase();
+          if (qLower.includes('forte') || qLower.includes('aguda') || qLower.includes('constante') || qLower.includes('intensa') || afLower.includes('mais de 15') || afLower.includes('perícia')) {
+            prio = 'Alta';
+            prioCor = 'text-rose-700 font-bold bg-rose-50 border border-rose-200';
+          } else if (afLower.includes('dias') || (queixa && !qLower.includes('nenhuma') && !qLower.includes('sem queixa'))) {
+            prio = 'Média';
+            prioCor = 'text-amber-700 font-semibold bg-amber-50 border border-amber-200';
+          }
+
+          novaListaServidores.push({
+            nome: nome.toUpperCase(),
+            mat: mat,
+            setor: setor,
+            queixa: queixa + (tempoSentado ? ` (${tempoSentado}h sentado)` : '') + (afastamento && afastamento !== 'Nenhum' ? ` [Afastamento: ${afastamento}]` : ''),
+            eva: '-',
+            escala: `Anamnese (${cargo}${lateralidade ? ' • ' + lateralidade : ''})`,
+            prio: prio,
+            prioCor: prioCor,
+            date: dataReg.split(' ')[0]
+          });
+
+          if (!setoresMap[setor]) setoresMap[setor] = { servidores: 0, evas: [], queixas: [] };
+          setoresMap[setor].servidores++;
+          if (queixa) setoresMap[setor].queixas.push(queixa);
+
+          if (qLower.includes('lombar') || qLower.includes('costas')) regiaoCount["Coluna Lombar"]++;
+          if (qLower.includes('cervic') || qLower.includes('pescoço') || qLower.includes('pescoco')) regiaoCount["Cervical / Pescoço"]++;
+          if (qLower.includes('ombr') || qLower.includes('manguito')) regiaoCount["Ombros (Manguito Rotador)"]++;
+          if (qLower.includes('punho') || qLower.includes('mão') || qLower.includes('mao') || qLower.includes('carpo')) regiaoCount["Punhos e Mãos"]++;
+          if (qLower.includes('torác') || qLower.includes('torac')) regiaoCount["Coluna Torácica"]++;
+          if (qLower.includes('joelh')) regiaoCount["Joelhos"]++;
+          if (qLower.includes('pé') || qLower.includes('pe') || qLower.includes('tornozelo')) regiaoCount["Pés e Tornozelos"]++;
+          if (qLower.includes('quadril') || qLower.includes('coxa')) regiaoCount["Quadril e Coxas"]++;
+          if (qLower.includes('cotovelo')) regiaoCount["Cotovelos"]++;
+        });
+      }
+
+      if (Array.isArray(data.eva)) {
+        data.eva.forEach(r => {
+          const nome = extrair(r, 'Nome', 'nome_eva') || 'Servidor(a) Não Identificado';
+          const mat = extrair(r, 'Matrícula', 'matricula_eva') || 'S/M';
+          const setor = extrair(r, 'Setor', 'setor_eva') || 'Geral Continuar';
+          const queixa = extrair(r, 'Local da Dor', 'local_dor') || 'Dor / Desconforto';
+          const evaNum = parseFloat(extrair(r, 'Nível de Dor (0-10)', 'nivel_dor'));
+          const evaVal = isNaN(evaNum) ? 0 : evaNum;
+          const dataReg = extrair(r, 'Data Registro', 'DATA_REGISTRO') || new Date().toLocaleDateString('pt-BR');
+
+          if (!isNaN(evaNum)) totalEvas.push(evaVal);
+
+          let prio = 'Baixa';
+          let prioCor = 'text-emerald-700 font-medium bg-emerald-50 border border-emerald-200';
+          if (evaVal >= 8) {
+            prio = 'Alta';
+            prioCor = 'text-rose-700 font-bold bg-rose-50 border border-rose-200';
+          } else if (evaVal >= 6) {
+            prio = 'Média';
+            prioCor = 'text-amber-700 font-semibold bg-amber-50 border border-amber-200';
+          }
+
+          novaListaServidores.push({
+            nome: nome.toUpperCase(),
+            mat: mat,
+            setor: setor,
+            queixa: queixa,
+            eva: isNaN(evaNum) ? '-' : evaVal,
+            escala: `EVA: ${evaVal}/10`,
+            prio: prio,
+            prioCor: prioCor,
+            date: dataReg.split(' ')[0]
+          });
+
+          if (!setoresMap[setor]) setoresMap[setor] = { servidores: 0, evas: [], queixas: [] };
+          setoresMap[setor].servidores++;
+          if (!isNaN(evaNum)) setoresMap[setor].evas.push(evaVal);
+          if (queixa) setoresMap[setor].queixas.push(queixa);
+
+          const qLower = queixa.toLowerCase();
+          if (qLower.includes('lombar') || qLower.includes('costas')) regiaoCount["Coluna Lombar"]++;
+          if (qLower.includes('cervic') || qLower.includes('pescoço') || qLower.includes('pescoco')) regiaoCount["Cervical / Pescoço"]++;
+          if (qLower.includes('ombr') || qLower.includes('manguito')) regiaoCount["Ombros (Manguito Rotador)"]++;
+          if (qLower.includes('punho') || qLower.includes('mão') || qLower.includes('mao') || qLower.includes('carpo')) regiaoCount["Punhos e Mãos"]++;
+          if (qLower.includes('torác') || qLower.includes('torac')) regiaoCount["Coluna Torácica"]++;
+          if (qLower.includes('joelh')) regiaoCount["Joelhos"]++;
+          if (qLower.includes('pé') || qLower.includes('pe') || qLower.includes('tornozelo')) regiaoCount["Pés e Tornozelos"]++;
+          if (qLower.includes('quadril') || qLower.includes('coxa')) regiaoCount["Quadril e Coxas"]++;
+          if (qLower.includes('cotovelo')) regiaoCount["Cotovelos"]++;
+        });
+      }
+
+      let dashScores = [];
+      if (Array.isArray(data.dash)) {
+        data.dash.forEach(r => {
+          const nome = extrair(r, 'Nome', 'nome_dash') || 'Servidor(a) Não Identificado';
+          const mat = extrair(r, 'Matrícula', 'matricula_dash') || 'S/M';
+          const setor = extrair(r, 'Setor', 'setor_dash') || 'Geral Continuar';
+          const score = parseFloat(extrair(r, 'Escore QuickDASH', 'score_dash'));
+          const dataReg = extrair(r, 'Data Registro', 'DATA_REGISTRO') || new Date().toLocaleDateString('pt-BR');
+
+          if (!isNaN(score)) dashScores.push(score);
+
+          let prio = score > 40 ? 'Alta' : (score > 20 ? 'Média' : 'Baixa');
+          let prioCor = prio === 'Alta' ? 'text-rose-700 font-bold bg-rose-50 border border-rose-200' : (prio === 'Média' ? 'text-amber-700 font-semibold bg-amber-50 border border-amber-200' : 'text-emerald-700 font-medium bg-emerald-50 border border-emerald-200');
+
+          novaListaServidores.push({
+            nome: nome.toUpperCase(),
+            mat: mat,
+            setor: setor,
+            queixa: 'Membros Superiores (DASH)',
+            eva: '-',
+            escala: `QuickDASH: ${isNaN(score) ? '-' : score.toFixed(1)}`,
+            prio: prio,
+            prioCor: prioCor,
+            date: dataReg.split(' ')[0]
+          });
+
+          if (!setoresMap[setor]) setoresMap[setor] = { servidores: 0, evas: [], queixas: [] };
+          setoresMap[setor].servidores++;
+          setoresMap[setor].queixas.push('Membros Superiores');
+          regiaoCount["Ombros (Manguito Rotador)"]++;
+          regiaoCount["Punhos e Mãos"]++;
+        });
+      }
+
+      let oswScores = [];
+      if (Array.isArray(data.oswestry)) {
+        data.oswestry.forEach(r => {
+          const nome = extrair(r, 'Nome', 'nome_oswestry') || 'Servidor(a) Não Identificado';
+          const mat = extrair(r, 'Matrícula', 'matricula_oswestry') || 'S/M';
+          const setor = extrair(r, 'Setor', 'setor_oswestry') || 'Geral Continuar';
+          const score = parseFloat(extrair(r, 'Índice Oswestry (%)', 'score_oswestry'));
+          const dataReg = extrair(r, 'Data Registro', 'DATA_REGISTRO') || new Date().toLocaleDateString('pt-BR');
+
+          if (!isNaN(score)) oswScores.push(score);
+
+          let prio = score > 40 ? 'Alta' : (score > 20 ? 'Média' : 'Baixa');
+          let prioCor = prio === 'Alta' ? 'text-rose-700 font-bold bg-rose-50 border border-rose-200' : (prio === 'Média' ? 'text-amber-700 font-semibold bg-amber-50 border border-amber-200' : 'text-emerald-700 font-medium bg-emerald-50 border border-emerald-200');
+
+          novaListaServidores.push({
+            nome: nome.toUpperCase(),
+            mat: mat,
+            setor: setor,
+            queixa: 'Coluna Lombar (ODI)',
+            eva: '-',
+            escala: `Oswestry: ${isNaN(score) ? '-' : score.toFixed(1)}%`,
+            prio: prio,
+            prioCor: prioCor,
+            date: dataReg.split(' ')[0]
+          });
+
+          if (!setoresMap[setor]) setoresMap[setor] = { servidores: 0, evas: [], queixas: [] };
+          setoresMap[setor].servidores++;
+          setoresMap[setor].queixas.push('Coluna Lombar');
+          regiaoCount["Coluna Lombar"]++;
+        });
+      }
+
+      let rmScores = [];
+      if (Array.isArray(data.roland)) {
+        data.roland.forEach(r => {
+          const nome = extrair(r, 'Nome', 'nome_rm') || 'Servidor(a) Não Identificado';
+          const mat = extrair(r, 'Matrícula', 'matricula_rm') || 'S/M';
+          const setor = extrair(r, 'Setor', 'setor_rm') || 'Geral Continuar';
+          const score = parseFloat(extrair(r, 'Escore RMDQ (0-24)', 'score_rmdq', 'score_roland'));
+          const dataReg = extrair(r, 'Data Registro', 'DATA_REGISTRO') || new Date().toLocaleDateString('pt-BR');
+
+          if (!isNaN(score)) rmScores.push(score);
+
+          let prio = score >= 14 ? 'Alta' : (score >= 6 ? 'Média' : 'Baixa');
+          let prioCor = prio === 'Alta' ? 'text-rose-700 font-bold bg-rose-50 border border-rose-200' : (prio === 'Média' ? 'text-amber-700 font-semibold bg-amber-50 border border-amber-200' : 'text-emerald-700 font-medium bg-emerald-50 border border-emerald-200');
+
+          novaListaServidores.push({
+            nome: nome.toUpperCase(),
+            mat: mat,
+            setor: setor,
+            queixa: 'Incapacidade Lombar Diária',
+            eva: '-',
+            escala: `Roland-Morris: ${isNaN(score) ? '-' : score}/24`,
+            prio: prio,
+            prioCor: prioCor,
+            date: dataReg.split(' ')[0]
+          });
+
+          if (!setoresMap[setor]) setoresMap[setor] = { servidores: 0, evas: [], queixas: [] };
+          setoresMap[setor].servidores++;
+          setoresMap[setor].queixas.push('Coluna Lombar');
+          regiaoCount["Coluna Lombar"]++;
+        });
+      }
+
+      let lefsScores = [];
+      if (Array.isArray(data.lefs)) {
+        data.lefs.forEach(r => {
+          const nome = extrair(r, 'Nome', 'nome_lefs') || 'Servidor(a) Não Identificado';
+          const mat = extrair(r, 'Matrícula', 'matricula_lefs') || 'S/M';
+          const setor = extrair(r, 'Setor', 'setor_lefs') || 'Geral Continuar';
+          const score = parseFloat(extrair(r, 'Escore LEFS (0-80)', 'score_lefs'));
+          const pct = extrair(r, 'Funcionalidade (%)', 'funcionalidade_pct');
+          const dataReg = extrair(r, 'Data Registro', 'DATA_REGISTRO') || new Date().toLocaleDateString('pt-BR');
+
+          if (!isNaN(score)) lefsScores.push(score);
+
+          let prio = score < 60 ? 'Alta' : (score < 72 ? 'Média' : 'Baixa');
+          let prioCor = prio === 'Alta' ? 'text-rose-700 font-bold bg-rose-50 border border-rose-200' : (prio === 'Média' ? 'text-amber-700 font-semibold bg-amber-50 border border-amber-200' : 'text-emerald-700 font-medium bg-emerald-50 border border-emerald-200');
+
+          novaListaServidores.push({
+            nome: nome.toUpperCase(),
+            mat: mat,
+            setor: setor,
+            queixa: 'Membros Inferiores (LEFS)',
+            eva: '-',
+            escala: `LEFS: ${pct || (score + ' pts')}`,
+            prio: prio,
+            prioCor: prioCor,
+            date: dataReg.split(' ')[0]
+          });
+
+          if (!setoresMap[setor]) setoresMap[setor] = { servidores: 0, evas: [], queixas: [] };
+          setoresMap[setor].servidores++;
+          setoresMap[setor].queixas.push('Membros Inferiores');
+          regiaoCount["Joelhos"]++;
+          regiaoCount["Pés e Tornozelos"]++;
+        });
+      }
+
+      const novosSetores = [];
+      const setorNomes = Object.keys(setoresMap);
+      let setorMaisCritico = 'Geral';
+      let maxServidoresNoSetor = 0;
+
+      setorNomes.forEach(nome => {
+        const s = setoresMap[nome];
+        const mediaEvaSetor = s.evas.length > 0 ? (s.evas.reduce((a,b)=>a+b, 0) / s.evas.length).toFixed(1) : '-';
+        let risco = 'Moderado';
+        if ((typeof mediaEvaSetor === 'string' && parseFloat(mediaEvaSetor) >= 7) || s.servidores >= 15) risco = 'Crítico';
+        else if ((typeof mediaEvaSetor === 'string' && parseFloat(mediaEvaSetor) >= 5.5) || s.servidores >= 8) risco = 'Alto';
+        else if (s.servidores <= 3 && (mediaEvaSetor === '-' || parseFloat(mediaEvaSetor) < 4)) risco = 'Baixo';
+
+        if (s.servidores > maxServidoresNoSetor) {
+          maxServidoresNoSetor = s.servidores;
+          setorMaisCritico = nome;
+        }
+
+        const freqQueixa = {};
+        s.queixas.forEach(q => freqQueixa[q] = (freqQueixa[q] || 0) + 1);
+        const topQueixas = Object.entries(freqQueixa).sort((a,b)=>b[1]-a[1]).slice(0,2).map(x=>x[0]).join(' / ');
+
+        let conduta = "Pausa Ativa e Orientação Ergonômica";
+        if (risco === 'Crítico') conduta = "Pausa Ativa Imediata e Avaliação Postural";
+        else if (risco === 'Alto') conduta = "Cinesioterapia Laboral e Exercícios Dirigidos";
+
+        novosSetores.push({
+          setor: nome,
+          servidores: s.servidores,
+          mediaEva: mediaEvaSetor,
+          pred: topQueixas || 'Múltiplas Queixas',
+          risco: risco,
+          conduta: conduta
+        });
+      });
+
+      novosSetores.sort((a,b) => b.servidores - a.servidores);
+
+      const totalQueixasTopo = Object.values(regiaoCount).reduce((a,b)=>a+b, 0) || 1;
+      const novaTopografia = Object.keys(regiaoCount).map(reg => {
+        const count = regiaoCount[reg];
+        const pct = ((count / totalQueixasTopo) * 100).toFixed(1);
+        let risco = 'Baixo';
+        let cor = 'text-emerald-700 font-medium bg-emerald-50 border border-emerald-200';
+        if (pct >= 40 || count >= 10) { risco = 'Crítico (Severo)'; cor = 'text-rose-700 font-bold bg-rose-50 border border-rose-200'; }
+        else if (pct >= 25 || count >= 6) { risco = 'Alto'; cor = 'text-amber-700 font-bold bg-amber-50 border border-amber-200'; }
+        else if (pct >= 15 || count >= 3) { risco = 'Moderado'; cor = 'text-yellow-700 font-semibold bg-yellow-50 border border-yellow-200'; }
+
+        return {
+          regiao: reg,
+          queixas: count,
+          perc: pct,
+          d7: Math.round(count * 0.45),
+          imp: Math.round(count * 0.22),
+          risco: risco,
+          cor: cor
+        };
+      });
+      novaTopografia.sort((a,b) => b.queixas - a.queixas);
+
+      servidoresLista = novaListaServidores;
+      setoresDados = novosSetores.length > 0 ? novosSetores : [...DEMO_SETORES];
+      topografiaDados = novaTopografia;
+
+      const totalMapeamentos = novaListaServidores.length;
+      document.getElementById('kpi-total').innerText = totalMapeamentos;
+      
+      if (totalEvas.length > 0) {
+        const mediaEvaGeral = (totalEvas.reduce((a,b)=>a+b, 0) / totalEvas.length).toFixed(1);
+        document.getElementById('kpi-eva').innerHTML = `${mediaEvaGeral} <span class="text-xs font-semibold text-slate-400">/ 10</span>`;
+      }
+      
+      const lombarCount = regiaoCount["Coluna Lombar"] || 0;
+      const lombarPct = ((lombarCount / totalQueixasTopo) * 100).toFixed(1);
+      document.getElementById('kpi-lombar').innerText = lombarPct + '%';
+      document.getElementById('kpi-setor').innerText = setorMaisCritico;
+
+      if (dashScores.length > 0) {
+        const dashMedia = (dashScores.reduce((a,b)=>a+b, 0) / dashScores.length).toFixed(1);
+        const dashGraves = ((dashScores.filter(s=>s>40).length / dashScores.length) * 100).toFixed(1);
+        const elM = document.getElementById('kpi-dash-media'); if(elM) elM.innerText = dashMedia;
+        const elG = document.getElementById('kpi-dash-graves'); if(elG) elG.innerText = dashGraves + '%';
+        const elT = document.getElementById('kpi-dash-total'); if(elT) elT.innerText = dashScores.length;
+      }
+      if (oswScores.length > 0) {
+        const oswMedia = (oswScores.reduce((a,b)=>a+b, 0) / oswScores.length).toFixed(1);
+        const oswGraves = ((oswScores.filter(s=>s>40).length / oswScores.length) * 100).toFixed(1);
+        const elM = document.getElementById('kpi-oswestry-media'); if(elM) elM.innerText = oswMedia + '%';
+        const elG = document.getElementById('kpi-oswestry-graves'); if(elG) elG.innerText = oswGraves + '%';
+        const elT = document.getElementById('kpi-oswestry-total'); if(elT) elT.innerText = oswScores.length;
+      }
+      if (rmScores.length > 0) {
+        const rmMedia = (rmScores.reduce((a,b)=>a+b, 0) / rmScores.length).toFixed(1);
+        const rmGraves = ((rmScores.filter(s=>s>=14).length / rmScores.length) * 100).toFixed(1);
+        const elM = document.getElementById('kpi-roland-media'); if(elM) elM.innerText = rmMedia;
+        const elG = document.getElementById('kpi-roland-graves'); if(elG) elG.innerText = rmGraves + '%';
+        const elT = document.getElementById('kpi-roland-total'); if(elT) elT.innerText = rmScores.length;
+      }
+      if (lefsScores.length > 0) {
+        const lefsMedia = (lefsScores.reduce((a,b)=>a+b, 0) / lefsScores.length).toFixed(1);
+        const lefsGraves = ((lefsScores.filter(s=>s<60).length / lefsScores.length) * 100).toFixed(1);
+        const elM = document.getElementById('kpi-lefs-media'); if(elM) elM.innerText = lefsMedia + ' pts';
+        const elG = document.getElementById('kpi-lefs-graves'); if(elG) elG.innerText = lefsGraves + '%';
+        const elT = document.getElementById('kpi-lefs-total'); if(elT) elT.innerText = lefsScores.length;
+      }
+
+      document.getElementById('tab-topografia').innerText = `🗺️ Topografia & QNSO (${topografiaDados.length})`;
+      document.getElementById('tab-setores').innerText = `🏢 Setores Auditados (${setoresDados.length})`;
+    }
+
+    function aplicarModoDemonstracao() {
+      topografiaDados = [...DEMO_TOPOGRAFIA];
+      setoresDados = [...DEMO_SETORES];
+      servidoresLista = [...DEMO_SERVIDORES];
+      document.getElementById('kpi-total').innerText = DEMO_KPIS.total;
+      document.getElementById('kpi-eva').innerHTML = `${DEMO_KPIS.eva} <span class="text-xs font-bold text-slate-400">/ 10</span>`;
+      document.getElementById('kpi-lombar').innerText = DEMO_KPIS.lombar;
+      document.getElementById('kpi-setor').innerText = DEMO_KPIS.setor;
+      
+      const b = document.getElementById('badge-status');
+      if (b) b.className = "bg-amber-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold shadow-sm flex items-center gap-2";
+      const txt = document.getElementById('badge-status-text');
+      if (txt) txt.innerText = "Base Demonstrativa";
+
+      document.getElementById('tab-topografia').innerText = `🗺️ Topografia & QNSO (${topografiaDados.length})`;
+      document.getElementById('tab-setores').innerText = `🏢 Setores Auditados (${setoresDados.length})`;
+
+      renderTopografia();
+      renderSetores();
+      renderServidores();
+    }
+
+    function aplicarModoReal(totalRows) {
+      const b = document.getElementById('badge-status');
+      if (b) b.className = "bg-[#0F4C43] text-white px-3.5 py-2 rounded-xl text-xs font-bold shadow-sm flex items-center gap-2";
+      const txt = document.getElementById('badge-status-text');
+      if (txt) txt.innerText = `100% Oficial • ${totalRows} Registros`;
+
+      renderTopografia();
+      renderSetores();
+      renderServidores();
+    }
+
+    function toggleModoDemonstracao() {
+      const btn = document.getElementById('btn-toggle-demo');
+      if (modoAtual === 'real') {
+        modoAtual = 'demo';
+        aplicarModoDemonstracao();
+        if (btn) btn.innerText = "👁️ Ver Dados Oficiais";
+      } else {
+        modoAtual = 'real';
+        if (cacheDadosGoogle) {
+          processarDadosReais(cacheDadosGoogle);
+          aplicarModoReal(servidoresLista.length);
+        }
+        if (btn) btn.innerText = "👁️ Ver Demonstração";
+      }
+    }
+
+    function sincronizarComGoogle(silencioso = false) {
+      const icon = document.getElementById('sync-icon');
+      if (icon) icon.classList.add('animate-spin');
+      
+      fetch(API, { method: 'GET' })
+        .then(res => res.json())
+        .then(data => {
+          if (icon) icon.classList.remove('animate-spin');
+          if (data && data.status === 'sucesso') {
+            cacheDadosGoogle = data;
+            const total = (data.anamnese ? data.anamnese.length : 0) +
+                          (data.eva ? data.eva.length : 0) +
+                          (data.qnso ? data.qnso.length : 0) +
+                          (data.dash ? data.dash.length : 0) +
+                          (data.oswestry ? data.oswestry.length : 0) +
+                          (data.roland ? data.roland.length : 0) +
+                          (data.lefs ? data.lefs.length : 0) +
+                          (data.agendamento ? data.agendamento.length : 0) +
+                          (data.evolucao ? data.evolucao.length : 0);
+
+            if (total > 0) {
+              dadosReaisCarregados = true;
+              modoAtual = 'real';
+              processarDadosReais(data);
+              aplicarModoReal(total);
+              
+              const btnToggle = document.getElementById('btn-toggle-demo');
+              if (btnToggle) btnToggle.classList.remove('hidden');
+
+              if (!silencioso) {
+                alert(`Sincronização concluída com sucesso!\n\nForam carregados ${total} registros oficiais da Plataforma Continuar.`);
+              }
+            } else {
+              aplicarModoDemonstracao();
+              if (!silencioso) {
+                alert("Conexão ativa com o Google Sheets! Planilha sem respostas registradas no momento (0 registros).");
+              }
+            }
+          } else {
+            if (!silencioso) alert("A planilha respondeu em formato não reconhecido.");
+          }
+        })
+        .catch(() => {
+          if (icon) icon.classList.remove('animate-spin');
+          if (!silencioso) alert("Não foi possível conectar à planilha no momento. Exibindo dados locais.");
+        });
+    }
+
+    function startDictation(id, btn) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if(!SpeechRecognition) return alert("Gravação de voz indisponível neste navegador.");
+      const sr = new SpeechRecognition();
+      sr.lang = "pt-BR";
+      const orig = btn.innerText; btn.innerText = "🔴";
+      sr.onresult = e => { document.getElementById(id).value += (document.getElementById(id).value ? ' ' : '') + e.results[0][0].transcript; };
+      sr.onerror = () => { btn.innerText = orig; };
+      sr.onend = () => { btn.innerText = orig; };
+      try { sr.start(); } catch(e) { btn.innerText = orig; }
+    }
+
+    function enviarGestao(e, id, tipo) {
+      e.preventDefault();
+      const f = document.getElementById(id);
+      const btn = f.querySelector('button[type="submit"]');
+      let loader = f.querySelector('.loader');
+
+      const fd = new FormData(f);
+      fd.append("TIPO_FORMULARIO", tipo);
+      fd.append("DATA_REGISTRO", new Date().toLocaleString('pt-BR'));
+
+      btn.disabled = true; if(loader) loader.style.display = 'block';
+
+      fetch(API, { 
+        method: 'POST', 
+        mode: 'no-cors', 
+        body: new URLSearchParams(fd) 
+      }).then(() => {
+        btn.disabled = false; if(loader) loader.style.display = 'none';
+        alert(`Registro de ${tipo} gravado com sucesso!`);
+        f.reset();
+        setTimeout(() => sincronizarComGoogle(true), 1500);
+      }).catch(() => {
+        btn.disabled = false; if(loader) loader.style.display = 'none';
+        alert("Falha ao salvar o registro. Verifique sua conexão.");
+      });
+    }
+  </script>
+</body>
+</html>
