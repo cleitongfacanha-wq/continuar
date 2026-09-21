@@ -12,30 +12,6 @@
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#f0fdf9',
-                            100: '#ccfbf1',
-                            200: '#99f6e4',
-                            300: '#5eead4',
-                            400: '#2dd4bf',
-                            500: '#14b8a6',
-                            600: '#0d9488',
-                            700: '#0f4c43',
-                            800: '#0c3b34',
-                            900: '#082823',
-                            dark: '#0B302B',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
     <style>
         body {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -51,7 +27,7 @@
             cursor: not-allowed !important;
             border-color: transparent !important;
             font-weight: 900 !important;
-            box-shadow: none !important; /* Remove o brilho verde de foco */
+            box-shadow: none !important;
             outline: none !important;
         }
         input.bloqueado:focus {
@@ -80,7 +56,7 @@
                         UDSO • Hospital Governador Celso Ramos
                     </span>
                 </div>
-                <h1 class="text-2xl md:text-3xl font-black tracking-tight">Grade de Intervenções Cinesiológicas</h1>
+                <h1 class="text-2xl md:text-3xl font-heading font-black tracking-tight">Grade de Intervenções Cinesiológicas</h1>
                 <p class="text-xs md:text-sm text-emerald-100/80 mt-0.5 font-medium">
                     Planejamento Semanal de Pausas Ativas Orientadas
                 </p>
@@ -106,7 +82,7 @@
                 <button onclick="mudarSemana(1)" class="p-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl transition font-bold text-slate-600 shadow-sm">Próxima →</button>
             </div>
             <div class="flex items-center gap-3 w-full md:w-auto text-xs text-slate-500 font-medium">
-                Alterne as semanas para visualizar ou criar escalas diferentes.
+                Alterne as semanas para visualizar as escalas.
             </div>
         </div>
 
@@ -116,7 +92,7 @@
             <div>
                 <h3 class="text-blue-900 font-bold text-sm mb-1">Observações</h3>
                 <p class="text-blue-800 text-xs leading-relaxed">
-                  O agendamento é dinâmico e poderá sofrer alterações de acordo com a evolução do projeto, entre em contato com o Fisioterapeuta do Trabalho para alterar o horário. Células cinzas indicam que o horário já expirou ou foi reservado por outro setor.
+                  O agendamento é dinâmico e poderá sofrer alterações de acordo com a evolução do projeto, entre em contato com o Fisioterapeuta do Trabalho para alterar o horário. Células cinzas indicam horários já reservados ou expirados.
                 </p>
             </div>
         </div>
@@ -128,10 +104,13 @@
                 <span class="font-bold text-slate-700" id="status-escala">Carregando dados da nuvem...</span>
             </div>
             <div class="flex items-center gap-2">
+                <button type="button" onclick="carregarGradeNuvem()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-4 py-2.5 rounded-xl font-bold transition shadow-sm flex items-center gap-1.5">
+                    <span>↻ Atualizar</span>
+                </button>
                 <button type="button" onclick="salvarGradeNuvem()" id="btn-sync-grade" class="bg-[#0F4C43] hover:bg-[#0c3b34] text-white px-5 py-2.5 rounded-xl font-bold transition shadow-sm flex items-center gap-1.5">
                     <span>☁️ Salvar e Bloquear Horários</span>
                 </button>
-                <button type="button" onclick="limparGradeGeral()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-3.5 py-2 rounded-xl font-bold transition">
+                <button type="button" onclick="limparGradeGeral()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-3.5 py-2.5 rounded-xl font-bold transition hidden md:block">
                     🧹 Limpar Tela
                 </button>
             </div>
@@ -182,7 +161,7 @@
 
     <script>
         // =========================================================================
-        // ATENÇÃO: COLE A NOVA URL DO SEU SCRIPT INDIVIDUAL ABAIXO 
+        // ATENÇÃO: COLE A URL DO SEU SCRIPT INDIVIDUAL DE AGENDAMENTO ABAIXO 
         // =========================================================================
         const API = "SEU_LINK_DO_APPS_SCRIPT_AQUI"; 
         
@@ -243,7 +222,6 @@
             carregarGradeNuvem();
         });
 
-        // Função responsável por bloquear as células se o horário cronológico já passou
         function bloquearHorariosPassados() {
             const agora = new Date();
             const linhas = document.querySelectorAll('tbody tr');
@@ -260,23 +238,29 @@
                     dataCelula.setDate(dataCelula.getDate() + idx);
                     dataCelula.setHours(hora, minuto, 0, 0);
                     
-                    if (dataCelula < agora) {
+                    // Bloqueia apenas se a célula está no passado E se não tem nada digitado nela
+                    if (dataCelula < agora && celula.value.trim() === '') {
                         celula.readOnly = true;
                         celula.classList.add('bloqueado');
-                        if (celula.value.trim() === "") {
-                            celula.placeholder = "Expirado";
-                            celula.value = ""; // Garante que a célula vazia fique sem brilho verde
-                        }
-                    } else {
-                        if (celula.placeholder === "Expirado") {
-                            celula.placeholder = "Digitar setor";
-                        }
+                        celula.placeholder = "Expirado";
+                    } else if (dataCelula >= agora && celula.placeholder === "Expirado") {
+                        celula.readOnly = false;
+                        celula.classList.remove('bloqueado');
+                        celula.placeholder = "Digitar setor";
                     }
                 });
             });
         }
 
-        // Leitura de Dados da Nuvem
+        // Helper para extrair dados sem se preocupar com Maiúscula/Minúscula nas colunas do Google
+        function getValueCI(obj, keyName) {
+            const lowerKey = keyName.toLowerCase();
+            for (let k in obj) {
+                if (k.toLowerCase() === lowerKey) return obj[k];
+            }
+            return "";
+        }
+
         async function carregarGradeNuvem() {
             const semanaSelecionada = document.getElementById('semana-ref').value;
             const statusEl = document.getElementById('status-escala');
@@ -291,7 +275,7 @@
                 const response = await fetch(urlSemCache);
                 const data = await response.json();
                 
-                // Limpa a tela localmente antes de preencher com a nuvem
+                // Limpa a tela localmente
                 inputs.forEach(inp => {
                     inp.value = '';
                     inp.readOnly = false;
@@ -303,40 +287,44 @@
 
                 if (data.status === "sucesso" && listaRegistros.length > 0) {
                     
-                    // Filtra apenas a semana atual ignorando bagunças de data do Google
                     const agendamentosSemana = listaRegistros.filter(reg => {
-                        if (!reg.Semana) return false;
-                        let dStr = String(reg.Semana).trim();
-                        if (dStr.includes('/')) {
-                            const partesData = dStr.split(/[ /]/);
-                            dStr = `${partesData[2]}-${partesData[1].padStart(2,'0')}-${partesData[0].padStart(2,'0')}`;
-                        } else {
-                            dStr = dStr.split('T')[0];
+                        const semanaStr = getValueCI(reg, 'Semana');
+                        if (!semanaStr) return false;
+                        let dStr = String(semanaStr).trim();
+                        if (dStr.includes('T')) dStr = dStr.split('T')[0];
+                        else if (dStr.includes('/')) {
+                            const p = dStr.split('/');
+                            if (p.length === 3 && p[2].length === 4) {
+                                dStr = `${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`;
+                            }
                         }
                         return dStr === semanaSelecionada;
                     });
                     
                     const mapaHorarios = {};
                     agendamentosSemana.forEach(reg => {
-                        if(reg.Horario) {
-                            mapaHorarios[String(reg.Horario).trim()] = reg;
-                        }
+                        const h = getValueCI(reg, 'Horario');
+                        if(h) mapaHorarios[String(h).trim()] = reg;
                     });
 
-                    // Preenche e trava as células
                     Object.values(mapaHorarios).forEach(reg => {
-                        const horarioPlanilha = String(reg.Horario).trim();
+                        const horarioPlanilha = String(getValueCI(reg, 'Horario')).trim();
                         const linha = Array.from(document.querySelectorAll('tr')).find(tr => 
                             tr.querySelector('.time-col') && tr.querySelector('.time-col').innerText.trim() === horarioPlanilha
                         );
                         
                         if (linha) {
                             const celulas = linha.querySelectorAll('.setor-input');
-                            const dias = [reg.Segunda, reg.Terca, reg.Quarta, reg.Quinta, reg.Sexta];
+                            const dias = [
+                                getValueCI(reg, 'Segunda'), 
+                                getValueCI(reg, 'Terca'), 
+                                getValueCI(reg, 'Quarta'), 
+                                getValueCI(reg, 'Quinta'), 
+                                getValueCI(reg, 'Sexta')
+                            ];
                             
                             celulas.forEach((celula, idx) => {
-                                const valorDia = (dias[idx] !== undefined && dias[idx] !== null) ? String(dias[idx]).trim() : '';
-                                
+                                const valorDia = String(dias[idx] || '').trim();
                                 if (valorDia !== '') {
                                     celula.value = valorDia;
                                     celula.readOnly = true;
@@ -347,21 +335,19 @@
                     });
                 }
                 
-                // Bloqueia horários velhos por cima da grade carregada
                 bloquearHorariosPassados();
 
-                statusEl.innerHTML = `Grade atualizada e sincronizada com a nuvem`;
+                statusEl.innerHTML = `Grade sincronizada (Atualizado agora)`;
                 statusDot.className = "w-3 h-3 rounded-full bg-emerald-500";
             } catch (error) {
                 console.error("Erro na leitura:", error);
                 bloquearHorariosPassados();
-                
-                statusEl.innerHTML = `Falha de rede. Exibindo horários locais.`;
+                statusEl.innerHTML = `Exibindo horários locais. Clique em Atualizar.`;
                 statusDot.className = "w-3 h-3 rounded-full bg-amber-500";
             }
         }
 
-        // Efeitos visuais e duplo clique do Gestor
+        // Visuais e Liberação por Senha
         inputs.forEach(input => {
             input.addEventListener('blur', function() {
                 if (this.value.trim() !== '' && !this.readOnly) {
@@ -373,12 +359,13 @@
 
             input.addEventListener('dblclick', function() {
                 if (this.readOnly || this.classList.contains('bloqueado')) {
-                    const senhaDigitada = prompt("Controle UDSO: Digite a credencial técnica (abrra) para liberar a edição deste horário:");
+                    const senhaDigitada = prompt("Controle UDSO: Digite a credencial técnica (abrra) para liberar a edição ou excluir este agendamento:");
                     if (senhaDigitada !== null) {
                         if (btoa(senhaDigitada) === "YWJycmE=") {
                             this.readOnly = false; 
                             this.classList.remove('bloqueado');
                             this.value = ''; 
+                            this.placeholder = "Liberado";
                             this.focus(); 
                         } else {
                             alert("Credencial inválida.");
@@ -389,7 +376,7 @@
         });
 
         function limparGradeGeral() {
-            const senha = prompt("Controle UDSO: Digite a credencial técnica (abrra) para limpar a tela:");
+            const senha = prompt("Controle UDSO: Digite a credencial técnica (abrra) para limpar a tela inteira:");
             if (senha !== null && btoa(senha) === "YWJycmE=") {
                 inputs.forEach(inp => {
                     inp.value = '';
@@ -398,19 +385,19 @@
                     inp.placeholder = "Digitar setor";
                 });
                 bloquearHorariosPassados();
-                alert('Tela limpa localmente. Salve para apagar esses horários também na nuvem.');
+                alert('Tela limpa! Para apagar tudo da nuvem nesta semana, clique em Salvar.');
             } else if (senha !== null) {
                 alert('Credencial inválida.');
             }
         }
 
-        // ENVIO EM FILA SEQUENCIAL (Evita quebrar a planilha do Google)
         async function salvarGradeNuvem() {
             const semanaSelecionada = document.getElementById('semana-ref').value;
             const btnSalvar = document.getElementById('btn-sync-grade');
+            const statusEl = document.getElementById('status-escala');
             const txtOriginal = btnSalvar.innerHTML;
             
-            btnSalvar.innerHTML = '<span>⏳ Bloqueando e Salvando...</span>';
+            btnSalvar.innerHTML = '<span>⏳ Salvando na Nuvem...</span>';
             btnSalvar.disabled = true;
 
             const linhas = document.querySelectorAll('tbody tr');
@@ -439,21 +426,35 @@
             });
 
             if(enviosDados.length === 0){
-                alert("Nenhum setor foi preenchido na grade para ser salvo.");
+                alert("Você precisa digitar um setor antes de salvar.");
                 btnSalvar.innerHTML = txtOriginal;
                 btnSalvar.disabled = false;
                 return;
             }
 
             try {
-                // Envia uma linha por vez (Evita que o Google embaralhe as colunas na 1ª vez)
+                // Trava as células visualmente IMEDIATAMENTE antes de enviar para o Google
+                linhas.forEach(linha => {
+                    const inputsLinha = linha.querySelectorAll('.setor-input');
+                    inputsLinha.forEach(inp => {
+                        if (inp.value.trim() !== '') {
+                            inp.readOnly = true;
+                            inp.classList.add('bloqueado');
+                            inp.classList.remove('bg-emerald-50');
+                        }
+                    });
+                });
+
+                // Envia em Fila Sequencial (Protege a Planilha)
                 for (let formData of enviosDados) {
                     await fetch(API, { method: 'POST', mode: 'no-cors', body: formData });
                 }
-                alert("Horários reservados e salvos com sucesso na nuvem!");
-                carregarGradeNuvem(); 
+                
+                alert("Horários bloqueados e salvos com sucesso na nuvem!");
+                statusEl.innerHTML = `Grade sincronizada (Salvo Agora)`;
+                
             } catch (error) {
-                alert("Ocorreu um erro ao comunicar com a base de dados do Google Drive.");
+                alert("Ocorreu um erro ao comunicar com a base de dados.");
             } finally {
                 btnSalvar.innerHTML = txtOriginal;
                 btnSalvar.disabled = false;
