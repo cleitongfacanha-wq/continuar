@@ -30,10 +30,6 @@
                             900: '#082823',
                             dark: '#0B302B',
                         }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-                        heading: ['Montserrat', 'Inter', 'sans-serif'],
                     }
                 }
             }
@@ -48,17 +44,13 @@
             -webkit-font-smoothing: antialiased;
         }
         
-        .font-heading { font-family: 'Montserrat', 'Inter', sans-serif; }
-        
-        /* Estilo aplicado quando o campo está bloqueado pelo sistema */
         input.bloqueado {
-            background-color: #f1f5f9 !important; /* slate-100 */
-            color: #64748b !important; /* slate-500 */
+            background-color: #f1f5f9 !important; 
+            color: #64748b !important; 
             cursor: not-allowed !important;
             border-color: transparent !important;
         }
 
-        /* Estilização da tabela para manter proporções perfeitas */
         table { border-collapse: separate; border-spacing: 0; }
         td, th { border: 1px solid #e2e8f0; }
         th:first-child { border-top-left-radius: 1rem; }
@@ -79,9 +71,9 @@
                         UDSO • Hospital Governador Celso Ramos
                     </span>
                 </div>
-                <h1 class="text-2xl md:text-3xl font-heading font-black tracking-tight">Grade de Intervenções Cinesiológicas</h1>
+                <h1 class="text-2xl md:text-3xl font-black tracking-tight">Grade de Intervenções Cinesiológicas</h1>
                 <p class="text-xs md:text-sm text-emerald-100/80 mt-0.5 font-medium">
-                    Planejamento Semanal de Pausas Ativas Orientadas • Turno Vespertino
+                    Planejamento Semanal de Pausas Ativas Orientadas • Integração em Nuvem
                 </p>
             </div>
             <div class="flex items-center gap-2">
@@ -94,14 +86,29 @@
             </div>
         </header>
 
+        <!-- SELETOR DE CALENDÁRIO SEMANAL -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2 md:gap-4 w-full md:w-auto justify-between">
+                <button onclick="mudarSemana(-1)" class="p-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl transition font-bold text-slate-600 shadow-sm">← Anterior</button>
+                <div class="flex flex-col text-center">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Semana de Referência</label>
+                    <input type="date" id="semana-ref" class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm font-black text-emerald-900 outline-none focus:ring-2 focus:ring-[#0F4C43] cursor-pointer">
+                </div>
+                <button onclick="mudarSemana(1)" class="p-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl transition font-bold text-slate-600 shadow-sm">Próxima →</button>
+            </div>
+            <div class="flex items-center gap-3 w-full md:w-auto text-xs text-slate-500 font-medium">
+                Alterne as semanas para visualizar ou criar escalas diferentes.
+            </div>
+        </div>
+
         <!-- Instruções Operacionais -->
         <div class="bg-blue-50 border-l-4 border-blue-600 p-5 rounded-r-2xl mb-6 shadow-sm flex items-start gap-3">
             <div class="text-blue-600 text-xl mt-0.5">ℹ️</div>
             <div>
                 <h3 class="text-blue-900 font-bold text-sm mb-1">Observações</h3>
                 <p class="text-blue-800 text-xs leading-relaxed">
-                  O agendamento é dinâmico e poderá sofrer alterações de acordo com a evolução do projeto,</strong>entre em contato com o Fisioterapeuta do Trabalho 
-para alterar o horário.<br><em class="text-blue-700 font-semibold mt-1 inline-block"><strong></strong></em>
+                  O agendamento é dinâmico e poderá sofrer alterações de acordo com a evolução do projeto, entre em contato com o Fisioterapeuta do Trabalho para alterar o horário.<br>
+                  <em class="text-blue-700 font-semibold mt-1 inline-block">* Para alterar um horário bloqueado, dê um <strong>duplo clique</strong> e use a credencial técnica (abrra).</em>
                 </p>
             </div>
         </div>
@@ -109,16 +116,15 @@ para alterar o horário.<br><em class="text-blue-700 font-semibold mt-1 inline-b
         <!-- Barra de Ações da Escala -->
         <div class="flex flex-wrap items-center justify-between gap-3 mb-6 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-xs">
             <div class="flex items-center gap-2">
-                <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
-                <span class="font-bold text-slate-700" id="status-escala">Grade sincronizada no terminal local</span>
-                <span class="text-slate-400" id="data-ultima-gravacao"></span>
+                <span class="w-3 h-3 rounded-full bg-emerald-500" id="status-dot"></span>
+                <span class="font-bold text-slate-700" id="status-escala">Aguardando sincronização com a nuvem...</span>
             </div>
             <div class="flex items-center gap-2">
-                <button type="button" onclick="sincronizarGradeNuvem()" id="btn-sync-grade" class="bg-[#0F4C43] hover:bg-[#0c3b34] text-white px-4 py-2 rounded-xl font-bold transition shadow-sm flex items-center gap-1.5">
+                <button type="button" onclick="salvarGradeNuvem()" id="btn-sync-grade" class="bg-[#0F4C43] hover:bg-[#0c3b34] text-white px-4 py-2 rounded-xl font-bold transition shadow-sm flex items-center gap-1.5">
                     <span>☁️ Salvar na Planilha HGCR</span>
                 </button>
                 <button type="button" onclick="limparGradeGeral()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-3.5 py-2 rounded-xl font-bold transition">
-                    🧹 Limpar Grade
+                    🧹 Limpar Tela
                 </button>
             </div>
         </div>
@@ -129,16 +135,15 @@ para alterar o horário.<br><em class="text-blue-700 font-semibold mt-1 inline-b
                 <thead>
                     <tr class="bg-slate-100 text-slate-600 uppercase text-[11px] font-extrabold tracking-wider">
                         <th class="py-4 px-4 text-center bg-slate-200/50 w-32 border-b-2 border-slate-300">Horário</th>
-                        <th class="py-4 px-2 text-center border-b-2 border-slate-300">Segunda-feira</th>
-                        <th class="py-4 px-2 text-center border-b-2 border-slate-300">Terça-feira</th>
-                        <th class="py-4 px-2 text-center border-b-2 border-slate-300">Quarta-feira</th>
-                        <th class="py-4 px-2 text-center border-b-2 border-slate-300">Quinta-feira</th>
-                        <th class="py-4 px-2 text-center border-b-2 border-slate-300">Sexta-feira</th>
+                        <th id="th-seg" class="py-4 px-2 text-center border-b-2 border-slate-300">Segunda-feira</th>
+                        <th id="th-ter" class="py-4 px-2 text-center border-b-2 border-slate-300">Terça-feira</th>
+                        <th id="th-qua" class="py-4 px-2 text-center border-b-2 border-slate-300">Quarta-feira</th>
+                        <th id="th-qui" class="py-4 px-2 text-center border-b-2 border-slate-300">Quinta-feira</th>
+                        <th id="th-sex" class="py-4 px-2 text-center border-b-2 border-slate-300">Sexta-feira</th>
                     </tr>
                 </thead>
                 <tbody class="text-slate-800">
                     
-                    <!-- LINHA 1 -->
                     <tr class="hover:bg-slate-50 transition-colors group">
                         <td class="time-col font-black text-center text-slate-600 bg-slate-50 group-hover:bg-slate-100 text-xs tracking-wide">13:00 - 13:15</td>
                         <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
@@ -148,7 +153,6 @@ para alterar o horário.<br><em class="text-blue-700 font-semibold mt-1 inline-b
                         <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
                     </tr>
 
-                    <!-- LINHA 2 -->
                     <tr class="hover:bg-slate-50 transition-colors group">
                         <td class="time-col font-black text-center text-slate-600 bg-slate-50 group-hover:bg-slate-100 text-xs tracking-wide">13:30 - 13:45</td>
                         <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
@@ -158,7 +162,6 @@ para alterar o horário.<br><em class="text-blue-700 font-semibold mt-1 inline-b
                         <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
                     </tr>
 
-                    <!-- LINHA 3 -->
                     <tr class="hover:bg-slate-50 transition-colors group">
                         <td class="time-col font-black text-center text-slate-600 bg-slate-50 group-hover:bg-slate-100 text-xs tracking-wide">14:00 - 14:15</td>
                         <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
@@ -168,7 +171,6 @@ para alterar o horário.<br><em class="text-blue-700 font-semibold mt-1 inline-b
                         <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
                     </tr>
 
-                    <!-- LINHA 4 -->
                     <tr class="hover:bg-slate-50 transition-colors group">
                         <td class="time-col font-black text-center text-slate-600 bg-slate-50 group-hover:bg-slate-100 text-xs tracking-wide">14:30 - 14:45</td>
                         <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
@@ -178,7 +180,6 @@ para alterar o horário.<br><em class="text-blue-700 font-semibold mt-1 inline-b
                         <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
                     </tr>
 
-                    <!-- LINHA 5 -->
                     <tr class="hover:bg-slate-50 transition-colors group">
                         <td class="time-col font-black text-center text-slate-600 bg-slate-50 group-hover:bg-slate-100 text-xs tracking-wide">15:00 - 15:15</td>
                         <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
@@ -188,7 +189,6 @@ para alterar o horário.<br><em class="text-blue-700 font-semibold mt-1 inline-b
                         <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
                     </tr>
 
-                    <!-- LINHA 6 -->
                     <tr class="hover:bg-slate-50 transition-colors group">
                         <td class="time-col font-black text-center text-slate-600 bg-slate-50 group-hover:bg-slate-100 text-xs tracking-wide">15:30 - 15:45</td>
                         <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
@@ -198,7 +198,6 @@ para alterar o horário.<br><em class="text-blue-700 font-semibold mt-1 inline-b
                         <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
                     </tr>
 
-                    <!-- LINHA 7 -->
                     <tr class="hover:bg-slate-50 transition-colors group">
                         <td class="time-col font-black text-center text-slate-600 bg-slate-50 group-hover:bg-slate-100 text-xs tracking-wide">16:00 - 16:15</td>
                         <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
@@ -208,7 +207,6 @@ para alterar o horário.<br><em class="text-blue-700 font-semibold mt-1 inline-b
                         <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
                     </tr>
 
-                    <!-- LINHA 8 -->
                     <tr class="hover:bg-slate-50 transition-colors group">
                         <td class="time-col font-black text-center text-slate-600 bg-slate-50 group-hover:bg-slate-100 text-xs tracking-wide">16:30 - 16:45</td>
                         <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
@@ -218,7 +216,6 @@ para alterar o horário.<br><em class="text-blue-700 font-semibold mt-1 inline-b
                         <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
                     </tr>
 
-                    <!-- LINHA 9 -->
                     <tr class="hover:bg-slate-50 transition-colors group">
                         <td class="time-col font-black text-center text-slate-600 bg-slate-50 group-hover:bg-slate-100 text-xs tracking-wide">17:00 - 17:15</td>
                         <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
@@ -228,7 +225,6 @@ para alterar o horário.<br><em class="text-blue-700 font-semibold mt-1 inline-b
                         <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
                     </tr>
 
-                    <!-- LINHA 10 -->
                     <tr class="hover:bg-slate-50 transition-colors group">
                         <td class="time-col font-black text-center text-slate-600 bg-slate-50 group-hover:bg-slate-100 text-xs tracking-wide">17:30 - 17:45</td>
                         <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
@@ -238,7 +234,6 @@ para alterar o horário.<br><em class="text-blue-700 font-semibold mt-1 inline-b
                         <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
                     </tr>
 
-                    <!-- LINHA 11 -->
                     <tr class="hover:bg-slate-50 transition-colors group">
                         <td class="time-col font-black text-center text-slate-600 bg-slate-50 group-hover:bg-slate-100 text-xs tracking-wide">18:00 - 18:15</td>
                         <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
@@ -248,7 +243,6 @@ para alterar o horário.<br><em class="text-blue-700 font-semibold mt-1 inline-b
                         <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
                     </tr>
 
-                    <!-- LINHA 12 -->
                     <tr class="hover:bg-slate-50 transition-colors group">
                         <td class="time-col font-black text-center text-slate-600 bg-slate-50 group-hover:bg-slate-100 text-xs tracking-wide">18:30 - 18:45</td>
                         <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
@@ -263,192 +257,204 @@ para alterar o horário.<br><em class="text-blue-700 font-semibold mt-1 inline-b
         </div>
 
         <footer class="mt-8 text-center text-[11px] text-slate-400">
-            Plataforma Continuar • UDSO / HGCR
+            Plataforma Continuar • Governança Ergonômica • UDSO / HGCR
         </footer>
     </div>
 
-    <!-- MOTOR LÓGICO COM PERSISTÊNCIA LOCAL E NUVEM (UDSO/HGCR) -->
     <script>
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbx5rPeapV9nLVaZUPpSO7lWm5U9CWZQ2inVcN4q5XnTNkhGuSF9q6MaJb9OVEwpieXy/exec";
-        const API_URL = GAS_URL;
-        const STORAGE_KEY = "hgcr_grade_cinesioterapia_vespertino";
+        // ATENÇÃO: COLE A URL DO SEU SCRIPT INDIVIDUAL ABAIXO
+        const API = "https://script.google.com/macros/s/AKfycbx5rPeapV9nLVaZUPpSO7lWm5U9CWZQ2inVcN4q5XnTNkhGuSF9q6MaJb9OVEwpieXy/exec"; 
+        
         const inputs = document.querySelectorAll('.setor-input');
+        let segundaFeiraAtual = new Date();
 
-        function salvarGradeLocal() {
-            const grade = [];
-            inputs.forEach((inp, idx) => {
-                const tr = inp.closest('tr');
-                const td = inp.closest('td');
-                const horario = tr ? tr.querySelector('.time-col')?.innerText.trim() : '';
-                const diaIdx = td ? td.cellIndex : 0;
-                const dias = ['', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
-                grade.push({
-                    idx: idx,
-                    dia: dias[diaIdx] || '',
-                    horario: horario,
-                    setor: inp.value.trim(),
-                    bloqueado: inp.readOnly
-                });
-            });
-            localStorage.setItem(STORAGE_KEY, JSON.stringify({
-                atualizadoEm: new Date().toLocaleString('pt-BR'),
-                dados: grade
-            }));
-            atualizarStatusSalvo();
+        function getMonday(d) {
+            d = new Date(d);
+            var day = d.getDay(), diff = d.getDate() - day + (day == 0 ? -6: 1); 
+            return new Date(d.setDate(diff));
         }
 
-        function carregarGradeLocal() {
-            try {
-                const salvo = localStorage.getItem(STORAGE_KEY);
-                if (!salvo) return;
-                const parse = JSON.parse(salvo);
-                if (parse && Array.isArray(parse.dados)) {
-                    parse.dados.forEach(item => {
-                        const inp = inputs[item.idx];
-                        if (inp && item.setor) {
-                            inp.value = item.setor;
-                            if (item.bloqueado) {
-                                inp.readOnly = true;
-                                inp.classList.add('bloqueado');
-                            }
-                        }
-                    });
-                }
-                atualizarStatusSalvo();
-            } catch (err) {
-                console.warn('Erro ao carregar escala local:', err);
-            }
+        function formatarDataBR(data) {
+            return data.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
         }
 
-        function atualizarStatusSalvo() {
-            const el = document.getElementById('data-ultima-gravacao');
-            const salvo = localStorage.getItem(STORAGE_KEY);
-            if (el && salvo) {
-                try {
-                    const obj = JSON.parse(salvo);
-                    if (obj.atualizadoEm) {
-                        el.innerText = `• Última gravação: ${obj.atualizadoEm}`;
-                    }
-                } catch (_) {}
-            }
+        function formatarDataISO(data) {
+            return data.toISOString().split('T')[0];
         }
 
-        async function sincronizarGradeNuvem() {
-            salvarGradeLocal();
-            const salvo = localStorage.getItem(STORAGE_KEY);
-            if (!salvo) {
-                alert('Nenhum dado na grade para sincronizar.');
-                return;
-            }
-            const btn = document.getElementById('btn-sync-grade');
-            const originalText = btn.innerHTML;
-            btn.disabled = true;
-            btn.innerHTML = '<span>⏳ Enviando...</span>';
+        function inicializarCalendario() {
+            segundaFeiraAtual = getMonday(new Date());
+            document.getElementById('semana-ref').value = formatarDataISO(segundaFeiraAtual);
+            atualizarCabecalhos();
+            carregarGradeNuvem();
+        }
+
+        function atualizarCabecalhos() {
+            const seg = new Date(segundaFeiraAtual);
+            const ter = new Date(seg); ter.setDate(ter.getDate() + 1);
+            const qua = new Date(seg); qua.setDate(qua.getDate() + 2);
+            const qui = new Date(seg); qui.setDate(qui.getDate() + 3);
+            const sex = new Date(seg); sex.setDate(sex.getDate() + 4);
+
+            document.getElementById('th-seg').innerText = `Segunda-feira (${formatarDataBR(seg)})`;
+            document.getElementById('th-ter').innerText = `Terça-feira (${formatarDataBR(ter)})`;
+            document.getElementById('th-qua').innerText = `Quarta-feira (${formatarDataBR(qua)})`;
+            document.getElementById('th-qui').innerText = `Quinta-feira (${formatarDataBR(qui)})`;
+            document.getElementById('th-sex').innerText = `Sexta-feira (${formatarDataBR(sex)})`;
+        }
+
+        function mudarSemana(offset) {
+            segundaFeiraAtual.setDate(segundaFeiraAtual.getDate() + (offset * 7));
+            document.getElementById('semana-ref').value = formatarDataISO(segundaFeiraAtual);
+            atualizarCabecalhos();
+            carregarGradeNuvem();
+        }
+
+        document.getElementById('semana-ref').addEventListener('change', function(e) {
+            segundaFeiraAtual = getMonday(new Date(e.target.value + 'T12:00:00'));
+            e.target.value = formatarDataISO(segundaFeiraAtual); 
+            atualizarCabecalhos();
+            carregarGradeNuvem();
+        });
+
+        async function carregarGradeNuvem() {
+            const semanaSelecionada = document.getElementById('semana-ref').value;
+            const statusEl = document.getElementById('status-escala');
+            
+            statusEl.innerHTML = "Sincronizando com a nuvem...";
 
             try {
-                const dadosGrade = JSON.parse(salvo);
-                const agendamentosAtivos = dadosGrade.dados.filter(d => d.setor);
-
-                const params = new URLSearchParams();
-                params.append('origem', 'AGENDAMENTO');
-                params.append('TIPO_FORMULARIO', 'AGENDAMENTO_GRADE');
-                params.append('responsavel', 'Dr. Cleiton Gomes Façanha');
-                params.append('turno', 'Vespertino');
-                params.append('total_alocacoes', agendamentosAtivos.length);
-                params.append('resumo_grade', agendamentosAtivos.map(a => `${a.dia} ${a.horario}: ${a.setor}`).join(' | '));
-                params.append('grade_json', JSON.stringify(agendamentosAtivos));
-
-                await fetch(API_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: params
-                });
-
-                alert('Grade de cinesioterapia enviada com sucesso para a planilha institucional da UDSO!');
-            } catch (e) {
-                alert('Aviso: Os dados foram salvos no dispositivo, mas houve falha na sincronização via rede.');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = originalText;
-            }
-        }
-
-        function limparGradeGeral() {
-            const senha = prompt("Controle UDSO: Digite a credencial técnica para resetar a grade semanal:");
-            if (senha !== null && btoa(senha) === "YWJycmE=") {
+                const response = await fetch(API);
+                const data = await response.json();
+                
                 inputs.forEach(inp => {
                     inp.value = '';
                     inp.readOnly = false;
-                    inp.classList.remove('bloqueado');
+                    inp.classList.remove('bloqueado', 'bg-emerald-50');
                 });
-                localStorage.removeItem(STORAGE_KEY);
-                const el = document.getElementById('data-ultima-gravacao');
-                if (el) el.innerText = '';
-                alert('Grade semanal limpa com sucesso.');
-            } else if (senha !== null) {
-                alert('Credencial inválida.');
+
+                // Funciona tanto para o script universal (data.agendamento) quanto para o individual (data.dados)
+                const listaRegistros = data.dados || data.agendamento || [];
+
+                if (data.status === "sucesso" && listaRegistros.length > 0) {
+                    const agendamentosSemana = listaRegistros.filter(reg => reg.Semana === semanaSelecionada);
+                    
+                    const mapaHorarios = {};
+                    agendamentosSemana.forEach(reg => {
+                        mapaHorarios[reg.Horario] = reg;
+                    });
+
+                    Object.values(mapaHorarios).forEach(reg => {
+                        const linha = Array.from(document.querySelectorAll('tr')).find(tr => 
+                            tr.querySelector('.time-col') && tr.querySelector('.time-col').innerText.includes(reg.Horario)
+                        );
+                        
+                        if (linha) {
+                            const celulas = linha.querySelectorAll('.setor-input');
+                            const dias = [reg.Segunda, reg.Terca, reg.Quarta, reg.Quinta, reg.Sexta];
+                            
+                            celulas.forEach((celula, idx) => {
+                                if (dias[idx] && dias[idx].trim() !== '') {
+                                    celula.value = dias[idx];
+                                    celula.readOnly = true;
+                                    celula.classList.add('bloqueado');
+                                }
+                            });
+                        }
+                    });
+                }
+                
+                statusEl.innerHTML = `Grade atualizada com a nuvem`;
+            } catch (error) {
+                console.error("Erro:", error);
+                statusEl.innerHTML = `Exibindo campos em branco`;
             }
         }
 
         inputs.forEach(input => {
-            // Regra 1: Validação e Travamento no Desfoque (Blur)
             input.addEventListener('blur', function() {
-                const valorAtual = this.value.trim().toLowerCase();
-                
-                if (valorAtual !== '') {
-                    const celulaAtual = this.closest('td');
-                    const linhaAtual = this.closest('tr');
-                    const indiceColuna = celulaAtual.cellIndex;
-                    const indiceLinha = linhaAtual.rowIndex;
-                    
-                    let duplicado = false;
-
-                    for (let outroInput of inputs) {
-                        if (outroInput !== this && outroInput.value.trim().toLowerCase() === valorAtual) {
-                            const outraCelula = outroInput.closest('td');
-                            const outraLinha = outroInput.closest('tr');
-                            
-                            // Barreira de duplicidade: mesmo dia ou mesmo horário
-                            if (outraCelula.cellIndex === indiceColuna || outraLinha.rowIndex === indiceLinha) {
-                                duplicado = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (duplicado) {
-                        alert(`Atenção (UDSO): O setor [${valorAtual.toUpperCase()}] já possui intervenção agendada neste dia ou neste mesmo horário durante a semana. A regra prevê apenas uma alocação para evitar sobreposição de recursos.`);
-                        this.value = '';
-                    } else {
-                        // Trava de segurança
-                        this.readOnly = true; 
-                        this.classList.add('bloqueado'); 
-                    }
+                if (this.value.trim() !== '') {
+                    this.classList.add('bg-emerald-50');
+                } else {
+                    this.classList.remove('bg-emerald-50');
                 }
-                salvarGradeLocal();
             });
 
-            // Regra 2: Liberação de Edição por Senha (Duplo Clique)
             input.addEventListener('dblclick', function() {
-                if (this.readOnly) {
-                    const senhaDigitada = prompt("Controle UDSO: Célula bloqueada na grade. Insira a credencial para liberar a reedição:");
+                if (this.readOnly || this.classList.contains('bloqueado')) {
+                    const senhaDigitada = prompt("Controle UDSO: Célula bloqueada. Insira a credencial técnica (abrra) para liberar a edição:");
                     
-                    // A senha "abrra" está convertida em Base64 ("YWJycmE=")
                     if (senhaDigitada !== null) {
                         if (btoa(senhaDigitada) === "YWJycmE=") {
                             this.readOnly = false; 
                             this.classList.remove('bloqueado'); 
                             this.focus(); 
-                            salvarGradeLocal();
                         } else {
-                            alert("Credencial inválida. A célula permanecerá bloqueada.");
+                            alert("Credencial inválida.");
                         }
                     }
                 }
             });
         });
 
-        window.addEventListener('DOMContentLoaded', carregarGradeLocal);
+        function limparGradeGeral() {
+            const senha = prompt("Controle UDSO: Digite a credencial técnica (abrra) para limpar a tela:");
+            if (senha !== null && btoa(senha) === "YWJycmE=") {
+                inputs.forEach(inp => {
+                    inp.value = '';
+                    inp.readOnly = false;
+                    inp.classList.remove('bloqueado', 'bg-emerald-50');
+                });
+                alert('Tela limpa localmente. Salve para apagar esses horários na nuvem.');
+            } else if (senha !== null) {
+                alert('Credencial inválida.');
+            }
+        }
+
+        async function salvarGradeNuvem() {
+            const semanaSelecionada = document.getElementById('semana-ref').value;
+            const btnSalvar = document.getElementById('btn-sync-grade');
+            const txtOriginal = btnSalvar.innerHTML;
+            
+            btnSalvar.innerHTML = '<span>⏳ Enviando para a nuvem...</span>';
+            btnSalvar.disabled = true;
+
+            const linhas = document.querySelectorAll('tbody tr');
+            let enviosPromises = [];
+            
+            linhas.forEach(linha => {
+                const horario = linha.querySelector('.time-col').innerText;
+                const inputsLinha = linha.querySelectorAll('.setor-input');
+                
+                const formData = new URLSearchParams();
+                formData.append("TIPO_FORMULARIO", "AGENDAMENTO");
+                formData.append("DATA_REGISTRO", new Date().toLocaleString('pt-BR'));
+                formData.append("Semana", semanaSelecionada);
+                formData.append("Horario", horario);
+                formData.append("Segunda", inputsLinha[0].value.trim());
+                formData.append("Terca", inputsLinha[1].value.trim());
+                formData.append("Quarta", inputsLinha[2].value.trim());
+                formData.append("Quinta", inputsLinha[3].value.trim());
+                formData.append("Sexta", inputsLinha[4].value.trim());
+
+                enviosPromises.push(
+                    fetch(API, { method: 'POST', mode: 'no-cors', body: formData })
+                );
+            });
+
+            try {
+                await Promise.all(enviosPromises);
+                alert("Grade de agendamento salva com sucesso para a semana selecionada!");
+                carregarGradeNuvem(); 
+            } catch (error) {
+                alert("Ocorreu um erro ao comunicar com a base de dados do Google Drive.");
+            } finally {
+                btnSalvar.innerHTML = txtOriginal;
+                btnSalvar.disabled = false;
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', inicializarCalendario);
     </script>
 </body>
 </html>
