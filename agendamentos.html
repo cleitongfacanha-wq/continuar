@@ -30,6 +30,10 @@
                             900: '#082823',
                             dark: '#0B302B',
                         }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        heading: ['Montserrat', 'Inter', 'sans-serif'],
                     }
                 }
             }
@@ -45,10 +49,11 @@
         }
         
         input.bloqueado {
-            background-color: #f1f5f9 !important; 
-            color: #64748b !important; 
+            background-color: #e2e8f0 !important; 
+            color: #475569 !important; 
             cursor: not-allowed !important;
-            border-color: transparent !important;
+            border-color: #cbd5e1 !important;
+            font-weight: 900 !important;
         }
 
         table { border-collapse: separate; border-spacing: 0; }
@@ -71,9 +76,9 @@
                         UDSO • Hospital Governador Celso Ramos
                     </span>
                 </div>
-                <h1 class="text-2xl md:text-3xl font-black tracking-tight">Grade de Intervenções Cinesiológicas</h1>
+                <h1 class="text-2xl md:text-3xl font-heading font-black tracking-tight">Grade de Intervenções Cinesiológicas</h1>
                 <p class="text-xs md:text-sm text-emerald-100/80 mt-0.5 font-medium">
-                    Planejamento Semanal de Pausas Ativas Orientadas 
+                    Planejamento Semanal de Pausas Ativas Orientadas
                 </p>
             </div>
             <div class="flex items-center gap-2">
@@ -107,8 +112,7 @@
             <div>
                 <h3 class="text-blue-900 font-bold text-sm mb-1">Observações</h3>
                 <p class="text-blue-800 text-xs leading-relaxed">
-                  O agendamento é dinâmico e poderá sofrer alterações de acordo com a evolução do projeto, entre em contato com o Fisioterapeuta do Trabalho para alterar o horário.<br>
-                  <em class="text-blue-700 font-semibold mt-1 inline-block"> <strong></strong></em>
+                  O agendamento é dinâmico e poderá sofrer alterações de acordo com a evolução do projeto, entre em contato com o Fisioterapeuta do Trabalho para alterar o horário.
                 </p>
             </div>
         </div>
@@ -143,115 +147,26 @@
                     </tr>
                 </thead>
                 <tbody class="text-slate-800">
-                    
-                    <tr class="hover:bg-slate-50 transition-colors group">
-                        <td class="time-col font-black text-center text-slate-600 bg-slate-50 group-hover:bg-slate-100 text-xs tracking-wide">13:00 - 13:15</td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                    </tr>
-
-                    <tr class="hover:bg-slate-50 transition-colors group">
-                        <td class="time-col font-black text-center text-slate-600 bg-slate-50 group-hover:bg-slate-100 text-xs tracking-wide">13:30 - 13:45</td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                    </tr>
-
-                    <tr class="hover:bg-slate-50 transition-colors group">
-                        <td class="time-col font-black text-center text-slate-600 bg-slate-50 group-hover:bg-slate-100 text-xs tracking-wide">14:00 - 14:15</td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                    </tr>
-
-                    <tr class="hover:bg-slate-50 transition-colors group">
-                        <td class="time-col font-black text-center text-slate-600 bg-slate-50 group-hover:bg-slate-100 text-xs tracking-wide">14:30 - 14:45</td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                    </tr>
-
-                    <tr class="hover:bg-slate-50 transition-colors group">
-                        <td class="time-col font-black text-center text-slate-600 bg-slate-50 group-hover:bg-slate-100 text-xs tracking-wide">15:00 - 15:15</td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                    </tr>
-
-                    <tr class="hover:bg-slate-50 transition-colors group">
-                        <td class="time-col font-black text-center text-slate-600 bg-slate-50 group-hover:bg-slate-100 text-xs tracking-wide">15:30 - 15:45</td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                    </tr>
-
-                    <tr class="hover:bg-slate-50 transition-colors group">
-                        <td class="time-col font-black text-center text-slate-600 bg-slate-50 group-hover:bg-slate-100 text-xs tracking-wide">16:00 - 16:15</td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                    </tr>
-
-                    <tr class="hover:bg-slate-50 transition-colors group">
-                        <td class="time-col font-black text-center text-slate-600 bg-slate-50 group-hover:bg-slate-100 text-xs tracking-wide">16:30 - 16:45</td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                    </tr>
-
-                    <tr class="hover:bg-slate-50 transition-colors group">
-                        <td class="time-col font-black text-center text-slate-600 bg-slate-50 group-hover:bg-slate-100 text-xs tracking-wide">17:00 - 17:15</td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                    </tr>
-
-                    <tr class="hover:bg-slate-50 transition-colors group">
-                        <td class="time-col font-black text-center text-slate-600 bg-slate-50 group-hover:bg-slate-100 text-xs tracking-wide">17:30 - 17:45</td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                    </tr>
-
-                    <tr class="hover:bg-slate-50 transition-colors group">
-                        <td class="time-col font-black text-center text-slate-600 bg-slate-50 group-hover:bg-slate-100 text-xs tracking-wide">18:00 - 18:15</td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                    </tr>
-
-                    <tr class="hover:bg-slate-50 transition-colors group">
-                        <td class="time-col font-black text-center text-slate-600 bg-slate-50 group-hover:bg-slate-100 text-xs tracking-wide">18:30 - 18:45</td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                        <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                    </tr>
-
+                    <!-- Geração das Linhas de Horário -->
+                    <script>
+                        const horarios = [
+                            "13:00 - 13:15", "13:30 - 13:45", "14:00 - 14:15", "14:30 - 14:45", 
+                            "15:00 - 15:15", "15:30 - 15:45", "16:00 - 16:15", "16:30 - 16:45", 
+                            "17:00 - 17:15", "17:30 - 17:45", "18:00 - 18:15", "18:30 - 18:45"
+                        ];
+                        horarios.forEach(h => {
+                            document.write(`
+                                <tr class="hover:bg-slate-50 transition-colors group">
+                                    <td class="time-col font-black text-center text-slate-600 bg-slate-50 group-hover:bg-slate-100 text-xs tracking-wide">${h}</td>
+                                    <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
+                                    <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
+                                    <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
+                                    <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
+                                    <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
+                                </tr>
+                            `);
+                        });
+                    </script>
                 </tbody>
             </table>
         </div>
@@ -262,7 +177,6 @@
     </div>
 
     <script>
-        // ATENÇÃO: COLE A URL DO SEU SCRIPT INDIVIDUAL ABAIXO
         const API = "https://script.google.com/macros/s/AKfycbx5rPeapV9nLVaZUPpSO7lWm5U9CWZQ2inVcN4q5XnTNkhGuSF9q6MaJb9OVEwpieXy/exec"; 
         
         const inputs = document.querySelectorAll('.setor-input');
@@ -279,7 +193,10 @@
         }
 
         function formatarDataISO(data) {
-            return data.toISOString().split('T')[0];
+            const y = data.getFullYear();
+            const m = String(data.getMonth() + 1).padStart(2, '0');
+            const d = String(data.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
         }
 
         function inicializarCalendario() {
@@ -287,6 +204,9 @@
             document.getElementById('semana-ref').value = formatarDataISO(segundaFeiraAtual);
             atualizarCabecalhos();
             carregarGradeNuvem();
+            
+            // Auto-refresh a cada 30 segundos
+            setInterval(carregarGradeNuvem, 30000); 
         }
 
         function atualizarCabecalhos() {
@@ -311,7 +231,9 @@
         }
 
         document.getElementById('semana-ref').addEventListener('change', function(e) {
-            segundaFeiraAtual = getMonday(new Date(e.target.value + 'T12:00:00'));
+            const partes = e.target.value.split('-'); 
+            const dataInput = new Date(partes[0], partes[1] - 1, partes[2]);
+            segundaFeiraAtual = getMonday(dataInput);
             e.target.value = formatarDataISO(segundaFeiraAtual); 
             atualizarCabecalhos();
             carregarGradeNuvem();
@@ -320,11 +242,12 @@
         async function carregarGradeNuvem() {
             const semanaSelecionada = document.getElementById('semana-ref').value;
             const statusEl = document.getElementById('status-escala');
+            const statusDot = document.getElementById('status-dot');
             
-            statusEl.innerHTML = "Sincronizando com a nuvem...";
-
             try {
-                const response = await fetch(API);
+                // Quebra de cache para ler dados atualizados da planilha
+                const urlSemCache = API + "?t=" + new Date().getTime();
+                const response = await fetch(urlSemCache);
                 const data = await response.json();
                 
                 inputs.forEach(inp => {
@@ -333,20 +256,33 @@
                     inp.classList.remove('bloqueado', 'bg-emerald-50');
                 });
 
-                // Funciona tanto para o script universal (data.agendamento) quanto para o individual (data.dados)
                 const listaRegistros = data.dados || data.agendamento || [];
 
                 if (data.status === "sucesso" && listaRegistros.length > 0) {
-                    const agendamentosSemana = listaRegistros.filter(reg => reg.Semana === semanaSelecionada);
+                    
+                    const agendamentosSemana = listaRegistros.filter(reg => {
+                        if (!reg.Semana) return false;
+                        let dStr = String(reg.Semana).trim();
+                        if (dStr.includes('/')) {
+                            const partesData = dStr.split(/[ /]/);
+                            dStr = `${partesData[2]}-${partesData[1].padStart(2,'0')}-${partesData[0].padStart(2,'0')}`;
+                        } else {
+                            dStr = dStr.split('T')[0];
+                        }
+                        return dStr === semanaSelecionada;
+                    });
                     
                     const mapaHorarios = {};
                     agendamentosSemana.forEach(reg => {
-                        mapaHorarios[reg.Horario] = reg;
+                        if(reg.Horario) {
+                            mapaHorarios[String(reg.Horario).trim()] = reg;
+                        }
                     });
 
                     Object.values(mapaHorarios).forEach(reg => {
+                        const horarioPlanilha = String(reg.Horario).trim();
                         const linha = Array.from(document.querySelectorAll('tr')).find(tr => 
-                            tr.querySelector('.time-col') && tr.querySelector('.time-col').innerText.includes(reg.Horario)
+                            tr.querySelector('.time-col') && tr.querySelector('.time-col').innerText.trim() === horarioPlanilha
                         );
                         
                         if (linha) {
@@ -354,8 +290,10 @@
                             const dias = [reg.Segunda, reg.Terca, reg.Quarta, reg.Quinta, reg.Sexta];
                             
                             celulas.forEach((celula, idx) => {
-                                if (dias[idx] && dias[idx].trim() !== '') {
-                                    celula.value = dias[idx];
+                                const valorDia = (dias[idx] !== undefined && dias[idx] !== null) ? String(dias[idx]).trim() : '';
+                                
+                                if (valorDia !== '') {
+                                    celula.value = valorDia;
                                     celula.readOnly = true;
                                     celula.classList.add('bloqueado');
                                 }
@@ -365,9 +303,11 @@
                 }
                 
                 statusEl.innerHTML = `Grade atualizada com a nuvem`;
+                statusDot.className = "w-3 h-3 rounded-full bg-emerald-500";
             } catch (error) {
-                console.error("Erro:", error);
-                statusEl.innerHTML = `Exibindo campos em branco`;
+                console.error("Erro na leitura:", error);
+                statusEl.innerHTML = `Nenhum agendamento encontrado ou falha na rede`;
+                statusDot.className = "w-3 h-3 rounded-full bg-amber-500";
             }
         }
 
@@ -382,8 +322,7 @@
 
             input.addEventListener('dblclick', function() {
                 if (this.readOnly || this.classList.contains('bloqueado')) {
-                    const senhaDigitada = prompt("Controle UDSO: Célula bloqueada. Insira a credencial técnica (abrra) para liberar a edição:");
-                    
+                    const senhaDigitada = prompt("");
                     if (senhaDigitada !== null) {
                         if (btoa(senhaDigitada) === "YWJycmE=") {
                             this.readOnly = false; 
@@ -416,35 +355,46 @@
             const btnSalvar = document.getElementById('btn-sync-grade');
             const txtOriginal = btnSalvar.innerHTML;
             
-            btnSalvar.innerHTML = '<span>⏳ Enviando para a nuvem...</span>';
+            btnSalvar.innerHTML = '<span>⏳ Enviando...</span>';
             btnSalvar.disabled = true;
 
             const linhas = document.querySelectorAll('tbody tr');
             let enviosPromises = [];
             
             linhas.forEach(linha => {
-                const horario = linha.querySelector('.time-col').innerText;
+                const horario = linha.querySelector('.time-col').innerText.trim();
                 const inputsLinha = linha.querySelectorAll('.setor-input');
                 
-                const formData = new URLSearchParams();
-                formData.append("TIPO_FORMULARIO", "AGENDAMENTO");
-                formData.append("DATA_REGISTRO", new Date().toLocaleString('pt-BR'));
-                formData.append("Semana", semanaSelecionada);
-                formData.append("Horario", horario);
-                formData.append("Segunda", inputsLinha[0].value.trim());
-                formData.append("Terca", inputsLinha[1].value.trim());
-                formData.append("Quarta", inputsLinha[2].value.trim());
-                formData.append("Quinta", inputsLinha[3].value.trim());
-                formData.append("Sexta", inputsLinha[4].value.trim());
+                let temDado = Array.from(inputsLinha).some(inp => inp.value.trim() !== '');
+                
+                if (temDado) {
+                    const formData = new URLSearchParams();
+                    formData.append("TIPO_FORMULARIO", "AGENDAMENTO");
+                    formData.append("DATA_REGISTRO", new Date().toLocaleString('pt-BR'));
+                    formData.append("Semana", semanaSelecionada);
+                    formData.append("Horario", horario);
+                    formData.append("Segunda", inputsLinha[0].value.trim());
+                    formData.append("Terca", inputsLinha[1].value.trim());
+                    formData.append("Quarta", inputsLinha[2].value.trim());
+                    formData.append("Quinta", inputsLinha[3].value.trim());
+                    formData.append("Sexta", inputsLinha[4].value.trim());
 
-                enviosPromises.push(
-                    fetch(API, { method: 'POST', mode: 'no-cors', body: formData })
-                );
+                    enviosPromises.push(
+                        fetch(API, { method: 'POST', mode: 'no-cors', body: formData })
+                    );
+                }
             });
+
+            if(enviosPromises.length === 0){
+                alert("Nenhum setor foi preenchido na grade para ser salvo.");
+                btnSalvar.innerHTML = txtOriginal;
+                btnSalvar.disabled = false;
+                return;
+            }
 
             try {
                 await Promise.all(enviosPromises);
-                alert("Grade de agendamento salva com sucesso para a semana selecionada!");
+                alert("Horários salvos e bloqueados com sucesso!");
                 carregarGradeNuvem(); 
             } catch (error) {
                 alert("Ocorreu um erro ao comunicar com a base de dados do Google Drive.");
