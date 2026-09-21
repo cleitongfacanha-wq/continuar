@@ -30,10 +30,6 @@
                             900: '#082823',
                             dark: '#0B302B',
                         }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-                        heading: ['Montserrat', 'Inter', 'sans-serif'],
                     }
                 }
             }
@@ -48,12 +44,20 @@
             -webkit-font-smoothing: antialiased;
         }
         
+        /* Trava Visual Absoluta para Células Bloqueadas e Expiradas */
         input.bloqueado {
             background-color: #e2e8f0 !important; 
             color: #475569 !important; 
             cursor: not-allowed !important;
-            border-color: #cbd5e1 !important;
+            border-color: transparent !important;
             font-weight: 900 !important;
+            box-shadow: none !important; /* Remove o brilho verde de foco */
+            outline: none !important;
+        }
+        input.bloqueado:focus {
+            background-color: #e2e8f0 !important;
+            box-shadow: none !important;
+            border-color: transparent !important;
         }
 
         table { border-collapse: separate; border-spacing: 0; }
@@ -76,7 +80,7 @@
                         UDSO • Hospital Governador Celso Ramos
                     </span>
                 </div>
-                <h1 class="text-2xl md:text-3xl font-heading font-black tracking-tight">Grade de Intervenções Cinesiológicas</h1>
+                <h1 class="text-2xl md:text-3xl font-black tracking-tight">Grade de Intervenções Cinesiológicas</h1>
                 <p class="text-xs md:text-sm text-emerald-100/80 mt-0.5 font-medium">
                     Planejamento Semanal de Pausas Ativas Orientadas
                 </p>
@@ -112,7 +116,7 @@
             <div>
                 <h3 class="text-blue-900 font-bold text-sm mb-1">Observações</h3>
                 <p class="text-blue-800 text-xs leading-relaxed">
-                  O agendamento é dinâmico e poderá sofrer alterações de acordo com a evolução do projeto, entre em contato com o Fisioterapeuta do Trabalho para alterar o horário.
+                  O agendamento é dinâmico e poderá sofrer alterações de acordo com a evolução do projeto, entre em contato com o Fisioterapeuta do Trabalho para alterar o horário. Células cinzas indicam que o horário já expirou ou foi reservado por outro setor.
                 </p>
             </div>
         </div>
@@ -120,12 +124,12 @@
         <!-- Barra de Ações da Escala -->
         <div class="flex flex-wrap items-center justify-between gap-3 mb-6 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-xs">
             <div class="flex items-center gap-2">
-                <span class="w-3 h-3 rounded-full bg-emerald-500" id="status-dot"></span>
-                <span class="font-bold text-slate-700" id="status-escala">Aguardando sincronização com a nuvem...</span>
+                <span class="w-3 h-3 rounded-full bg-amber-500 animate-pulse" id="status-dot"></span>
+                <span class="font-bold text-slate-700" id="status-escala">Carregando dados da nuvem...</span>
             </div>
             <div class="flex items-center gap-2">
-                <button type="button" onclick="salvarGradeNuvem()" id="btn-sync-grade" class="bg-[#0F4C43] hover:bg-[#0c3b34] text-white px-4 py-2 rounded-xl font-bold transition shadow-sm flex items-center gap-1.5">
-                    <span>☁️ Salvar na Planilha HGCR</span>
+                <button type="button" onclick="salvarGradeNuvem()" id="btn-sync-grade" class="bg-[#0F4C43] hover:bg-[#0c3b34] text-white px-5 py-2.5 rounded-xl font-bold transition shadow-sm flex items-center gap-1.5">
+                    <span>☁️ Salvar e Bloquear Horários</span>
                 </button>
                 <button type="button" onclick="limparGradeGeral()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-3.5 py-2 rounded-xl font-bold transition">
                     🧹 Limpar Tela
@@ -147,7 +151,7 @@
                     </tr>
                 </thead>
                 <tbody class="text-slate-800">
-                    <!-- Geração das Linhas de Horário -->
+                    <!-- Geração Automática das Linhas de Horário -->
                     <script>
                         const horarios = [
                             "13:00 - 13:15", "13:30 - 13:45", "14:00 - 14:15", "14:30 - 14:45", 
@@ -158,11 +162,11 @@
                             document.write(`
                                 <tr class="hover:bg-slate-50 transition-colors group">
                                     <td class="time-col font-black text-center text-slate-600 bg-slate-50 group-hover:bg-slate-100 text-xs tracking-wide">${h}</td>
-                                    <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                                    <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                                    <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                                    <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
-                                    <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300 placeholder:font-normal" placeholder="Digitar setor"></td>
+                                    <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300" placeholder="Digitar setor"></td>
+                                    <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300" placeholder="Digitar setor"></td>
+                                    <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300" placeholder="Digitar setor"></td>
+                                    <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300" placeholder="Digitar setor"></td>
+                                    <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300" placeholder="Digitar setor"></td>
                                 </tr>
                             `);
                         });
@@ -177,8 +181,10 @@
     </div>
 
     <script>
-        // ATENÇÃO: COLE A URL DO SEU SCRIPT ABAIXO
-        const API = "https://script.google.com/macros/s/AKfycbx5rPeapV9nLVaZUPpSO7lWm5U9CWZQ2inVcN4q5XnTNkhGuSF9q6MaJb9OVEwpieXy/exec"; 
+        // =========================================================================
+        // ATENÇÃO: COLE A NOVA URL DO SEU SCRIPT INDIVIDUAL ABAIXO 
+        // =========================================================================
+        const API = "SEU_LINK_DO_APPS_SCRIPT_AQUI"; 
         
         const inputs = document.querySelectorAll('.setor-input');
         let segundaFeiraAtual = new Date();
@@ -205,9 +211,6 @@
             document.getElementById('semana-ref').value = formatarDataISO(segundaFeiraAtual);
             atualizarCabecalhos();
             carregarGradeNuvem();
-            
-            // Auto-refresh a cada 30 segundos
-            setInterval(carregarGradeNuvem, 30000); 
         }
 
         function atualizarCabecalhos() {
@@ -240,7 +243,7 @@
             carregarGradeNuvem();
         });
 
-        // NOVO: Função para verificar e bloquear horários que já passaram cronologicamente
+        // Função responsável por bloquear as células se o horário cronológico já passou
         function bloquearHorariosPassados() {
             const agora = new Date();
             const linhas = document.querySelectorAll('tbody tr');
@@ -262,6 +265,7 @@
                         celula.classList.add('bloqueado');
                         if (celula.value.trim() === "") {
                             celula.placeholder = "Expirado";
+                            celula.value = ""; // Garante que a célula vazia fique sem brilho verde
                         }
                     } else {
                         if (celula.placeholder === "Expirado") {
@@ -272,6 +276,7 @@
             });
         }
 
+        // Leitura de Dados da Nuvem
         async function carregarGradeNuvem() {
             const semanaSelecionada = document.getElementById('semana-ref').value;
             const statusEl = document.getElementById('status-escala');
@@ -281,10 +286,12 @@
             statusDot.className = "w-3 h-3 rounded-full bg-amber-500 animate-pulse";
 
             try {
+                // Força o navegador a buscar os dados mais recentes sem usar o cache local
                 const urlSemCache = API + "?t=" + new Date().getTime();
                 const response = await fetch(urlSemCache);
                 const data = await response.json();
                 
+                // Limpa a tela localmente antes de preencher com a nuvem
                 inputs.forEach(inp => {
                     inp.value = '';
                     inp.readOnly = false;
@@ -295,6 +302,8 @@
                 const listaRegistros = data.dados || data.agendamento || [];
 
                 if (data.status === "sucesso" && listaRegistros.length > 0) {
+                    
+                    // Filtra apenas a semana atual ignorando bagunças de data do Google
                     const agendamentosSemana = listaRegistros.filter(reg => {
                         if (!reg.Semana) return false;
                         let dStr = String(reg.Semana).trim();
@@ -314,6 +323,7 @@
                         }
                     });
 
+                    // Preenche e trava as células
                     Object.values(mapaHorarios).forEach(reg => {
                         const horarioPlanilha = String(reg.Horario).trim();
                         const linha = Array.from(document.querySelectorAll('tr')).find(tr => 
@@ -337,24 +347,24 @@
                     });
                 }
                 
-                // Aplica o bloqueio cronológico após carregar os dados
+                // Bloqueia horários velhos por cima da grade carregada
                 bloquearHorariosPassados();
 
-                statusEl.innerHTML = `Grade atualizada com a nuvem`;
+                statusEl.innerHTML = `Grade atualizada e sincronizada com a nuvem`;
                 statusDot.className = "w-3 h-3 rounded-full bg-emerald-500";
             } catch (error) {
                 console.error("Erro na leitura:", error);
-                // Mesmo se falhar a rede, bloqueia horários passados
                 bloquearHorariosPassados();
                 
-                statusEl.innerHTML = `Nenhum agendamento encontrado ou falha na rede`;
+                statusEl.innerHTML = `Falha de rede. Exibindo horários locais.`;
                 statusDot.className = "w-3 h-3 rounded-full bg-amber-500";
             }
         }
 
+        // Efeitos visuais e duplo clique do Gestor
         inputs.forEach(input => {
             input.addEventListener('blur', function() {
-                if (this.value.trim() !== '') {
+                if (this.value.trim() !== '' && !this.readOnly) {
                     this.classList.add('bg-emerald-50');
                 } else {
                     this.classList.remove('bg-emerald-50');
@@ -367,7 +377,8 @@
                     if (senhaDigitada !== null) {
                         if (btoa(senhaDigitada) === "YWJycmE=") {
                             this.readOnly = false; 
-                            this.classList.remove('bloqueado'); 
+                            this.classList.remove('bloqueado');
+                            this.value = ''; 
                             this.focus(); 
                         } else {
                             alert("Credencial inválida.");
@@ -387,22 +398,23 @@
                     inp.placeholder = "Digitar setor";
                 });
                 bloquearHorariosPassados();
-                alert('Tela limpa localmente. Salve para apagar esses horários na nuvem.');
+                alert('Tela limpa localmente. Salve para apagar esses horários também na nuvem.');
             } else if (senha !== null) {
                 alert('Credencial inválida.');
             }
         }
 
+        // ENVIO EM FILA SEQUENCIAL (Evita quebrar a planilha do Google)
         async function salvarGradeNuvem() {
             const semanaSelecionada = document.getElementById('semana-ref').value;
             const btnSalvar = document.getElementById('btn-sync-grade');
             const txtOriginal = btnSalvar.innerHTML;
             
-            btnSalvar.innerHTML = '<span>⏳ Enviando...</span>';
+            btnSalvar.innerHTML = '<span>⏳ Bloqueando e Salvando...</span>';
             btnSalvar.disabled = true;
 
             const linhas = document.querySelectorAll('tbody tr');
-            let enviosPromises = [];
+            let enviosDados = [];
             
             linhas.forEach(linha => {
                 const horario = linha.querySelector('.time-col').innerText.trim();
@@ -422,13 +434,11 @@
                     formData.append("Quinta", inputsLinha[3].value.trim());
                     formData.append("Sexta", inputsLinha[4].value.trim());
 
-                    enviosPromises.push(
-                        fetch(API, { method: 'POST', mode: 'no-cors', body: formData })
-                    );
+                    enviosDados.push(formData);
                 }
             });
 
-            if(enviosPromises.length === 0){
+            if(enviosDados.length === 0){
                 alert("Nenhum setor foi preenchido na grade para ser salvo.");
                 btnSalvar.innerHTML = txtOriginal;
                 btnSalvar.disabled = false;
@@ -436,8 +446,11 @@
             }
 
             try {
-                await Promise.all(enviosPromises);
-                alert("Horários salvos e bloqueados com sucesso!");
+                // Envia uma linha por vez (Evita que o Google embaralhe as colunas na 1ª vez)
+                for (let formData of enviosDados) {
+                    await fetch(API, { method: 'POST', mode: 'no-cors', body: formData });
+                }
+                alert("Horários reservados e salvos com sucesso na nuvem!");
                 carregarGradeNuvem(); 
             } catch (error) {
                 alert("Ocorreu um erro ao comunicar com a base de dados do Google Drive.");
