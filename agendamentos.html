@@ -127,10 +127,7 @@
                 </tbody>
             </table>
         </div>
-
-        <footer class="mt-8 text-center text-[11px] text-slate-400">
-            Plataforma Continuar • Governança Ergonômica • UDSO / HGCR
-        </footer>
+        <footer class="mt-8 text-center text-[11px] text-slate-400">Plataforma Continuar • Governança Ergonômica • UDSO / HGCR</footer>
     </div>
 
     <script>
@@ -235,7 +232,6 @@
             return "";
         }
 
-        // LÓGICA REESCRITA: Lê linha por linha e preenche o lugar exato
         async function carregarGradeNuvem() {
             const semanaSelecionada = document.getElementById('semana-ref').value;
             const statusEl = document.getElementById('status-escala');
@@ -249,7 +245,7 @@
                 const response = await fetch(urlSemCache);
                 const data = await response.json();
                 
-                // Limpa tela local
+                // Limpa a tela localmente antes de preencher
                 inputs.forEach(inp => {
                     inp.value = '';
                     inp.readOnly = false;
@@ -261,8 +257,9 @@
 
                 if (data.status === "sucesso" && listaRegistros.length > 0) {
                     
+                    // Filtra apenas a semana escolhida
                     const agendamentosSemana = listaRegistros.filter(reg => {
-                        const s = String(getValueCI(reg, 'Semana_Ref')).trim();
+                        const s = String(getValueCI(reg, 'Semana')).trim();
                         if (!s) return false;
                         let dStr = s;
                         if (dStr.includes('T')) dStr = dStr.split('T')[0];
@@ -275,29 +272,47 @@
                         return dStr === semanaSelecionada;
                     });
                     
-                    // Preenche a tela iterando cada linha que voltou da planilha
+                    // Preenche a tela respeitando a posição de CADA quadradinho
                     agendamentosSemana.forEach(reg => {
                         const horarioPlanilha = String(getValueCI(reg, 'Horario')).trim();
-                        const idxDia = parseInt(getValueCI(reg, 'Dia_Indice'), 10);
-                        const setorSalvo = String(getValueCI(reg, 'Setor')).trim();
-
+                        
                         const linha = Array.from(document.querySelectorAll('tr')).find(tr => 
                             tr.querySelector('.time-col') && tr.querySelector('.time-col').innerText.trim() === horarioPlanilha
                         );
                         
-                        if (linha && !isNaN(idxDia) && setorSalvo !== '') {
-                            const celula = linha.querySelectorAll('.setor-input')[idxDia];
-                            if (celula) {
-                                celula.value = setorSalvo;
-                                celula.readOnly = true;
-                                celula.classList.add('bloqueado');
+                        if (linha) {
+                            const celulas = linha.querySelectorAll('.setor-input');
+                            
+                            // Lógica Nova: Linha por Linha
+                            const setor = String(getValueCI(reg, 'Setor')).trim();
+                            const diaIdx = getValueCI(reg, 'Dia_Indice');
+                            
+                            if (setor !== '' && diaIdx !== "") {
+                                const idx = parseInt(diaIdx, 10);
+                                if (!isNaN(idx) && celulas[idx]) {
+                                    celulas[idx].value = setor;
+                                    celulas[idx].readOnly = true;
+                                    celulas[idx].classList.add('bloqueado');
+                                }
+                            } 
+                            // Lógica Antiga: Colunas por Dia (para não perder o histórico que já está na planilha)
+                            else {
+                                const dias = [getValueCI(reg, 'Segunda'), getValueCI(reg, 'Terca'), getValueCI(reg, 'Quarta'), getValueCI(reg, 'Quinta'), getValueCI(reg, 'Sexta')];
+                                celulas.forEach((celula, idx) => {
+                                    const valorDia = String(dias[idx] || '').trim();
+                                    if (valorDia !== '') {
+                                        celula.value = valorDia;
+                                        celula.readOnly = true;
+                                        celula.classList.add('bloqueado');
+                                    }
+                                });
                             }
                         }
                     });
                 }
                 
                 bloquearHorariosPassados();
-                statusEl.innerHTML = `Grade sincronizada (Atualizado agora)`;
+                statusEl.innerHTML = `Grade sincronizada com a nuvem`;
                 statusDot.className = "w-3 h-3 rounded-full bg-emerald-500";
             } catch (error) {
                 console.error("Erro na leitura:", error);
@@ -318,7 +333,7 @@
 
             input.addEventListener('dblclick', function() {
                 if (this.readOnly || this.classList.contains('bloqueado')) {
-                    const senhaDigitada = prompt("Controle UDSO: Digite a credencial técnica (abrra) para liberar a edição ou excluir este agendamento:");
+                    const senhaDigitada = prompt("Controle UDSO: Digite a credencial técnica (abrra) para liberar a edição deste horário:");
                     if (senhaDigitada !== null) {
                         if (btoa(senhaDigitada) === "YWJycmE=") {
                             this.readOnly = false; 
@@ -344,16 +359,16 @@
                     inp.placeholder = "Digitar setor";
                 });
                 bloquearHorariosPassados();
-                alert('Tela limpa!');
+                alert('Tela limpa! Clique em Salvar e Bloquear Horários para atualizar a nuvem.');
             } else if (senha !== null) {
                 alert('Credencial inválida.');
             }
         }
 
-        // LÓGICA DE ENVIO REESCRITA: Envia Célula por Célula
         async function salvarGradeNuvem() {
             const semanaSelecionada = document.getElementById('semana-ref').value;
             const btnSalvar = document.getElementById('btn-sync-grade');
+            const statusEl = document.getElementById('status-escala');
             const txtOriginal = btnSalvar.innerHTML;
             
             btnSalvar.innerHTML = '<span>⏳ Salvando na Nuvem...</span>';
@@ -370,28 +385,34 @@
                 inputsLinha.forEach((inp, idx) => {
                     const setorVal = inp.value.trim();
                     
-                    // Somente envia se estiver preenchido E se ainda não foi bloqueado pela nuvem
                     if (setorVal !== '' && !inp.classList.contains('bloqueado')) {
                         
-                        // Calcula a data exata daquela célula
+                        // Formatação exata da Data: SEXTA 25/09/2026 13:00
                         const dataCelula = new Date(segundaFeiraAtual);
                         dataCelula.setDate(dataCelula.getDate() + idx);
                         const dataFormatada = formatarDataBR(dataCelula); 
-                        
-                        const stringFormatada = `${diasNomes[idx]} ${dataFormatada} ${horaInicio}`; // Ex: SEXTA 25/09/2026 13:00
+                        const stringFormatada = `${diasNomes[idx]} ${dataFormatada} ${horaInicio}`;
 
                         const formData = new URLSearchParams();
                         formData.append("TIPO_FORMULARIO", "AGENDAMENTO");
                         formData.append("DATA_REGISTRO", new Date().toLocaleString('pt-BR'));
-                        formData.append("Semana_Ref", semanaSelecionada);
-                        formData.append("Data_Agendada", stringFormatada); // A Data exata que você pediu!
-                        formData.append("Horario", horario);
+                        formData.append("Semana", semanaSelecionada);
+                        
+                        // As novas colunas inteligentes:
+                        formData.append("Data_Agendada", stringFormatada); 
                         formData.append("Setor", setorVal);
+                        formData.append("Horario", horario);
                         formData.append("Dia_Indice", idx);
+
+                        // As antigas colunas (enviadas por segurança para manter compatibilidade)
+                        formData.append("Segunda", idx === 0 ? setorVal : "");
+                        formData.append("Terca", idx === 1 ? setorVal : "");
+                        formData.append("Quarta", idx === 2 ? setorVal : "");
+                        formData.append("Quinta", idx === 3 ? setorVal : "");
+                        formData.append("Sexta", idx === 4 ? setorVal : "");
 
                         enviosDados.push(formData);
                         
-                        // Trava a célula instantaneamente na tela
                         inp.readOnly = true;
                         inp.classList.add('bloqueado');
                         inp.classList.remove('bg-emerald-50');
@@ -407,7 +428,7 @@
             }
 
             try {
-                // Envia em fila sequencial
+                // Envia para o Google um por um para não encravar a planilha
                 for (let formData of enviosDados) {
                     await fetch(API, { method: 'POST', mode: 'no-cors', body: formData });
                 }
