@@ -5,22 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grade de Intervenções • UDSO / HGCR</title>
     
-    <!-- Fontes Oficiais Inter & Montserrat -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <style>
-        body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background-color: #f8fafc;
-            color: #0f172a;
-            -webkit-font-smoothing: antialiased;
-        }
+        body { font-family: 'Inter', system-ui, sans-serif; background-color: #f8fafc; color: #0f172a; }
         
-        /* Trava Visual Absoluta para Células Bloqueadas e Expiradas */
         input.bloqueado {
             background-color: #e2e8f0 !important; 
             color: #475569 !important; 
@@ -29,11 +21,6 @@
             font-weight: 900 !important;
             box-shadow: none !important;
             outline: none !important;
-        }
-        input.bloqueado:focus {
-            background-color: #e2e8f0 !important;
-            box-shadow: none !important;
-            border-color: transparent !important;
         }
 
         table { border-collapse: separate; border-spacing: 0; }
@@ -47,31 +34,23 @@
 <body class="p-4 md:p-8 min-h-screen flex flex-col items-center">
 
     <div class="max-w-7xl w-full">
-        <!-- Cabeçalho Institucional UDSO -->
+        <!-- Cabeçalho -->
         <header class="bg-gradient-to-r from-slate-900 to-[#0F4C43] text-white p-6 md:p-8 rounded-3xl mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-lg border border-slate-800">
             <div>
                 <div class="flex items-center gap-2 mb-1.5">
                     <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span class="text-[11px] font-extrabold uppercase tracking-widest text-emerald-200">
-                        UDSO • Hospital Governador Celso Ramos
-                    </span>
+                    <span class="text-[11px] font-extrabold uppercase tracking-widest text-emerald-200">UDSO • Hospital Governador Celso Ramos</span>
                 </div>
-                <h1 class="text-2xl md:text-3xl font-heading font-black tracking-tight">Grade de Intervenções Cinesiológicas</h1>
-                <p class="text-xs md:text-sm text-emerald-100/80 mt-0.5 font-medium">
-                    Planejamento Semanal de Pausas Ativas Orientadas
-                </p>
+                <h1 class="text-2xl md:text-3xl font-black tracking-tight" style="font-family: 'Montserrat', sans-serif;">Grade de Intervenções Cinesiológicas</h1>
+                <p class="text-xs md:text-sm text-emerald-100/80 mt-0.5 font-medium">Planejamento Semanal de Pausas Ativas Orientadas</p>
             </div>
             <div class="flex items-center gap-2">
-                <a href="painel_gestor_udso.html" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition border border-white/20 backdrop-blur-sm text-center whitespace-nowrap shadow-sm">
-                    📊 Painel Gestor
-                </a>
-                <a href="index.html" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition border border-white/20 backdrop-blur-sm text-center whitespace-nowrap shadow-sm">
-                    ← Portal
-                </a>
+                <a href="painel_gestor_udso.html" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition">📊 Painel Gestor</a>
+                <a href="index.html" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition">← Portal</a>
             </div>
         </header>
 
-        <!-- SELETOR DE CALENDÁRIO SEMANAL -->
+        <!-- Calendário -->
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-2 md:gap-4 w-full md:w-auto justify-between">
                 <button onclick="mudarSemana(-1)" class="p-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl transition font-bold text-slate-600 shadow-sm">← Anterior</button>
@@ -81,27 +60,24 @@
                 </div>
                 <button onclick="mudarSemana(1)" class="p-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl transition font-bold text-slate-600 shadow-sm">Próxima →</button>
             </div>
-            <div class="flex items-center gap-3 w-full md:w-auto text-xs text-slate-500 font-medium">
-                Alterne as semanas para visualizar as escalas.
-            </div>
         </div>
 
-        <!-- Instruções Operacionais -->
+        <!-- Observações -->
         <div class="bg-blue-50 border-l-4 border-blue-600 p-5 rounded-r-2xl mb-6 shadow-sm flex items-start gap-3">
             <div class="text-blue-600 text-xl mt-0.5">ℹ️</div>
             <div>
                 <h3 class="text-blue-900 font-bold text-sm mb-1">Observações</h3>
                 <p class="text-blue-800 text-xs leading-relaxed">
-                  O agendamento é dinâmico e poderá sofrer alterações de acordo com a evolução do projeto, entre em contato com o Fisioterapeuta do Trabalho para alterar o horário. Células cinzas indicam horários já reservados ou expirados.
+                  O agendamento é dinâmico e poderá sofrer alterações de acordo com a evolução do projeto. Entre em contato com o Fisioterapeuta do Trabalho para alterar o horário. Células cinzas estão reservadas ou expiradas.
                 </p>
             </div>
         </div>
 
-        <!-- Barra de Ações da Escala -->
+        <!-- Barra de Ações -->
         <div class="flex flex-wrap items-center justify-between gap-3 mb-6 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-xs">
             <div class="flex items-center gap-2">
                 <span class="w-3 h-3 rounded-full bg-amber-500 animate-pulse" id="status-dot"></span>
-                <span class="font-bold text-slate-700" id="status-escala">Carregando dados da nuvem...</span>
+                <span class="font-bold text-slate-700" id="status-escala">Sincronizando...</span>
             </div>
             <div class="flex items-center gap-2">
                 <button type="button" onclick="carregarGradeNuvem()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-4 py-2.5 rounded-xl font-bold transition shadow-sm flex items-center gap-1.5">
@@ -116,7 +92,7 @@
             </div>
         </div>
 
-        <!-- Tabela de Agendamentos -->
+        <!-- Tabela -->
         <div class="bg-white rounded-3xl shadow-md border border-slate-200/80 overflow-x-auto pb-1">
             <table class="w-full text-sm text-left min-w-[800px]">
                 <thead>
@@ -130,7 +106,6 @@
                     </tr>
                 </thead>
                 <tbody class="text-slate-800">
-                    <!-- Geração Automática das Linhas de Horário -->
                     <script>
                         const horarios = [
                             "13:00 - 13:15", "13:30 - 13:45", "14:00 - 14:15", "14:30 - 14:45", 
@@ -140,7 +115,7 @@
                         horarios.forEach(h => {
                             document.write(`
                                 <tr class="hover:bg-slate-50 transition-colors group">
-                                    <td class="time-col font-black text-center text-slate-600 bg-slate-50 group-hover:bg-slate-100 text-xs tracking-wide">${h}</td>
+                                    <td class="time-col font-black text-center text-slate-600 bg-slate-50 text-xs tracking-wide">${h}</td>
                                     <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300" placeholder="Digitar setor"></td>
                                     <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300" placeholder="Digitar setor"></td>
                                     <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300" placeholder="Digitar setor"></td>
@@ -153,17 +128,14 @@
                 </tbody>
             </table>
         </div>
-
-        <footer class="mt-8 text-center text-[11px] text-slate-400">
-            Plataforma Continuar • Governança Ergonômica • UDSO / HGCR
-        </footer>
+        <footer class="mt-8 text-center text-[11px] text-slate-400">Plataforma Continuar • Governança Ergonômica • UDSO / HGCR</footer>
     </div>
 
     <script>
         // =========================================================================
-        // ATENÇÃO: COLE A URL DO SEU SCRIPT INDIVIDUAL DE AGENDAMENTO ABAIXO 
+        // ATENÇÃO: COLE A URL DO SEU SCRIPT INDIVIDUAL ABAIXO 
         // =========================================================================
-        const API = "https://script.google.com/macros/s/AKfycbzxaCkNrMajJzjffZwHhc7UJlDNWJw988Fg-569WrEIUeo3qhYigyhGdhrSngWjstOTHA/exec"; 
+        const API = "SEU_LINK_DO_APPS_SCRIPT_AQUI"; 
         
         const inputs = document.querySelectorAll('.setor-input');
         let segundaFeiraAtual = new Date();
@@ -222,6 +194,7 @@
             carregarGradeNuvem();
         });
 
+        // Função responsável por bloquear horários antigos (para não agendar no passado)
         function bloquearHorariosPassados() {
             const agora = new Date();
             const linhas = document.querySelectorAll('tbody tr');
@@ -238,12 +211,12 @@
                     dataCelula.setDate(dataCelula.getDate() + idx);
                     dataCelula.setHours(hora, minuto, 0, 0);
                     
-                    // Bloqueia apenas se a célula está no passado E se não tem nada digitado nela
                     if (dataCelula < agora && celula.value.trim() === '') {
                         celula.readOnly = true;
                         celula.classList.add('bloqueado');
                         celula.placeholder = "Expirado";
-                    } else if (dataCelula >= agora && celula.placeholder === "Expirado") {
+                        celula.value = ""; 
+                    } else if (dataCelula >= agora && celula.placeholder === "Expirado" && celula.value.trim() === "") {
                         celula.readOnly = false;
                         celula.classList.remove('bloqueado');
                         celula.placeholder = "Digitar setor";
@@ -252,7 +225,6 @@
             });
         }
 
-        // Helper para extrair dados sem se preocupar com Maiúscula/Minúscula nas colunas do Google
         function getValueCI(obj, keyName) {
             const lowerKey = keyName.toLowerCase();
             for (let k in obj) {
@@ -261,6 +233,7 @@
             return "";
         }
 
+        // LÓGICA CORRIGIDA: Fusão de múltiplas linhas do Google Sheets
         async function carregarGradeNuvem() {
             const semanaSelecionada = document.getElementById('semana-ref').value;
             const statusEl = document.getElementById('status-escala');
@@ -270,12 +243,10 @@
             statusDot.className = "w-3 h-3 rounded-full bg-amber-500 animate-pulse";
 
             try {
-                // Força o navegador a buscar os dados mais recentes sem usar o cache local
                 const urlSemCache = API + "?t=" + new Date().getTime();
                 const response = await fetch(urlSemCache);
                 const data = await response.json();
                 
-                // Limpa a tela localmente
                 inputs.forEach(inp => {
                     inp.value = '';
                     inp.readOnly = false;
@@ -283,14 +254,15 @@
                     inp.placeholder = "Digitar setor";
                 });
 
-                const listaRegistros = data.dados || data.agendamento || [];
+                const listaRegistros = data.dados || [];
 
                 if (data.status === "sucesso" && listaRegistros.length > 0) {
                     
+                    // 1. Pega só a semana certa
                     const agendamentosSemana = listaRegistros.filter(reg => {
-                        const semanaStr = getValueCI(reg, 'Semana');
-                        if (!semanaStr) return false;
-                        let dStr = String(semanaStr).trim();
+                        const s = String(getValueCI(reg, 'Semana')).trim();
+                        if (!s) return false;
+                        let dStr = s;
                         if (dStr.includes('T')) dStr = dStr.split('T')[0];
                         else if (dStr.includes('/')) {
                             const p = dStr.split('/');
@@ -301,14 +273,25 @@
                         return dStr === semanaSelecionada;
                     });
                     
+                    // 2. FUSÃO (Merge) de todos os horários iguais
                     const mapaHorarios = {};
                     agendamentosSemana.forEach(reg => {
-                        const h = getValueCI(reg, 'Horario');
-                        if(h) mapaHorarios[String(h).trim()] = reg;
+                        const h = String(getValueCI(reg, 'Horario')).trim();
+                        if(h) {
+                            if (!mapaHorarios[h]) {
+                                mapaHorarios[h] = { Segunda: "", Terca: "", Quarta: "", Quinta: "", Sexta: "" };
+                            }
+                            if (getValueCI(reg, 'Segunda')) mapaHorarios[h].Segunda = getValueCI(reg, 'Segunda');
+                            if (getValueCI(reg, 'Terca')) mapaHorarios[h].Terca = getValueCI(reg, 'Terca');
+                            if (getValueCI(reg, 'Quarta')) mapaHorarios[h].Quarta = getValueCI(reg, 'Quarta');
+                            if (getValueCI(reg, 'Quinta')) mapaHorarios[h].Quinta = getValueCI(reg, 'Quinta');
+                            if (getValueCI(reg, 'Sexta')) mapaHorarios[h].Sexta = getValueCI(reg, 'Sexta');
+                        }
                     });
 
-                    Object.values(mapaHorarios).forEach(reg => {
-                        const horarioPlanilha = String(getValueCI(reg, 'Horario')).trim();
+                    // 3. Preenche na tela
+                    Object.keys(mapaHorarios).forEach(horarioPlanilha => {
+                        const regFusionado = mapaHorarios[horarioPlanilha];
                         const linha = Array.from(document.querySelectorAll('tr')).find(tr => 
                             tr.querySelector('.time-col') && tr.querySelector('.time-col').innerText.trim() === horarioPlanilha
                         );
@@ -316,11 +299,11 @@
                         if (linha) {
                             const celulas = linha.querySelectorAll('.setor-input');
                             const dias = [
-                                getValueCI(reg, 'Segunda'), 
-                                getValueCI(reg, 'Terca'), 
-                                getValueCI(reg, 'Quarta'), 
-                                getValueCI(reg, 'Quinta'), 
-                                getValueCI(reg, 'Sexta')
+                                regFusionado.Segunda, 
+                                regFusionado.Terca, 
+                                regFusionado.Quarta, 
+                                regFusionado.Quinta, 
+                                regFusionado.Sexta
                             ];
                             
                             celulas.forEach((celula, idx) => {
@@ -336,18 +319,16 @@
                 }
                 
                 bloquearHorariosPassados();
-
                 statusEl.innerHTML = `Grade sincronizada (Atualizado agora)`;
                 statusDot.className = "w-3 h-3 rounded-full bg-emerald-500";
             } catch (error) {
                 console.error("Erro na leitura:", error);
                 bloquearHorariosPassados();
-                statusEl.innerHTML = `Exibindo horários locais. Clique em Atualizar.`;
+                statusEl.innerHTML = `Falha de rede. Exibindo horários locais. Clique em Atualizar.`;
                 statusDot.className = "w-3 h-3 rounded-full bg-amber-500";
             }
         }
 
-        // Visuais e Liberação por Senha
         inputs.forEach(input => {
             input.addEventListener('blur', function() {
                 if (this.value.trim() !== '' && !this.readOnly) {
@@ -385,7 +366,7 @@
                     inp.placeholder = "Digitar setor";
                 });
                 bloquearHorariosPassados();
-                alert('Tela limpa! Para apagar tudo da nuvem nesta semana, clique em Salvar.');
+                alert('Tela limpa! Para apagar tudo da nuvem nesta semana, clique em Salvar e Bloquear Horários.');
             } else if (senha !== null) {
                 alert('Credencial inválida.');
             }
@@ -411,7 +392,6 @@
                 
                 if (temDado) {
                     const formData = new URLSearchParams();
-                    formData.append("TIPO_FORMULARIO", "AGENDAMENTO");
                     formData.append("DATA_REGISTRO", new Date().toLocaleString('pt-BR'));
                     formData.append("Semana", semanaSelecionada);
                     formData.append("Horario", horario);
@@ -433,7 +413,7 @@
             }
 
             try {
-                // Trava as células visualmente IMEDIATAMENTE antes de enviar para o Google
+                // Trava as células visualmente IMEDIATAMENTE na tela do usuário
                 linhas.forEach(linha => {
                     const inputsLinha = linha.querySelectorAll('.setor-input');
                     inputsLinha.forEach(inp => {
@@ -445,7 +425,6 @@
                     });
                 });
 
-                // Envia em Fila Sequencial (Protege a Planilha)
                 for (let formData of enviosDados) {
                     await fetch(API, { method: 'POST', mode: 'no-cors', body: formData });
                 }
@@ -454,7 +433,7 @@
                 statusEl.innerHTML = `Grade sincronizada (Salvo Agora)`;
                 
             } catch (error) {
-                alert("Ocorreu um erro ao comunicar com a base de dados.");
+                alert("Ocorreu um erro ao comunicar com a base de dados do Google Drive.");
             } finally {
                 btnSalvar.innerHTML = txtOriginal;
                 btnSalvar.disabled = false;
