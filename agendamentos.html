@@ -132,9 +132,9 @@
 
     <script>
         // =========================================================================
-        // ATENÇÃO: COLE A NOVA URL DO SEU SCRIPT INDIVIDUAL ABAIXO 
+        // ATENÇÃO: COLE A NOVA URL DO SEU SCRIPT ABAIXO 
         // =========================================================================
-        const API = "https://script.google.com/macros/s/AKfycbzxaCkNrMajJzjffZwHhc7UJlDNWJw988Fg-569WrEIUeo3qhYigyhGdhrSngWjstOTHA/exec"; 
+        const API = "https://script.google.com/macros/s/AKfycbzTbcJ2JcX75gLeHFKiefP2yUC40Q9vTh-G9UuUj93r-iglIcPP5KQfzeXgHcNiCEiB_w/exec"; 
         
         const inputs = document.querySelectorAll('.setor-input');
         const diasNomes = ["SEGUNDA", "TERÇA", "QUARTA", "QUINTA", "SEXTA"];
@@ -194,6 +194,7 @@
             carregarGradeNuvem();
         });
 
+        // Função responsável por bloquear horários passados
         function bloquearHorariosPassados() {
             const agora = new Date();
             const linhas = document.querySelectorAll('tbody tr');
@@ -210,6 +211,7 @@
                     dataCelula.setDate(dataCelula.getDate() + idx);
                     dataCelula.setHours(hora, minuto, 0, 0);
                     
+                    // Bloqueia e oculta brilho apenas de células vazias e passadas
                     if (dataCelula < agora && celula.value.trim() === '') {
                         celula.readOnly = true;
                         celula.classList.add('bloqueado');
@@ -241,11 +243,12 @@
             statusDot.className = "w-3 h-3 rounded-full bg-amber-500 animate-pulse";
 
             try {
+                // Break cache - garante leitura sempre da última versão da planilha
                 const urlSemCache = API + "?t=" + new Date().getTime();
                 const response = await fetch(urlSemCache);
                 const data = await response.json();
                 
-                // Limpa a tela localmente antes de preencher
+                // Reseta a grelha visualmente
                 inputs.forEach(inp => {
                     inp.value = '';
                     inp.readOnly = false;
@@ -257,7 +260,7 @@
 
                 if (data.status === "sucesso" && listaRegistros.length > 0) {
                     
-                    // Filtra apenas a semana escolhida
+                    // Filtra de forma blindada pela "Semana" exata
                     const agendamentosSemana = listaRegistros.filter(reg => {
                         const s = String(getValueCI(reg, 'Semana')).trim();
                         if (!s) return false;
@@ -272,40 +275,25 @@
                         return dStr === semanaSelecionada;
                     });
                     
-                    // Preenche a tela respeitando a posição de CADA quadradinho
+                    // Povoa a tabela com base nas coordenadas Exatas (Horario + Indice do Dia)
                     agendamentosSemana.forEach(reg => {
                         const horarioPlanilha = String(getValueCI(reg, 'Horario')).trim();
+                        const setorSalvo = String(getValueCI(reg, 'Setor')).trim();
+                        const diaIdx = getValueCI(reg, 'Dia_Indice');
                         
                         const linha = Array.from(document.querySelectorAll('tr')).find(tr => 
                             tr.querySelector('.time-col') && tr.querySelector('.time-col').innerText.trim() === horarioPlanilha
                         );
                         
-                        if (linha) {
+                        if (linha && setorSalvo !== '' && diaIdx !== '') {
                             const celulas = linha.querySelectorAll('.setor-input');
+                            const idx = parseInt(diaIdx, 10);
                             
-                            // Lógica Nova: Linha por Linha
-                            const setor = String(getValueCI(reg, 'Setor')).trim();
-                            const diaIdx = getValueCI(reg, 'Dia_Indice');
-                            
-                            if (setor !== '' && diaIdx !== "") {
-                                const idx = parseInt(diaIdx, 10);
-                                if (!isNaN(idx) && celulas[idx]) {
-                                    celulas[idx].value = setor;
-                                    celulas[idx].readOnly = true;
-                                    celulas[idx].classList.add('bloqueado');
-                                }
-                            } 
-                            // Lógica Antiga: Colunas por Dia (para não perder o histórico que já está na planilha)
-                            else {
-                                const dias = [getValueCI(reg, 'Segunda'), getValueCI(reg, 'Terca'), getValueCI(reg, 'Quarta'), getValueCI(reg, 'Quinta'), getValueCI(reg, 'Sexta')];
-                                celulas.forEach((celula, idx) => {
-                                    const valorDia = String(dias[idx] || '').trim();
-                                    if (valorDia !== '') {
-                                        celula.value = valorDia;
-                                        celula.readOnly = true;
-                                        celula.classList.add('bloqueado');
-                                    }
-                                });
+                            // Aplica o valor na célula exata e trava
+                            if (!isNaN(idx) && celulas[idx]) {
+                                celulas[idx].value = setorSalvo;
+                                celulas[idx].readOnly = true;
+                                celulas[idx].classList.add('bloqueado');
                             }
                         }
                     });
@@ -333,7 +321,7 @@
 
             input.addEventListener('dblclick', function() {
                 if (this.readOnly || this.classList.contains('bloqueado')) {
-                    const senhaDigitada = prompt("Controle UDSO: Digite a credencial técnica (abrra) para liberar a edição deste horário:");
+                    const senhaDigitada = prompt("Controle UDSO: Digite a credencial técnica (abrra) para liberar a edição ou excluir este agendamento:");
                     if (senhaDigitada !== null) {
                         if (btoa(senhaDigitada) === "YWJycmE=") {
                             this.readOnly = false; 
@@ -365,10 +353,10 @@
             }
         }
 
+        // NOVO FORMATO DE ENVIO
         async function salvarGradeNuvem() {
             const semanaSelecionada = document.getElementById('semana-ref').value;
             const btnSalvar = document.getElementById('btn-sync-grade');
-            const statusEl = document.getElementById('status-escala');
             const txtOriginal = btnSalvar.innerHTML;
             
             btnSalvar.innerHTML = '<span>⏳ Salvando na Nuvem...</span>';
@@ -385,9 +373,10 @@
                 inputsLinha.forEach((inp, idx) => {
                     const setorVal = inp.value.trim();
                     
+                    // Se o campo for novo/modificado
                     if (setorVal !== '' && !inp.classList.contains('bloqueado')) {
                         
-                        // Formatação exata da Data: SEXTA 25/09/2026 13:00
+                        // Exemplo: SEXTA 25/09/2026 13:00
                         const dataCelula = new Date(segundaFeiraAtual);
                         dataCelula.setDate(dataCelula.getDate() + idx);
                         const dataFormatada = formatarDataBR(dataCelula); 
@@ -396,23 +385,16 @@
                         const formData = new URLSearchParams();
                         formData.append("TIPO_FORMULARIO", "AGENDAMENTO");
                         formData.append("DATA_REGISTRO", new Date().toLocaleString('pt-BR'));
-                        formData.append("Semana", semanaSelecionada);
                         
-                        // As novas colunas inteligentes:
+                        formData.append("Semana", semanaSelecionada);
                         formData.append("Data_Agendada", stringFormatada); 
-                        formData.append("Setor", setorVal);
                         formData.append("Horario", horario);
+                        formData.append("Setor", setorVal);
                         formData.append("Dia_Indice", idx);
-
-                        // As antigas colunas (enviadas por segurança para manter compatibilidade)
-                        formData.append("Segunda", idx === 0 ? setorVal : "");
-                        formData.append("Terca", idx === 1 ? setorVal : "");
-                        formData.append("Quarta", idx === 2 ? setorVal : "");
-                        formData.append("Quinta", idx === 3 ? setorVal : "");
-                        formData.append("Sexta", idx === 4 ? setorVal : "");
 
                         enviosDados.push(formData);
                         
+                        // Trava a célula na hora para dar feedback
                         inp.readOnly = true;
                         inp.classList.add('bloqueado');
                         inp.classList.remove('bg-emerald-50');
@@ -428,13 +410,14 @@
             }
 
             try {
-                // Envia para o Google um por um para não encravar a planilha
+                // Envia linha a linha para a base de dados
                 for (let formData of enviosDados) {
                     await fetch(API, { method: 'POST', mode: 'no-cors', body: formData });
                 }
                 
                 alert("Horários bloqueados e salvos com sucesso na nuvem!");
                 carregarGradeNuvem(); 
+                
             } catch (error) {
                 alert("Ocorreu um erro ao comunicar com a base de dados do Google Drive.");
             } finally {
