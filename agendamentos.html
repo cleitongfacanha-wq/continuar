@@ -9,7 +9,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <style>
         body { font-family: 'Inter', system-ui, sans-serif; background-color: #f8fafc; color: #0f172a; }
         
@@ -68,7 +67,7 @@
             <div>
                 <h3 class="text-blue-900 font-bold text-sm mb-1">Observações</h3>
                 <p class="text-blue-800 text-xs leading-relaxed">
-                  O agendamento é dinâmico e poderá sofrer alterações de acordo com a evolução do projeto. Entre em contato com o Fisioterapeuta do Trabalho para alterar o horário. Células cinzas estão reservadas ou expiradas.
+                  O agendamento é dinâmico e poderá sofrer alterações de acordo com a evolução do projeto. Entre em contato com o Fisioterapeuta do Trabalho para alterar o horário.
                 </p>
             </div>
         </div>
@@ -128,16 +127,20 @@
                 </tbody>
             </table>
         </div>
-        <footer class="mt-8 text-center text-[11px] text-slate-400">Plataforma Continuar • Governança Ergonômica • UDSO / HGCR</footer>
+
+        <footer class="mt-8 text-center text-[11px] text-slate-400">
+            Plataforma Continuar • Governança Ergonômica • UDSO / HGCR
+        </footer>
     </div>
 
     <script>
         // =========================================================================
-        // ATENÇÃO: COLE A URL DO SEU SCRIPT INDIVIDUAL ABAIXO 
+        // ATENÇÃO: COLE A NOVA URL DO SEU SCRIPT INDIVIDUAL ABAIXO 
         // =========================================================================
-        const API = "https://script.google.com/macros/s/AKfycbzxaCkNrMajJzjffZwHhc7UJlDNWJw988Fg-569WrEIUeo3qhYigyhGdhrSngWjstOTHA/exec"; 
+        const API = "SEU_LINK_DO_APPS_SCRIPT_AQUI"; 
         
         const inputs = document.querySelectorAll('.setor-input');
+        const diasNomes = ["SEGUNDA", "TERÇA", "QUARTA", "QUINTA", "SEXTA"];
         let segundaFeiraAtual = new Date();
 
         function getMonday(d) {
@@ -194,7 +197,6 @@
             carregarGradeNuvem();
         });
 
-        // Função responsável por bloquear horários antigos (para não agendar no passado)
         function bloquearHorariosPassados() {
             const agora = new Date();
             const linhas = document.querySelectorAll('tbody tr');
@@ -233,7 +235,7 @@
             return "";
         }
 
-        // LÓGICA CORRIGIDA: Fusão de múltiplas linhas do Google Sheets
+        // LÓGICA REESCRITA: Lê linha por linha e preenche o lugar exato
         async function carregarGradeNuvem() {
             const semanaSelecionada = document.getElementById('semana-ref').value;
             const statusEl = document.getElementById('status-escala');
@@ -247,6 +249,7 @@
                 const response = await fetch(urlSemCache);
                 const data = await response.json();
                 
+                // Limpa tela local
                 inputs.forEach(inp => {
                     inp.value = '';
                     inp.readOnly = false;
@@ -258,9 +261,8 @@
 
                 if (data.status === "sucesso" && listaRegistros.length > 0) {
                     
-                    // 1. Pega só a semana certa
                     const agendamentosSemana = listaRegistros.filter(reg => {
-                        const s = String(getValueCI(reg, 'Semana')).trim();
+                        const s = String(getValueCI(reg, 'Semana_Ref')).trim();
                         if (!s) return false;
                         let dStr = s;
                         if (dStr.includes('T')) dStr = dStr.split('T')[0];
@@ -273,47 +275,23 @@
                         return dStr === semanaSelecionada;
                     });
                     
-                    // 2. FUSÃO (Merge) de todos os horários iguais
-                    const mapaHorarios = {};
+                    // Preenche a tela iterando cada linha que voltou da planilha
                     agendamentosSemana.forEach(reg => {
-                        const h = String(getValueCI(reg, 'Horario')).trim();
-                        if(h) {
-                            if (!mapaHorarios[h]) {
-                                mapaHorarios[h] = { Segunda: "", Terca: "", Quarta: "", Quinta: "", Sexta: "" };
-                            }
-                            if (getValueCI(reg, 'Segunda')) mapaHorarios[h].Segunda = getValueCI(reg, 'Segunda');
-                            if (getValueCI(reg, 'Terca')) mapaHorarios[h].Terca = getValueCI(reg, 'Terca');
-                            if (getValueCI(reg, 'Quarta')) mapaHorarios[h].Quarta = getValueCI(reg, 'Quarta');
-                            if (getValueCI(reg, 'Quinta')) mapaHorarios[h].Quinta = getValueCI(reg, 'Quinta');
-                            if (getValueCI(reg, 'Sexta')) mapaHorarios[h].Sexta = getValueCI(reg, 'Sexta');
-                        }
-                    });
+                        const horarioPlanilha = String(getValueCI(reg, 'Horario')).trim();
+                        const idxDia = parseInt(getValueCI(reg, 'Dia_Indice'), 10);
+                        const setorSalvo = String(getValueCI(reg, 'Setor')).trim();
 
-                    // 3. Preenche na tela
-                    Object.keys(mapaHorarios).forEach(horarioPlanilha => {
-                        const regFusionado = mapaHorarios[horarioPlanilha];
                         const linha = Array.from(document.querySelectorAll('tr')).find(tr => 
                             tr.querySelector('.time-col') && tr.querySelector('.time-col').innerText.trim() === horarioPlanilha
                         );
                         
-                        if (linha) {
-                            const celulas = linha.querySelectorAll('.setor-input');
-                            const dias = [
-                                regFusionado.Segunda, 
-                                regFusionado.Terca, 
-                                regFusionado.Quarta, 
-                                regFusionado.Quinta, 
-                                regFusionado.Sexta
-                            ];
-                            
-                            celulas.forEach((celula, idx) => {
-                                const valorDia = String(dias[idx] || '').trim();
-                                if (valorDia !== '') {
-                                    celula.value = valorDia;
-                                    celula.readOnly = true;
-                                    celula.classList.add('bloqueado');
-                                }
-                            });
+                        if (linha && !isNaN(idxDia) && setorSalvo !== '') {
+                            const celula = linha.querySelectorAll('.setor-input')[idxDia];
+                            if (celula) {
+                                celula.value = setorSalvo;
+                                celula.readOnly = true;
+                                celula.classList.add('bloqueado');
+                            }
                         }
                     });
                 }
@@ -366,16 +344,16 @@
                     inp.placeholder = "Digitar setor";
                 });
                 bloquearHorariosPassados();
-                alert('Tela limpa! Para apagar tudo da nuvem nesta semana, clique em Salvar e Bloquear Horários.');
+                alert('Tela limpa!');
             } else if (senha !== null) {
                 alert('Credencial inválida.');
             }
         }
 
+        // LÓGICA DE ENVIO REESCRITA: Envia Célula por Célula
         async function salvarGradeNuvem() {
             const semanaSelecionada = document.getElementById('semana-ref').value;
             const btnSalvar = document.getElementById('btn-sync-grade');
-            const statusEl = document.getElementById('status-escala');
             const txtOriginal = btnSalvar.innerHTML;
             
             btnSalvar.innerHTML = '<span>⏳ Salvando na Nuvem...</span>';
@@ -386,52 +364,56 @@
             
             linhas.forEach(linha => {
                 const horario = linha.querySelector('.time-col').innerText.trim();
+                const horaInicio = horario.split(' - ')[0];
                 const inputsLinha = linha.querySelectorAll('.setor-input');
                 
-                let temDado = Array.from(inputsLinha).some(inp => inp.value.trim() !== '');
-                
-                if (temDado) {
-                    const formData = new URLSearchParams();
-                    formData.append("DATA_REGISTRO", new Date().toLocaleString('pt-BR'));
-                    formData.append("Semana", semanaSelecionada);
-                    formData.append("Horario", horario);
-                    formData.append("Segunda", inputsLinha[0].value.trim());
-                    formData.append("Terca", inputsLinha[1].value.trim());
-                    formData.append("Quarta", inputsLinha[2].value.trim());
-                    formData.append("Quinta", inputsLinha[3].value.trim());
-                    formData.append("Sexta", inputsLinha[4].value.trim());
+                inputsLinha.forEach((inp, idx) => {
+                    const setorVal = inp.value.trim();
+                    
+                    // Somente envia se estiver preenchido E se ainda não foi bloqueado pela nuvem
+                    if (setorVal !== '' && !inp.classList.contains('bloqueado')) {
+                        
+                        // Calcula a data exata daquela célula
+                        const dataCelula = new Date(segundaFeiraAtual);
+                        dataCelula.setDate(dataCelula.getDate() + idx);
+                        const dataFormatada = formatarDataBR(dataCelula); 
+                        
+                        const stringFormatada = `${diasNomes[idx]} ${dataFormatada} ${horaInicio}`; // Ex: SEXTA 25/09/2026 13:00
 
-                    enviosDados.push(formData);
-                }
+                        const formData = new URLSearchParams();
+                        formData.append("TIPO_FORMULARIO", "AGENDAMENTO");
+                        formData.append("DATA_REGISTRO", new Date().toLocaleString('pt-BR'));
+                        formData.append("Semana_Ref", semanaSelecionada);
+                        formData.append("Data_Agendada", stringFormatada); // A Data exata que você pediu!
+                        formData.append("Horario", horario);
+                        formData.append("Setor", setorVal);
+                        formData.append("Dia_Indice", idx);
+
+                        enviosDados.push(formData);
+                        
+                        // Trava a célula instantaneamente na tela
+                        inp.readOnly = true;
+                        inp.classList.add('bloqueado');
+                        inp.classList.remove('bg-emerald-50');
+                    }
+                });
             });
 
             if(enviosDados.length === 0){
-                alert("Você precisa digitar um setor antes de salvar.");
+                alert("Não há nenhum agendamento novo para salvar.");
                 btnSalvar.innerHTML = txtOriginal;
                 btnSalvar.disabled = false;
                 return;
             }
 
             try {
-                // Trava as células visualmente IMEDIATAMENTE na tela do usuário
-                linhas.forEach(linha => {
-                    const inputsLinha = linha.querySelectorAll('.setor-input');
-                    inputsLinha.forEach(inp => {
-                        if (inp.value.trim() !== '') {
-                            inp.readOnly = true;
-                            inp.classList.add('bloqueado');
-                            inp.classList.remove('bg-emerald-50');
-                        }
-                    });
-                });
-
+                // Envia em fila sequencial
                 for (let formData of enviosDados) {
                     await fetch(API, { method: 'POST', mode: 'no-cors', body: formData });
                 }
                 
                 alert("Horários bloqueados e salvos com sucesso na nuvem!");
-                statusEl.innerHTML = `Grade sincronizada (Salvo Agora)`;
-                
+                carregarGradeNuvem(); 
             } catch (error) {
                 alert("Ocorreu um erro ao comunicar com a base de dados do Google Drive.");
             } finally {
