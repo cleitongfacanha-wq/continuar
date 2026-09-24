@@ -12,7 +12,7 @@
     <style>
         body { font-family: 'Inter', system-ui, sans-serif; background-color: #f8fafc; color: #0f172a; }
         
-        /* Célula Ocupada / Bloqueada */
+        /* Célula Agendada / Bloqueada */
         input.bloqueado {
             background-color: #ecfdf5 !important; /* emerald-50 */
             color: #064e3b !important; /* emerald-900 */
@@ -126,7 +126,9 @@
                     <span class="text-slate-500 font-medium">Sessões Marcadas:</span>
                     <strong id="contador-agendamentos" class="text-sm font-black text-[#0F4C43]">0</strong>
                     <span class="text-slate-300">|</span>
-                    <span class="text-[11px] text-slate-400 font-medium" id="lbl-status-modo">Modo Seguro</span>
+                    <span class="text-[11px] text-emerald-800 font-bold flex items-center gap-1" id="lbl-status-modo">
+                        <span>🔒</span> Células Protegidas
+                    </span>
                 </div>
             </div>
 
@@ -138,10 +140,10 @@
                 </div>
 
                 <div class="flex flex-wrap items-center gap-2">
-                    <!-- Botão de Alternância de Modo Edição -->
-                    <button type="button" onclick="toggleModoEdicao()" id="btn-toggle-edicao" class="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 px-4 py-2.5 rounded-xl font-bold transition shadow-sm flex items-center gap-1.5">
-                        <span id="icone-edicao">🔓</span>
-                        <span id="texto-edicao">Habilitar Edição</span>
+                    <!-- Botão de Alternância de Modo Edição com Senha -->
+                    <button type="button" onclick="acionarModoEdicao()" id="btn-toggle-edicao" class="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 px-4 py-2.5 rounded-xl font-bold transition shadow-sm flex items-center gap-1.5">
+                        <span id="icone-edicao">🔒</span>
+                        <span id="texto-edicao">Desbloquear para Edição</span>
                     </button>
 
                     <!-- Atualizar da Nuvem -->
@@ -154,7 +156,7 @@
                         <span>☁️ Gravar Agendamentos</span>
                     </button>
 
-                    <!-- Limpar Grade da Semana -->
+                    <!-- Limpar Grade da Semana (Protegido por Senha) -->
                     <button type="button" onclick="limparGradeSemana()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-3.5 py-2.5 rounded-xl font-bold transition flex items-center gap-1">
                         <span>🧹 Limpar Grade</span>
                     </button>
@@ -180,11 +182,11 @@
                 </table>
             </div>
 
-            <!-- Dica Operacional -->
+            <!-- Dica Operacional e Segurança -->
             <div class="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs text-slate-500 gap-2 bg-slate-50 p-3.5 rounded-2xl border border-slate-200/60">
                 <div class="flex items-center gap-2">
-                    <span class="text-base">💡</span>
-                    <span><strong>Dica de uso:</strong> Digite o setor (ex: <em>UTI Adulto</em>, <em>RH</em>, <em>CME</em>). Para alterar horários existentes, clique em <strong>"Habilitar Edição"</strong> ou dê um <strong>duplo clique</strong> sobre a célula.</span>
+                    <span class="text-base">🛡️</span>
+                    <span><strong>Segurança UDSO:</strong> Horários já reservados são protegidos por credencial criptográfica. Células livres podem ser agendadas normalmente por qualquer usuário.</span>
                 </div>
                 <span class="text-[11px] text-emerald-800 font-semibold whitespace-nowrap">Conectado ao Google Drive</span>
             </div>
@@ -197,12 +199,17 @@
         </footer>
     </div>
 
-    <!-- Script de Gestão, Sincronização e Edição -->
+    <!-- Script de Gestão, Sincronização, Edição e Segurança Criptográfica -->
     <script>
         // =========================================================================
-        // ENDPOINT OFICIAL DO GOOGLE APPS SCRIPT (AGENDAMENTO)
+        // CONFIGURAÇÕES GERAIS E ENDPOINT
         // =========================================================================
         const API = "https://script.google.com/macros/s/AKfycbwmAkYW0uDXpqOXTrTu_ThlJfImrbpSbi9BILgGwQzZ1naxLfluDq5KwaO6H98Mcw5Y_g/exec";
+
+        // Parâmetros de Autenticação Segura (Criptografia Unidirecional SHA-256)
+        // A senha não é armazenada em texto nem em formatos reversíveis no código
+        const AUTH_SALT = "hgcr_udso_continuar_salt_";
+        const AUTH_HASH = "fe77dd014586937ed5b7a26d73872c89ec5322feb3a242c28112edea70355e1a";
 
         // Horários Padrão de Cinesioterapia / Pausas Ativas
         const listaHorarios = [
@@ -214,7 +221,35 @@
         const diasNomes = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
 
         let segundaFeiraAtual = new Date();
-        let modoEdicaoAtivo = false;
+        let modoEdicaoLiberado = false;
+
+        // Função de verificação criptográfica SHA-256
+        async function calcularHashDigest(texto) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(AUTH_SALT + String(texto).trim().toLowerCase());
+            const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function solicitarAutenticacao() {
+            // Se já autenticou nesta sessão da página
+            if (sessionStorage.getItem('udso_auth_grade') === '1') {
+                return true;
+            }
+
+            const entrada = prompt("Segurança UDSO / HGCR:\nDigite a chave de segurança para autorizar alterações em horários reservados:");
+            if (!entrada) return false;
+
+            const digest = await calcularHashDigest(entrada);
+            if (digest === AUTH_HASH) {
+                sessionStorage.setItem('udso_auth_grade', '1');
+                return true;
+            } else {
+                alert("Chave de segurança incorreta. A alteração de horários reservados foi bloqueada.");
+                return false;
+            }
+        }
 
         // Retorna a segunda-feira correspondente à data fornecida
         function getMonday(d) {
@@ -295,26 +330,25 @@
             carregarGradeNuvem();
         }
 
-        // Alternância do Modo Edição
-        function toggleModoEdicao() {
-            modoEdicaoAtivo = !modoEdicaoAtivo;
-            const btn = document.getElementById('btn-toggle-edicao');
-            const txt = document.getElementById('texto-edicao');
-            const ico = document.getElementById('icone-edicao');
-            const lblModo = document.getElementById('lbl-status-modo');
+        // Alternância do Modo Edição com Verificação de Segurança
+        async function acionarModoEdicao() {
+            if (!modoEdicaoLiberado) {
+                const autorizado = await solicitarAutenticacao();
+                if (!autorizado) return;
 
-            if (modoEdicaoAtivo) {
+                modoEdicaoLiberado = true;
+                const btn = document.getElementById('btn-toggle-edicao');
                 btn.className = "bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-700 px-4 py-2.5 rounded-xl font-bold transition shadow-sm flex items-center gap-1.5 animate-pulse";
-                txt.innerText = "Modo Edição Ativo (Bloquear)";
-                ico.innerText = "🔒";
-                lblModo.innerText = "Modo Edição Aberto";
-                lblModo.className = "text-[11px] text-emerald-800 font-bold";
+                document.getElementById('texto-edicao').innerText = "Bloquear Grade";
+                document.getElementById('icone-edicao').innerText = "🔓";
+                document.getElementById('lbl-status-modo').innerHTML = '<span class="text-emerald-700">🔓 Edição Liberada</span>';
             } else {
+                modoEdicaoLiberado = false;
+                const btn = document.getElementById('btn-toggle-edicao');
                 btn.className = "bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 px-4 py-2.5 rounded-xl font-bold transition shadow-sm flex items-center gap-1.5";
-                txt.innerText = "Habilitar Edição";
-                ico.innerText = "🔓";
-                lblModo.innerText = "Modo Seguro (Bloqueado)";
-                lblModo.className = "text-[11px] text-slate-400 font-medium";
+                document.getElementById('texto-edicao').innerText = "Desbloquear para Edição";
+                document.getElementById('icone-edicao').innerText = "🔒";
+                document.getElementById('lbl-status-modo').innerHTML = '<span>🔒</span> Células Protegidas';
             }
 
             aplicarRegrasBloqueio();
@@ -344,7 +378,8 @@
                     input.classList.add('expirado');
                     input.placeholder = "Passado";
                 } else if (temValor) {
-                    if (modoEdicaoAtivo) {
+                    // Célula preenchida/agendada
+                    if (modoEdicaoLiberado) {
                         input.readOnly = false;
                         input.classList.remove('bloqueado', 'expirado');
                         input.classList.add('em-edicao');
@@ -354,6 +389,7 @@
                         input.classList.add('bloqueado');
                     }
                 } else {
+                    // Célula livre para novo agendamento
                     input.readOnly = false;
                     input.classList.remove('bloqueado', 'em-edicao', 'expirado');
                     input.placeholder = "Livre";
@@ -377,13 +413,29 @@
                     salvarCacheLocal();
                 });
 
-                // Duplo clique permite desbloquear e editar a célula imediatamente
-                inp.addEventListener('dblclick', function() {
-                    if (this.readOnly) {
-                        this.readOnly = false;
-                        this.classList.remove('bloqueado');
-                        this.classList.add('em-edicao');
-                        this.focus();
+                // Se o usuário clicar em uma célula bloqueada, avisa sobre a proteção
+                inp.addEventListener('click', async function() {
+                    if (this.readOnly && this.classList.contains('bloqueado')) {
+                        // Se não estiver em modo liberado, tenta autenticar no clique
+                        const ok = await solicitarAutenticacao();
+                        if (ok) {
+                            modoEdicaoLiberado = true;
+                            acionarModoEdicao();
+                            this.focus();
+                        }
+                    }
+                });
+
+                // Duplo clique sobre célula protegida solicita autenticação
+                inp.addEventListener('dblclick', async function() {
+                    if (this.readOnly && this.classList.contains('bloqueado')) {
+                        const ok = await solicitarAutenticacao();
+                        if (ok) {
+                            this.readOnly = false;
+                            this.classList.remove('bloqueado');
+                            this.classList.add('em-edicao');
+                            this.focus();
+                        }
                     }
                 });
 
@@ -391,7 +443,7 @@
                     if (this.value.trim() === '') {
                         this.classList.remove('bloqueado', 'em-edicao');
                         this.placeholder = "Livre";
-                    } else if (!modoEdicaoAtivo) {
+                    } else if (!modoEdicaoLiberado) {
                         this.classList.remove('em-edicao');
                         this.classList.add('bloqueado');
                     }
@@ -455,8 +507,6 @@
 
         // =========================================================================
         // LEITURA DA NUVEM (doGet)
-        // Suporta tanto o formato individual (Semana, Horario, Setor, Dia_Indice)
-        // quanto o formato matricial (Segunda, Terca, Quarta, Quinta, Sexta)
         // =========================================================================
         async function carregarGradeNuvem() {
             const dataFiltroBR = formatarDataBR(segundaFeiraAtual);
@@ -475,7 +525,7 @@
                 inp.placeholder = "Livre";
             });
 
-            // Carrega cache local imediatamente para agilidade
+            // Carrega cache local imediatamente
             carregarCacheLocal();
 
             try {
@@ -488,14 +538,14 @@
                                        Array.isArray(data) ? data : [];
 
                 if (listaRegistros.length > 0) {
-                    // Filtra registros que pertencem a esta semana (ISO "2026-09-21" ou BR "21/09/2026")
+                    // Filtra registros da semana atual (formato ISO "2026-09-21" ou BR "21/09/2026")
                     const agendamentosSemana = listaRegistros.filter(reg => {
                         const sem = String(reg.Semana || reg["DIA(dia/mês/ano)"] || reg.dia || '').trim();
                         return sem === dataFiltroISO || sem === dataFiltroBR;
                     });
 
                     agendamentosSemana.forEach(reg => {
-                        // 1. Caso Formato Individual por Slot (Dia_Indice + Horario + Setor)
+                        // Formato Individual por Slot (Dia_Indice + Horario + Setor)
                         if (reg.Dia_Indice !== undefined && reg.Dia_Indice !== '' && reg.Setor) {
                             const colIdx = parseInt(reg.Dia_Indice, 10);
                             const horarioSlot = String(reg.Horario || reg.Data_Agendada || '').trim();
@@ -512,7 +562,7 @@
                             }
                         }
 
-                        // 2. Caso Formato Matricial (Segunda, Terca, Quarta, Quinta, Sexta)
+                        // Formato Matricial de Linha (Segunda, Terca, Quarta, Quinta, Sexta)
                         const horarioMatriz = String(reg["Horario Agendado (hora:minutos)"] || reg.Horario || '').trim();
                         const trMatriz = Array.from(document.querySelectorAll('#corpo-tabela tr')).find(r => 
                             r.querySelector('.time-col')?.innerText.trim() === horarioMatriz
@@ -557,8 +607,6 @@
 
         // =========================================================================
         // GRAVAÇÃO NA NUVEM (doPost)
-        // Envia com suporte pleno ao schema exato da planilha:
-        // Semana, Data_Agendada, Horario, Setor, Dia_Indice
         // =========================================================================
         async function salvarGradeNuvem() {
             const dataFiltroBR = formatarDataBR(segundaFeiraAtual);
@@ -588,15 +636,15 @@
 
                         const formData = new URLSearchParams();
                         
-                        // 1. Schema exato da planilha Google Sheets ativa
+                        // Schema exato da planilha Google Sheets ativa
                         formData.append("DATA_REGISTRO", new Date().toLocaleString('pt-BR'));
-                        formData.append("Semana", dataFiltroISO); // "2026-09-21"
+                        formData.append("Semana", dataFiltroISO);
                         formData.append("Data_Agendada", `${diasNomes[colIdx].toUpperCase()} ${diaDataBR.substring(0, 5)} ${horaInicio}`);
                         formData.append("Horario", horario);
                         formData.append("Setor", setorVal);
                         formData.append("Dia_Indice", String(colIdx));
 
-                        // 2. Parâmetros de redundância e compatibilidade institucional
+                        // Parâmetros de redundância e compatibilidade institucional
                         formData.append("TIPO_FORMULARIO", "AGENDAMENTO");
                         formData.append("origem", "AGENDAMENTO");
                         formData.append("acao", "agendamento");
@@ -627,12 +675,14 @@
 
                 salvarCacheLocal();
 
-                // Desativa modo edição após gravação bem-sucedida
-                if (modoEdicaoAtivo) {
-                    toggleModoEdicao();
-                } else {
-                    aplicarRegrasBloqueio();
-                }
+                // Re-bloqueia as células após a gravação
+                modoEdicaoLiberado = false;
+                document.getElementById('btn-toggle-edicao').className = "bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 px-4 py-2.5 rounded-xl font-bold transition shadow-sm flex items-center gap-1.5";
+                document.getElementById('texto-edicao').innerText = "Desbloquear para Edição";
+                document.getElementById('icone-edicao').innerText = "🔒";
+                document.getElementById('lbl-status-modo').innerHTML = '<span>🔒</span> Células Protegidas';
+
+                aplicarRegrasBloqueio();
 
                 alert(`Horários da semana (${dataFiltroBR}) gravados com sucesso na sua planilha!`);
                 carregarGradeNuvem();
@@ -646,8 +696,11 @@
             }
         }
 
-        // Limpeza amigável da semana
-        function limparGradeSemana() {
+        // Limpeza da semana protegida por autenticação
+        async function limparGradeSemana() {
+            const autorizado = await solicitarAutenticacao();
+            if (!autorizado) return;
+
             if (confirm("Deseja realmente limpar todos os setores preenchidos na grade desta semana?\n\n(Dica: Clique em 'Gravar Agendamentos' após limpar se desejar atualizar a planilha na nuvem).")) {
                 document.querySelectorAll('.setor-input').forEach(inp => {
                     inp.value = '';
