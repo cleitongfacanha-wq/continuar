@@ -223,6 +223,7 @@
         let segundaFeiraAtual = new Date();
         let modoEdicaoLiberado = false;
         let promptAberto = false;
+        let horariosCarregadosNuvem = new Set();
 
         // Função de verificação criptográfica SHA-256
         async function calcularHashDigest(texto) {
@@ -561,7 +562,7 @@
                 inp.placeholder = "Livre";
             });
 
-            // Carrega cache local imediatamente
+            // Carrega cache local imediatamente enquanto busca na rede
             carregarCacheLocal();
 
             try {
@@ -577,14 +578,51 @@
                     // Filtra registros da semana atual (formato ISO "2026-09-21" ou BR "21/09/2026")
                     const agendamentosSemana = listaRegistros.filter(reg => {
                         const sem = String(reg.Semana || reg["DIA(dia/mês/ano)"] || reg.dia || '').trim();
-                        return sem === dataFiltroISO || sem === dataFiltroBR;
+                        return sem === dataFiltroISO || sem === dataFiltroBR || sem.startsWith(dataFiltroISO) || sem.startsWith(dataFiltroBR);
                     });
 
+                    // Limpa campos na interface para aplicar os dados oficiais da nuvem
+                    document.querySelectorAll('.setor-input').forEach(inp => {
+                        inp.value = '';
+                    });
+                    horariosCarregadosNuvem.clear();
+
+                    let totalSetores = 0;
+
                     agendamentosSemana.forEach(reg => {
-                        // Formato Individual por Slot (Dia_Indice + Horario + Setor)
+                        // Formato Matricial de Linha (Segunda, Terca, Quarta, Quinta, Sexta)
+                        const horarioMatriz = String(reg["Horario Agendado (hora:minutos)"] || reg.Horario || '').trim();
+                        if (horarioMatriz) {
+                            horariosCarregadosNuvem.add(horarioMatriz);
+                            const trMatriz = Array.from(document.querySelectorAll('#corpo-tabela tr')).find(r => 
+                                r.querySelector('.time-col')?.innerText.trim() === horarioMatriz
+                            );
+
+                            if (trMatriz) {
+                                const celulas = trMatriz.querySelectorAll('.setor-input');
+                                const dias = [
+                                    reg.Segunda || reg.segunda || '',
+                                    reg.Terca || reg.terca || reg['Terça'] || reg['terça'] || '',
+                                    reg.Quarta || reg.quarta || '',
+                                    reg.Quinta || reg.quinta || '',
+                                    reg.Sexta || reg.sexta || ''
+                                ];
+
+                                dias.forEach((val, idx) => {
+                                    const v = String(val || '').trim();
+                                    if (celulas[idx]) {
+                                        celulas[idx].value = v;
+                                        if (v !== '') totalSetores++;
+                                    }
+                                });
+                            }
+                        }
+
+                        // Formato Individual por Slot (legado / redundância)
                         if (reg.Dia_Indice !== undefined && reg.Dia_Indice !== '' && reg.Setor) {
                             const colIdx = parseInt(reg.Dia_Indice, 10);
                             const horarioSlot = String(reg.Horario || reg.Data_Agendada || '').trim();
+                            if (horarioSlot) horariosCarregadosNuvem.add(horarioSlot);
 
                             const tr = Array.from(document.querySelectorAll('#corpo-tabela tr')).find(r => 
                                 r.querySelector('.time-col')?.innerText.trim() === horarioSlot
@@ -592,42 +630,22 @@
 
                             if (tr && !isNaN(colIdx) && colIdx >= 0 && colIdx < 5) {
                                 const celulas = tr.querySelectorAll('.setor-input');
-                                if (celulas[colIdx]) {
+                                if (celulas[colIdx] && !celulas[colIdx].value) {
                                     celulas[colIdx].value = String(reg.Setor).trim();
+                                    totalSetores++;
                                 }
                             }
-                        }
-
-                        // Formato Matricial de Linha (Segunda, Terca, Quarta, Quinta, Sexta)
-                        const horarioMatriz = String(reg["Horario Agendado (hora:minutos)"] || reg.Horario || '').trim();
-                        const trMatriz = Array.from(document.querySelectorAll('#corpo-tabela tr')).find(r => 
-                            r.querySelector('.time-col')?.innerText.trim() === horarioMatriz
-                        );
-
-                        if (trMatriz) {
-                            const celulas = trMatriz.querySelectorAll('.setor-input');
-                            const dias = [
-                                reg.Segunda || reg.segunda || '',
-                                reg.Terca || reg.terca || reg['Terça'] || reg['terça'] || '',
-                                reg.Quarta || reg.quarta || '',
-                                reg.Quinta || reg.quinta || '',
-                                reg.Sexta || reg.sexta || ''
-                            ];
-
-                            dias.forEach((val, idx) => {
-                                const v = String(val || '').trim();
-                                if (v !== '' && celulas[idx]) {
-                                    celulas[idx].value = v;
-                                }
-                            });
                         }
                     });
 
                     salvarCacheLocal();
-                    statusEl.innerHTML = `Sincronizado com a nuvem (${dataFiltroBR})`;
+                    statusEl.innerHTML = totalSetores > 0 
+                        ? `Sincronizado com a nuvem (${totalSetores} setor(es) em ${dataFiltroBR})`
+                        : `Conectado à nuvem (Sem agendamentos nesta semana)`;
                     statusDot.className = "w-3 h-3 rounded-full bg-emerald-500";
                 } else {
-                    statusEl.innerHTML = `Conectado (Sem agendamentos prévios nesta semana)`;
+                    horariosCarregadosNuvem.clear();
+                    statusEl.innerHTML = `Conectado (Sem agendamentos prévios)`;
                     statusDot.className = "w-3 h-3 rounded-full bg-emerald-500";
                 }
 
@@ -659,54 +677,58 @@
 
             linhas.forEach(linha => {
                 const horario = linha.querySelector('.time-col').innerText.trim();
-                const horaInicio = horario.split(' - ')[0];
                 const inputsLinha = linha.querySelectorAll('.setor-input');
+                const seg = inputsLinha[0].value.trim();
+                const ter = inputsLinha[1].value.trim();
+                const qua = inputsLinha[2].value.trim();
+                const qui = inputsLinha[3].value.trim();
+                const sex = inputsLinha[4].value.trim();
 
-                inputsLinha.forEach((inp, colIdx) => {
-                    const setorVal = inp.value.trim();
+                const temValor = (seg !== '' || ter !== '' || qua !== '' || qui !== '' || sex !== '');
+                const estavaNaPlanilha = horariosCarregadosNuvem.has(horario);
 
-                    if (setorVal !== '') {
-                        const diaData = new Date(segundaFeiraAtual);
-                        diaData.setDate(diaData.getDate() + colIdx);
-                        const diaDataBR = formatarDataBR(diaData);
+                // Envia se tem agendamento ativo OU se existia na planilha e foi alterado/limpo
+                if (temValor || estavaNaPlanilha) {
+                    const formData = new URLSearchParams();
+                    formData.append("DATA DO AGENDAMENTO", new Date().toLocaleString('pt-BR'));
+                    formData.append("DIA(dia/mês/ano)", dataFiltroBR);
+                    formData.append("Horario Agendado (hora:minutos)", horario);
+                    formData.append("Segunda", seg);
+                    formData.append("Terca", ter);
+                    formData.append("Quarta", qua);
+                    formData.append("Quinta", qui);
+                    formData.append("Sexta", sex);
 
-                        const formData = new URLSearchParams();
-                        
-                        // Schema exato da planilha Google Sheets ativa
-                        formData.append("DATA_REGISTRO", new Date().toLocaleString('pt-BR'));
-                        formData.append("Semana", dataFiltroISO);
-                        formData.append("Data_Agendada", `${diasNomes[colIdx].toUpperCase()} ${diaDataBR.substring(0, 5)} ${horaInicio}`);
-                        formData.append("Horario", horario);
-                        formData.append("Setor", setorVal);
-                        formData.append("Dia_Indice", String(colIdx));
+                    // Parâmetros de redundância e compatibilidade institucional
+                    formData.append("DATA_REGISTRO", new Date().toLocaleString('pt-BR'));
+                    formData.append("Semana", dataFiltroISO);
+                    formData.append("Horario", horario);
+                    formData.append("TIPO_FORMULARIO", "AGENDAMENTO");
+                    formData.append("origem", "AGENDAMENTO");
+                    formData.append("acao", "agendamento");
 
-                        // Parâmetros de redundância e compatibilidade institucional
-                        formData.append("TIPO_FORMULARIO", "AGENDAMENTO");
-                        formData.append("origem", "AGENDAMENTO");
-                        formData.append("acao", "agendamento");
-                        formData.append("DIA(dia/mês/ano)", dataFiltroBR);
-                        formData.append("Horario Agendado (hora:minutos)", horario);
-
-                        enviosDados.push(formData);
-                    }
-                });
+                    enviosDados.push(formData);
+                }
             });
 
             if (enviosDados.length === 0) {
-                alert("Nenhum setor foi preenchido para gravação nesta semana.");
+                alert("Nenhum agendamento foi preenchido ou modificado nesta semana.");
                 btnSalvar.innerHTML = txtOriginal;
                 btnSalvar.disabled = false;
                 return;
             }
 
             try {
-                // Envia os agendamentos registrados
-                for (let formData of enviosDados) {
+                // Envia as linhas para a planilha
+                for (let i = 0; i < enviosDados.length; i++) {
                     await fetch(API, {
                         method: 'POST',
                         mode: 'no-cors',
-                        body: formData
+                        body: enviosDados[i]
                     });
+                    if (i < enviosDados.length - 1) {
+                        await new Promise(r => setTimeout(r, 450));
+                    }
                 }
 
                 salvarCacheLocal();
@@ -715,8 +737,8 @@
                 atualizarBotoesStatusBloqueado();
                 aplicarRegrasBloqueio();
 
-                alert(`Horários da semana (${dataFiltroBR}) gravados com sucesso na sua planilha!`);
-                carregarGradeNuvem();
+                alert(`Grade da semana (${dataFiltroBR}) gravada e sincronizada com sucesso na nuvem!`);
+                await carregarGradeNuvem();
 
             } catch (error) {
                 console.error("Erro no envio:", error);
@@ -732,7 +754,7 @@
             const autorizado = await solicitarAutenticacao();
             if (!autorizado) return;
 
-            if (confirm("Deseja realmente limpar todos os setores preenchidos na grade desta semana?\n\n(Dica: Clique em 'Gravar Agendamentos' após limpar se desejar atualizar a planilha na nuvem).")) {
+            if (confirm("Deseja realmente limpar todos os setores preenchidos na grade desta semana?\n\nClique em 'OK' para limpar a grade da semana.")) {
                 document.querySelectorAll('.setor-input').forEach(inp => {
                     inp.value = '';
                     inp.readOnly = false;
@@ -741,6 +763,13 @@
                 });
                 salvarCacheLocal();
                 aplicarRegrasBloqueio();
+                atualizarContador();
+
+                if (confirm("Deseja gravar a limpeza imediatamente na planilha da nuvem?")) {
+                    await salvarGradeNuvem();
+                } else {
+                    alert("Grade limpa na tela! Você pode agendar novos setores e clicar em 'Gravar Agendamentos' quando finalizar.");
+                }
             }
         }
 
