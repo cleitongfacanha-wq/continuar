@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grade de Intervenções • UDSO / HGCR</title>
+    <title>Grade de Intervenções Cinesiológicas • UDSO / HGCR</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,25 +12,41 @@
     <style>
         body { font-family: 'Inter', system-ui, sans-serif; background-color: #f8fafc; color: #0f172a; }
         
-        /* Célula Bloqueada */
+        /* Célula Ocupada / Bloqueada */
         input.bloqueado {
-            background-color: #e2e8f0 !important; 
-            color: #475569 !important; 
-            cursor: not-allowed !important;
-            border-color: transparent !important;
-            font-weight: 900 !important;
+            background-color: #ecfdf5 !important; /* emerald-50 */
+            color: #064e3b !important; /* emerald-900 */
+            cursor: pointer;
+            border-color: #a7f3d0 !important;
+            font-weight: 800 !important;
             box-shadow: none !important;
-            outline: none !important;
         }
 
-        /* CONFIGURAÇÃO DE FIXAÇÃO (STICKY) PARA ROLAGEM */
+        /* Célula em Modo Edição */
+        input.em-edicao {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            cursor: text !important;
+            border: 2px dashed #0F4C43 !important;
+        }
+
+        /* Célula Expirada (Horário Passado) */
+        input.expirado {
+            background-color: #f1f5f9 !important; /* slate-100 */
+            color: #94a3b8 !important; /* slate-400 */
+            cursor: not-allowed !important;
+            border-color: transparent !important;
+            font-weight: 500 !important;
+        }
+
+        /* Configuração de Fixação (Sticky) para Rolagem */
         .tabela-container {
-            max-height: 65vh; /* Altura máxima para ativar rolagem vertical */
+            max-height: 68vh;
             overflow: auto;
             position: relative;
         }
         
-        table { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 800px; }
+        table { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 820px; }
         td, th { border: 1px solid #e2e8f0; padding: 0; }
         
         /* Fixa o Cabeçalho (Dias da Semana) no Topo */
@@ -38,7 +54,7 @@
             position: sticky;
             top: 0;
             z-index: 20;
-            background-color: #f1f5f9; /* slate-100 */
+            background-color: #f8fafc;
             border-bottom: 2px solid #cbd5e1;
         }
         
@@ -47,123 +63,168 @@
             position: sticky;
             left: 0;
             z-index: 10;
-            background-color: #f8fafc; /* slate-50 */
+            background-color: #f8fafc;
             border-right: 2px solid #cbd5e1;
         }
         
-        /* Corrige o canto superior esquerdo para ficar por cima de tudo */
+        /* Canto superior esquerdo */
         thead th:first-child {
             z-index: 30;
-            background-color: #e2e8f0; /* slate-200 */
+            background-color: #e2e8f0;
         }
+
+        .loader-spin {
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            width: 14px;
+            height: 14px;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="p-4 md:p-8 min-h-screen flex flex-col items-center">
+<body class="p-3 md:p-6 lg:p-8 min-h-screen flex flex-col items-center antialiased">
 
-    <div class="max-w-7xl w-full">
-        <!-- Cabeçalho -->
-        <header class="bg-gradient-to-r from-slate-900 to-[#0F4C43] text-white p-6 md:p-8 rounded-3xl mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-lg border border-slate-800">
-            <div>
-                <div class="flex items-center gap-2 mb-1.5">
-                    <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span class="text-[11px] font-extrabold uppercase tracking-widest text-emerald-200">UDSO • Hospital Governador Celso Ramos</span>
+    <div class="max-w-7xl w-full flex-grow flex flex-col justify-between">
+        <div>
+            <!-- Cabeçalho Institucional -->
+            <header class="bg-gradient-to-r from-slate-900 to-[#0F4C43] text-white p-6 md:p-8 rounded-3xl mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-lg border border-slate-800">
+                <div>
+                    <div class="flex items-center gap-2 mb-1.5">
+                        <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span class="text-[11px] font-extrabold uppercase tracking-widest text-emerald-200">UDSO • Hospital Governador Celso Ramos</span>
+                    </div>
+                    <h1 class="text-2xl md:text-3xl font-black tracking-tight" style="font-family: 'Montserrat', sans-serif;">Grade de Intervenções Cinesiológicas</h1>
+                    <p class="text-xs md:text-sm text-emerald-100/80 mt-0.5 font-medium">Planejamento Semanal de Pausas Ativas Orientadas & Manejo Ergonômico (NR-17)</p>
                 </div>
-                <h1 class="text-2xl md:text-3xl font-black tracking-tight" style="font-family: 'Montserrat', sans-serif;">Grade de Intervenções Cinesiológicas</h1>
-                <p class="text-xs md:text-sm text-emerald-100/80 mt-0.5 font-medium">Planejamento Semanal de Pausas Ativas Orientadas</p>
-            </div>
-            <div class="flex items-center gap-2">
-                <a href="painel_gestor_udso.html" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition">📊 Painel Gestor</a>
-                <a href="index.html" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition">← Portal</a>
-            </div>
-        </header>
-
-        <!-- Calendário -->
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-2 md:gap-4 w-full md:w-auto justify-between">
-                <button onclick="mudarSemana(-1)" class="p-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl transition font-bold text-slate-600 shadow-sm">← Anterior</button>
-                <div class="flex flex-col text-center">
-                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Semana de Referência</label>
-                    <input type="date" id="semana-ref" class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm font-black text-emerald-900 outline-none focus:ring-2 focus:ring-[#0F4C43] cursor-pointer">
+                <div class="flex flex-wrap items-center gap-2">
+                    <a href="painel_gestor_udso.html" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition border border-white/20 backdrop-blur-sm">📊 Painel Gestor</a>
+                    <a href="index.html" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition border border-white/20 backdrop-blur-sm">← Portal</a>
                 </div>
-                <button onclick="mudarSemana(1)" class="p-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl transition font-bold text-slate-600 shadow-sm">Próxima →</button>
+            </header>
+
+            <!-- Seletor de Semana e Navegação -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 mb-5 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-2 md:gap-3 w-full md:w-auto justify-between">
+                    <button type="button" onclick="mudarSemana(-1)" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl transition text-xs font-bold text-slate-700 shadow-sm flex items-center gap-1.5">
+                        <span>←</span> Semana Anterior
+                    </button>
+                    <div class="flex flex-col text-center">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Segunda-feira de Referência</label>
+                        <input type="date" id="semana-ref" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-black text-[#0F4C43] outline-none focus:ring-2 focus:ring-[#0F4C43] cursor-pointer text-center">
+                    </div>
+                    <button type="button" onclick="mudarSemana(1)" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl transition text-xs font-bold text-slate-700 shadow-sm flex items-center gap-1.5">
+                        Próxima Semana <span>→</span>
+                    </button>
+                </div>
+
+                <!-- Resumo dos Horários Ocupados -->
+                <div class="flex items-center gap-3 text-xs bg-slate-50 px-4 py-2 rounded-xl border border-slate-200/80 w-full md:w-auto justify-center">
+                    <span class="text-slate-500 font-medium">Sessões Marcadas:</span>
+                    <strong id="contador-agendamentos" class="text-sm font-black text-[#0F4C43]">0</strong>
+                    <span class="text-slate-300">|</span>
+                    <span class="text-[11px] text-slate-400 font-medium" id="lbl-status-modo">Modo Seguro</span>
+                </div>
+            </div>
+
+            <!-- Barra de Ações Rápidas & Controles de Edição -->
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-5 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-xs">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-3 h-3 rounded-full bg-amber-500 animate-pulse" id="status-dot"></span>
+                    <span class="font-bold text-slate-700" id="status-escala">Inicializando grade...</span>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2">
+                    <!-- Botão de Alternância de Modo Edição -->
+                    <button type="button" onclick="toggleModoEdicao()" id="btn-toggle-edicao" class="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 px-4 py-2.5 rounded-xl font-bold transition shadow-sm flex items-center gap-1.5">
+                        <span id="icone-edicao">🔓</span>
+                        <span id="texto-edicao">Habilitar Edição</span>
+                    </button>
+
+                    <!-- Atualizar da Nuvem -->
+                    <button type="button" onclick="carregarGradeNuvem()" id="btn-recarregar" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3.5 py-2.5 rounded-xl font-bold transition shadow-sm flex items-center gap-1.5">
+                        <span>↻ Atualizar</span>
+                    </button>
+
+                    <!-- Salvar no Google Sheets -->
+                    <button type="button" onclick="salvarGradeNuvem()" id="btn-sync-grade" class="bg-[#0F4C43] hover:bg-[#0c3b34] text-white px-5 py-2.5 rounded-xl font-bold transition shadow-sm flex items-center gap-2">
+                        <span>☁️ Gravar Agendamentos</span>
+                    </button>
+
+                    <!-- Limpar Grade da Semana -->
+                    <button type="button" onclick="limparGradeSemana()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-3.5 py-2.5 rounded-xl font-bold transition flex items-center gap-1">
+                        <span>🧹 Limpar Grade</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabela de Horários e Dias da Semana -->
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200/90 pb-1 tabela-container">
+                <table id="tabela-grade">
+                    <thead>
+                        <tr class="text-slate-700 uppercase text-[11px] font-extrabold tracking-wider">
+                            <th class="py-3.5 px-3 text-center w-36">Horário</th>
+                            <th id="th-seg" class="py-3.5 px-2 text-center">Segunda-feira</th>
+                            <th id="th-ter" class="py-3.5 px-2 text-center">Terça-feira</th>
+                            <th id="th-qua" class="py-3.5 px-2 text-center">Quarta-feira</th>
+                            <th id="th-qui" class="py-3.5 px-2 text-center">Quinta-feira</th>
+                            <th id="th-sex" class="py-3.5 px-2 text-center">Sexta-feira</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-slate-800" id="corpo-tabela">
+                        <!-- Gerado dinamicamente via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Dica Operacional -->
+            <div class="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs text-slate-500 gap-2 bg-slate-50 p-3.5 rounded-2xl border border-slate-200/60">
+                <div class="flex items-center gap-2">
+                    <span class="text-base">💡</span>
+                    <span><strong>Dica de uso:</strong> Digite o setor (ex: <em>UTI Adulto</em>, <em>RH</em>, <em>CME</em>). Para alterar horários existentes, clique em <strong>"Habilitar Edição"</strong> ou dê um <strong>duplo clique</strong> sobre a célula.</span>
+                </div>
+                <span class="text-[11px] text-emerald-800 font-semibold whitespace-nowrap">Conectado ao Google Drive</span>
             </div>
         </div>
 
-        <!-- Barra de Ações -->
-        <div class="flex flex-wrap items-center justify-between gap-3 mb-6 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-xs">
-            <div class="flex items-center gap-2">
-                <span class="w-3 h-3 rounded-full bg-amber-500 animate-pulse" id="status-dot"></span>
-                <span class="font-bold text-slate-700" id="status-escala">Sincronizando...</span>
-            </div>
-            <div class="flex items-center gap-2">
-                <button type="button" onclick="carregarGradeNuvem()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-4 py-2.5 rounded-xl font-bold transition shadow-sm flex items-center gap-1.5">
-                    <span>↻ Atualizar</span>
-                </button>
-                <button type="button" onclick="salvarGradeNuvem()" id="btn-sync-grade" class="bg-[#0F4C43] hover:bg-[#0c3b34] text-white px-5 py-2.5 rounded-xl font-bold transition shadow-sm flex items-center gap-1.5">
-                    <span>☁️ Salvar e Bloquear Horários</span>
-                </button>
-                <button type="button" onclick="limparGradeGeral()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-3.5 py-2.5 rounded-xl font-bold transition hidden md:block">
-                    🧹 Limpar Tela
-                </button>
-            </div>
-        </div>
-
-        <!-- Tabela (Com Div de Rolagem) -->
-        <div class="bg-white rounded-3xl shadow-md border border-slate-200/80 pb-1 tabela-container">
-            <table>
-                <thead>
-                    <tr class="text-slate-600 uppercase text-[11px] font-extrabold tracking-wider">
-                        <th class="py-4 px-4 text-center w-32">Horário</th>
-                        <th id="th-seg" class="py-4 px-2 text-center">Segunda-feira</th>
-                        <th id="th-ter" class="py-4 px-2 text-center">Terça-feira</th>
-                        <th id="th-qua" class="py-4 px-2 text-center">Quarta-feira</th>
-                        <th id="th-qui" class="py-4 px-2 text-center">Quinta-feira</th>
-                        <th id="th-sex" class="py-4 px-2 text-center">Sexta-feira</th>
-                    </tr>
-                </thead>
-                <tbody class="text-slate-800">
-                    <script>
-                        const horarios = [
-                            "13:00 - 13:15", "13:30 - 13:45", "14:00 - 14:15", "14:30 - 14:45", 
-                            "15:00 - 15:15", "15:30 - 15:45", "16:00 - 16:15", "16:30 - 16:45", 
-                            "17:00 - 17:15", "17:30 - 17:45", "18:00 - 18:15", "18:30 - 18:45"
-                        ];
-                        horarios.forEach(h => {
-                            document.write(`
-                                <tr class="hover:bg-slate-50 transition-colors group">
-                                    <td class="time-col font-black text-center text-slate-600 text-xs tracking-wide py-3">${h}</td>
-                                    <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300" placeholder="Digitar setor"></td>
-                                    <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300" placeholder="Digitar setor"></td>
-                                    <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300" placeholder="Digitar setor"></td>
-                                    <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300" placeholder="Digitar setor"></td>
-                                    <td class="p-0 relative"><input type="text" class="setor-input w-full h-[52px] text-center text-xs font-bold bg-transparent outline-none focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43] transition-all placeholder:text-slate-300" placeholder="Digitar setor"></td>
-                                </tr>
-                            `);
-                        });
-                    </script>
-                </tbody>
-            </table>
-        </div>
-        <footer class="mt-8 text-center text-[11px] text-slate-400">Plataforma Continuar • Governança Ergonômica • UDSO / HGCR</footer>
+        <!-- Rodapé Institucional -->
+        <footer class="mt-8 text-center text-[11px] text-slate-400 py-4">
+            Plataforma Continuar • Governança Ergonômica & Cinesioterapia Laboral • UDSO / Hospital Governador Celso Ramos<br>
+            Responsabilidade Técnica: Dr. Cleiton Gomes Façanha (CREFITO-10: 265.366-F)
+        </footer>
     </div>
 
+    <!-- Script de Gestão, Sincronização e Edição -->
     <script>
         // =========================================================================
-        // ATENÇÃO: COLE A NOVA URL DO SEU SCRIPT INDIVIDUAL ABAIXO 
+        // ENDPOINT OFICIAL DO GOOGLE APPS SCRIPT (AGENDAMENTO)
         // =========================================================================
-        const API = "https://script.google.com/macros/s/AKfycbwmAkYW0uDXpqOXTrTu_ThlJfImrbpSbi9BILgGwQzZ1naxLfluDq5KwaO6H98Mcw5Y_g/exec"; 
-        
-        const inputs = document.querySelectorAll('.setor-input');
-        let segundaFeiraAtual = new Date();
+        const API = "https://script.google.com/macros/s/AKfycbwmAkYW0uDXpqOXTrTu_ThlJfImrbpSbi9BILgGwQzZ1naxLfluDq5KwaO6H98Mcw5Y_g/exec";
 
-        // Volta para a segunda-feira da semana escolhida
+        // Horários Padrão de Cinesioterapia / Pausas Ativas
+        const listaHorarios = [
+            "13:00 - 13:15", "13:30 - 13:45", "14:00 - 14:15", "14:30 - 14:45",
+            "15:00 - 15:15", "15:30 - 15:45", "16:00 - 16:15", "16:30 - 16:45",
+            "17:00 - 17:15", "17:30 - 17:45", "18:00 - 18:15", "18:30 - 18:45"
+        ];
+
+        const diasNomes = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
+
+        let segundaFeiraAtual = new Date();
+        let modoEdicaoAtivo = false;
+
+        // Retorna a segunda-feira correspondente à data fornecida
         function getMonday(d) {
             d = new Date(d);
-            var day = d.getDay(), diff = d.getDate() - day + (day == 0 ? -6: 1); 
+            const day = d.getDay();
+            const diff = d.getDate() - day + (day === 0 ? -6 : 1);
             return new Date(d.setDate(diff));
         }
 
-        // Formata data para o padrão de leitura da planilha: DD/MM/YYYY
+        // Formata data para DD/MM/YYYY
         function formatarDataBR(data) {
             const d = String(data.getDate()).padStart(2, '0');
             const m = String(data.getMonth() + 1).padStart(2, '0');
@@ -171,7 +232,7 @@
             return `${d}/${m}/${y}`;
         }
 
-        // Formata data para o input HTML: YYYY-MM-DD
+        // Formata data para YYYY-MM-DD
         function formatarDataISO(data) {
             const y = data.getFullYear();
             const m = String(data.getMonth() + 1).padStart(2, '0');
@@ -179,27 +240,54 @@
             return `${y}-${m}-${d}`;
         }
 
-        function inicializarCalendario() {
-            segundaFeiraAtual = getMonday(new Date());
-            document.getElementById('semana-ref').value = formatarDataISO(segundaFeiraAtual);
-            atualizarCabecalhos();
-            carregarGradeNuvem();
+        // Renderiza a grade de horários
+        function construirTabela() {
+            const tbody = document.getElementById('corpo-tabela');
+            tbody.innerHTML = '';
+
+            listaHorarios.forEach((horario, rowIdx) => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50/70 transition-colors group';
+
+                // Coluna do Horário
+                let html = `<td class="time-col font-black text-center text-slate-700 text-xs tracking-wide py-3 px-2 bg-slate-50">${horario}</td>`;
+
+                // 5 Colunas (Segunda a Sexta: índices 0 a 4)
+                for (let colIdx = 0; colIdx < 5; colIdx++) {
+                    html += `
+                        <td class="p-0 relative border border-slate-200">
+                            <input type="text" 
+                                data-row="${rowIdx}" 
+                                data-col="${colIdx}" 
+                                data-horario="${horario}"
+                                class="setor-input w-full h-[50px] text-center text-xs font-semibold bg-transparent outline-none transition-all placeholder:text-slate-300 focus:bg-emerald-50 focus:ring-2 focus:ring-inset focus:ring-[#0F4C43]" 
+                                placeholder="Livre">
+                        </td>
+                    `;
+                }
+
+                tr.innerHTML = html;
+                tbody.appendChild(tr);
+            });
+
+            vincularEventosInputs();
         }
 
+        // Atualiza cabeçalhos das colunas com as datas exatas da semana
         function atualizarCabecalhos() {
-            const seg = new Date(segundaFeiraAtual);
-            const ter = new Date(seg); ter.setDate(ter.getDate() + 1);
-            const qua = new Date(seg); qua.setDate(qua.getDate() + 2);
-            const qui = new Date(seg); qui.setDate(qui.getDate() + 3);
-            const sex = new Date(seg); sex.setDate(sex.getDate() + 4);
+            const diasIds = ['th-seg', 'th-ter', 'th-qua', 'th-qui', 'th-sex'];
 
-            document.getElementById('th-seg').innerText = `Segunda-feira (${formatarDataBR(seg)})`;
-            document.getElementById('th-ter').innerText = `Terça-feira (${formatarDataBR(ter)})`;
-            document.getElementById('th-qua').innerText = `Quarta-feira (${formatarDataBR(qua)})`;
-            document.getElementById('th-qui').innerText = `Quinta-feira (${formatarDataBR(qui)})`;
-            document.getElementById('th-sex').innerText = `Sexta-feira (${formatarDataBR(sex)})`;
+            for (let i = 0; i < 5; i++) {
+                const dia = new Date(segundaFeiraAtual);
+                dia.setDate(dia.getDate() + i);
+                const el = document.getElementById(diasIds[i]);
+                if (el) {
+                    el.innerHTML = `${diasNomes[i]} <span class="block text-[10px] text-slate-400 font-medium lowercase">(${formatarDataBR(dia)})</span>`;
+                }
+            }
         }
 
+        // Navegação entre semanas (-1 ou +1)
         function mudarSemana(offset) {
             segundaFeiraAtual.setDate(segundaFeiraAtual.getDate() + (offset * 7));
             document.getElementById('semana-ref').value = formatarDataISO(segundaFeiraAtual);
@@ -207,225 +295,395 @@
             carregarGradeNuvem();
         }
 
-        document.getElementById('semana-ref').addEventListener('change', function(e) {
-            const partes = e.target.value.split('-'); 
-            const dataInput = new Date(partes[0], partes[1] - 1, partes[2]);
-            segundaFeiraAtual = getMonday(dataInput);
-            e.target.value = formatarDataISO(segundaFeiraAtual); 
-            atualizarCabecalhos();
-            carregarGradeNuvem();
-        });
+        // Alternância do Modo Edição
+        function toggleModoEdicao() {
+            modoEdicaoAtivo = !modoEdicaoAtivo;
+            const btn = document.getElementById('btn-toggle-edicao');
+            const txt = document.getElementById('texto-edicao');
+            const ico = document.getElementById('icone-edicao');
+            const lblModo = document.getElementById('lbl-status-modo');
 
-        // Bloqueia horários antigos
-        function bloquearHorariosPassados() {
+            if (modoEdicaoAtivo) {
+                btn.className = "bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-700 px-4 py-2.5 rounded-xl font-bold transition shadow-sm flex items-center gap-1.5 animate-pulse";
+                txt.innerText = "Modo Edição Ativo (Bloquear)";
+                ico.innerText = "🔒";
+                lblModo.innerText = "Modo Edição Aberto";
+                lblModo.className = "text-[11px] text-emerald-800 font-bold";
+            } else {
+                btn.className = "bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 px-4 py-2.5 rounded-xl font-bold transition shadow-sm flex items-center gap-1.5";
+                txt.innerText = "Habilitar Edição";
+                ico.innerText = "🔓";
+                lblModo.innerText = "Modo Seguro (Bloqueado)";
+                lblModo.className = "text-[11px] text-slate-400 font-medium";
+            }
+
+            aplicarRegrasBloqueio();
+        }
+
+        // Aplica regras de bloqueio visual e permissão de edição
+        function aplicarRegrasBloqueio() {
+            const inputs = document.querySelectorAll('.setor-input');
             const agora = new Date();
-            const linhas = document.querySelectorAll('tbody tr');
-            
-            linhas.forEach(linha => {
-                const horarioTexto = linha.querySelector('.time-col').innerText.trim();
-                const horaInicioStr = horarioTexto.split(' - ')[0]; 
+
+            inputs.forEach(input => {
+                const colIdx = parseInt(input.getAttribute('data-col'), 10);
+                const horarioStr = input.getAttribute('data-horario');
+                const horaInicioStr = horarioStr.split(' - ')[0];
                 const [hora, minuto] = horaInicioStr.split(':').map(Number);
-                
-                const celulas = linha.querySelectorAll('.setor-input');
-                
-                celulas.forEach((celula, idx) => {
-                    const dataCelula = new Date(segundaFeiraAtual);
-                    dataCelula.setDate(dataCelula.getDate() + idx);
-                    dataCelula.setHours(hora, minuto, 0, 0);
-                    
-                    if (dataCelula < agora && celula.value.trim() === '') {
-                        celula.readOnly = true;
-                        celula.classList.add('bloqueado');
-                        celula.placeholder = "Expirado";
-                        celula.value = ""; 
-                    } else if (dataCelula >= agora && celula.placeholder === "Expirado" && celula.value.trim() === "") {
-                        celula.readOnly = false;
-                        celula.classList.remove('bloqueado');
-                        celula.placeholder = "Digitar setor";
+
+                const dataCelula = new Date(segundaFeiraAtual);
+                dataCelula.setDate(dataCelula.getDate() + colIdx);
+                dataCelula.setHours(hora, minuto, 0, 0);
+
+                const temValor = input.value.trim() !== '';
+
+                // Se o horário já passou e está vazio
+                if (dataCelula < agora && !temValor) {
+                    input.readOnly = true;
+                    input.classList.remove('bloqueado', 'em-edicao');
+                    input.classList.add('expirado');
+                    input.placeholder = "Passado";
+                } else if (temValor) {
+                    if (modoEdicaoAtivo) {
+                        input.readOnly = false;
+                        input.classList.remove('bloqueado', 'expirado');
+                        input.classList.add('em-edicao');
+                    } else {
+                        input.readOnly = true;
+                        input.classList.remove('em-edicao', 'expirado');
+                        input.classList.add('bloqueado');
+                    }
+                } else {
+                    input.readOnly = false;
+                    input.classList.remove('bloqueado', 'em-edicao', 'expirado');
+                    input.placeholder = "Livre";
+                }
+            });
+
+            atualizarContador();
+        }
+
+        function atualizarContador() {
+            const preenchidos = Array.from(document.querySelectorAll('.setor-input')).filter(i => i.value.trim() !== '').length;
+            document.getElementById('contador-agendamentos').innerText = preenchidos;
+        }
+
+        function vincularEventosInputs() {
+            const inputs = document.querySelectorAll('.setor-input');
+
+            inputs.forEach(inp => {
+                inp.addEventListener('input', () => {
+                    atualizarContador();
+                    salvarCacheLocal();
+                });
+
+                // Duplo clique permite desbloquear e editar a célula imediatamente
+                inp.addEventListener('dblclick', function() {
+                    if (this.readOnly) {
+                        this.readOnly = false;
+                        this.classList.remove('bloqueado');
+                        this.classList.add('em-edicao');
+                        this.focus();
+                    }
+                });
+
+                inp.addEventListener('blur', function() {
+                    if (this.value.trim() === '') {
+                        this.classList.remove('bloqueado', 'em-edicao');
+                        this.placeholder = "Livre";
+                    } else if (!modoEdicaoAtivo) {
+                        this.classList.remove('em-edicao');
+                        this.classList.add('bloqueado');
                     }
                 });
             });
         }
 
-        // Ler dados e preencher a grelha
-        async function carregarGradeNuvem() {
-            const dataFiltroBR = formatarDataBR(segundaFeiraAtual); // Ex: "21/09/2026"
-            const statusEl = document.getElementById('status-escala');
-            const statusDot = document.getElementById('status-dot');
-            
-            statusEl.innerHTML = "Sincronizando com a nuvem...";
-            statusDot.className = "w-3 h-3 rounded-full bg-amber-500 animate-pulse";
+        // Cache local resiliente em localStorage
+        function getCacheKey() {
+            return 'hgcr_agendamentos_' + formatarDataBR(segundaFeiraAtual);
+        }
 
+        function salvarCacheLocal() {
             try {
-                const urlSemCache = API + "?t=" + new Date().getTime();
-                const response = await fetch(urlSemCache);
-                const data = await response.json();
-                
-                // Limpa e destrava localmente
-                inputs.forEach(inp => {
-                    inp.value = '';
-                    inp.readOnly = false;
-                    inp.classList.remove('bloqueado', 'bg-emerald-50');
-                    inp.placeholder = "Digitar setor";
+                const linhas = document.querySelectorAll('#corpo-tabela tr');
+                const registros = [];
+
+                linhas.forEach(linha => {
+                    const horario = linha.querySelector('.time-col').innerText.trim();
+                    const cells = linha.querySelectorAll('.setor-input');
+                    const valores = Array.from(cells).map(c => c.value.trim());
+
+                    if (valores.some(v => v !== '')) {
+                        registros.push({
+                            horario: horario,
+                            dias: valores
+                        });
+                    }
                 });
 
-                const listaRegistros = data.dados || [];
+                localStorage.setItem(getCacheKey(), JSON.stringify(registros));
+            } catch (_) {}
+        }
 
-                if (data.status === "sucesso" && listaRegistros.length > 0) {
-                    
-                    // Procura na Planilha as linhas que pertencem a esta semana (DIA)
+        function carregarCacheLocal() {
+            try {
+                const salvos = JSON.parse(localStorage.getItem(getCacheKey()) || '[]');
+                if (!salvos || salvos.length === 0) return false;
+
+                salvos.forEach(reg => {
+                    const tr = Array.from(document.querySelectorAll('#corpo-tabela tr')).find(r => 
+                        r.querySelector('.time-col')?.innerText.trim() === reg.horario
+                    );
+
+                    if (tr && Array.isArray(reg.dias)) {
+                        const inputs = tr.querySelectorAll('.setor-input');
+                        reg.dias.forEach((val, idx) => {
+                            if (inputs[idx] && val) {
+                                inputs[idx].value = val;
+                            }
+                        });
+                    }
+                });
+
+                aplicarRegrasBloqueio();
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        // =========================================================================
+        // LEITURA DA NUVEM (doGet)
+        // Suporta tanto o formato individual (Semana, Horario, Setor, Dia_Indice)
+        // quanto o formato matricial (Segunda, Terca, Quarta, Quinta, Sexta)
+        // =========================================================================
+        async function carregarGradeNuvem() {
+            const dataFiltroBR = formatarDataBR(segundaFeiraAtual);
+            const dataFiltroISO = formatarDataISO(segundaFeiraAtual);
+            const statusEl = document.getElementById('status-escala');
+            const statusDot = document.getElementById('status-dot');
+
+            statusEl.innerHTML = "Sincronizando com a base...";
+            statusDot.className = "w-3 h-3 rounded-full bg-amber-500 animate-pulse";
+
+            // Limpa campos na interface
+            document.querySelectorAll('.setor-input').forEach(inp => {
+                inp.value = '';
+                inp.readOnly = false;
+                inp.classList.remove('bloqueado', 'em-edicao', 'expirado');
+                inp.placeholder = "Livre";
+            });
+
+            // Carrega cache local imediatamente para agilidade
+            carregarCacheLocal();
+
+            try {
+                const url = `${API}?t=${new Date().getTime()}`;
+                const response = await fetch(url, { method: 'GET' });
+                const data = await response.json();
+
+                const listaRegistros = Array.isArray(data.dados) ? data.dados :
+                                       Array.isArray(data.agendamento) ? data.agendamento :
+                                       Array.isArray(data) ? data : [];
+
+                if (listaRegistros.length > 0) {
+                    // Filtra registros que pertencem a esta semana (ISO "2026-09-21" ou BR "21/09/2026")
                     const agendamentosSemana = listaRegistros.filter(reg => {
-                        return reg["DIA(dia/mês/ano)"] === dataFiltroBR;
+                        const sem = String(reg.Semana || reg["DIA(dia/mês/ano)"] || reg.dia || '').trim();
+                        return sem === dataFiltroISO || sem === dataFiltroBR;
                     });
-                    
-                    // Preenche a tabela
+
                     agendamentosSemana.forEach(reg => {
-                        const horarioPlanilha = String(reg["Horario Agendado (hora:minutos)"]).trim();
-                        
-                        const linha = Array.from(document.querySelectorAll('tr')).find(tr => 
-                            tr.querySelector('.time-col') && tr.querySelector('.time-col').innerText.trim() === horarioPlanilha
+                        // 1. Caso Formato Individual por Slot (Dia_Indice + Horario + Setor)
+                        if (reg.Dia_Indice !== undefined && reg.Dia_Indice !== '' && reg.Setor) {
+                            const colIdx = parseInt(reg.Dia_Indice, 10);
+                            const horarioSlot = String(reg.Horario || reg.Data_Agendada || '').trim();
+
+                            const tr = Array.from(document.querySelectorAll('#corpo-tabela tr')).find(r => 
+                                r.querySelector('.time-col')?.innerText.trim() === horarioSlot
+                            );
+
+                            if (tr && !isNaN(colIdx) && colIdx >= 0 && colIdx < 5) {
+                                const celulas = tr.querySelectorAll('.setor-input');
+                                if (celulas[colIdx]) {
+                                    celulas[colIdx].value = String(reg.Setor).trim();
+                                }
+                            }
+                        }
+
+                        // 2. Caso Formato Matricial (Segunda, Terca, Quarta, Quinta, Sexta)
+                        const horarioMatriz = String(reg["Horario Agendado (hora:minutos)"] || reg.Horario || '').trim();
+                        const trMatriz = Array.from(document.querySelectorAll('#corpo-tabela tr')).find(r => 
+                            r.querySelector('.time-col')?.innerText.trim() === horarioMatriz
                         );
-                        
-                        if (linha) {
-                            const celulas = linha.querySelectorAll('.setor-input');
-                            const dias = [reg.Segunda, reg.Terca, reg.Quarta, reg.Quinta, reg.Sexta];
-                            
-                            celulas.forEach((celula, idx) => {
-                                const valorDia = String(dias[idx] || '').trim();
-                                if (valorDia !== '') {
-                                    celula.value = valorDia;
-                                    celula.readOnly = true;
-                                    celula.classList.add('bloqueado');
+
+                        if (trMatriz) {
+                            const celulas = trMatriz.querySelectorAll('.setor-input');
+                            const dias = [
+                                reg.Segunda || reg.segunda || '',
+                                reg.Terca || reg.terca || reg['Terça'] || reg['terça'] || '',
+                                reg.Quarta || reg.quarta || '',
+                                reg.Quinta || reg.quinta || '',
+                                reg.Sexta || reg.sexta || ''
+                            ];
+
+                            dias.forEach((val, idx) => {
+                                const v = String(val || '').trim();
+                                if (v !== '' && celulas[idx]) {
+                                    celulas[idx].value = v;
                                 }
                             });
                         }
                     });
-                }
-                
-                bloquearHorariosPassados();
-                statusEl.innerHTML = `Grade sincronizada com a nuvem`;
-                statusDot.className = "w-3 h-3 rounded-full bg-emerald-500";
-            } catch (error) {
-                console.error("Erro na leitura:", error);
-                bloquearHorariosPassados();
-                statusEl.innerHTML = `Falha de rede. Exibindo horários locais. Clique em Atualizar.`;
-                statusDot.className = "w-3 h-3 rounded-full bg-amber-500";
-            }
-        }
 
-        // Comportamentos de UI
-        inputs.forEach(input => {
-            input.addEventListener('blur', function() {
-                if (this.value.trim() !== '' && !this.readOnly) {
-                    this.classList.add('bg-emerald-50');
+                    salvarCacheLocal();
+                    statusEl.innerHTML = `Sincronizado com a nuvem (${dataFiltroBR})`;
+                    statusDot.className = "w-3 h-3 rounded-full bg-emerald-500";
                 } else {
-                    this.classList.remove('bg-emerald-50');
+                    statusEl.innerHTML = `Conectado (Sem agendamentos prévios nesta semana)`;
+                    statusDot.className = "w-3 h-3 rounded-full bg-emerald-500";
                 }
-            });
 
-            input.addEventListener('dblclick', function() {
-                if (this.readOnly || this.classList.contains('bloqueado')) {
-                    const senhaDigitada = prompt("Controle UDSO: Digite a credencial técnica (abrra) para liberar/excluir:");
-                    if (senhaDigitada !== null) {
-                        if (btoa(senhaDigitada) === "YWJycmE=") {
-                            this.readOnly = false; 
-                            this.classList.remove('bloqueado');
-                            this.value = ''; 
-                            this.placeholder = "Liberado";
-                            this.focus(); 
-                        } else {
-                            alert("Credencial inválida.");
-                        }
-                    }
-                }
-            });
-        });
+                aplicarRegrasBloqueio();
 
-        function limparGradeGeral() {
-            const senha = prompt("Controle UDSO: Digite a credencial técnica (abrra) para limpar a tela:");
-            if (senha !== null && btoa(senha) === "YWJycmE=") {
-                inputs.forEach(inp => {
-                    inp.value = '';
-                    inp.readOnly = false;
-                    inp.classList.remove('bloqueado', 'bg-emerald-50');
-                    inp.placeholder = "Digitar setor";
-                });
-                bloquearHorariosPassados();
-                alert('Tela limpa! Clique em Salvar para apagar estes horários da nuvem.');
-            } else if (senha !== null) {
-                alert('Credencial inválida.');
+            } catch (error) {
+                console.warn("Falha na sincronização via rede:", error);
+                statusEl.innerHTML = `Modo Offline (Exibindo cache local salvo)`;
+                statusDot.className = "w-3 h-3 rounded-full bg-amber-500";
+                aplicarRegrasBloqueio();
             }
         }
 
-        // SALVAR NA NUVEM
+        // =========================================================================
+        // GRAVAÇÃO NA NUVEM (doPost)
+        // Envia com suporte pleno ao schema exato da planilha:
+        // Semana, Data_Agendada, Horario, Setor, Dia_Indice
+        // =========================================================================
         async function salvarGradeNuvem() {
-            const dataFiltroBR = formatarDataBR(segundaFeiraAtual); // "21/09/2026"
+            const dataFiltroBR = formatarDataBR(segundaFeiraAtual);
+            const dataFiltroISO = formatarDataISO(segundaFeiraAtual);
             const btnSalvar = document.getElementById('btn-sync-grade');
             const statusEl = document.getElementById('status-escala');
             const txtOriginal = btnSalvar.innerHTML;
-            
-            btnSalvar.innerHTML = '<span>⏳ Salvando na Nuvem...</span>';
+
+            btnSalvar.innerHTML = '<span class="loader-spin"></span> Gravando na nuvem...';
             btnSalvar.disabled = true;
 
-            const linhas = document.querySelectorAll('tbody tr');
+            const linhas = document.querySelectorAll('#corpo-tabela tr');
             let enviosDados = [];
-            
+
             linhas.forEach(linha => {
                 const horario = linha.querySelector('.time-col').innerText.trim();
+                const horaInicio = horario.split(' - ')[0];
                 const inputsLinha = linha.querySelectorAll('.setor-input');
-                
-                // Envia a linha inteira se houver qualquer setor preenchido (ou se foi apagado para limpar)
-                let temDado = Array.from(inputsLinha).some(inp => inp.value.trim() !== '');
-                
-                if (temDado) {
-                    const formData = new URLSearchParams();
-                    formData.append("DATA DO AGENDAMENTO", new Date().toLocaleString('pt-BR'));
-                    formData.append("DIA(dia/mês/ano)", dataFiltroBR); 
-                    formData.append("Horario Agendado (hora:minutos)", horario);
-                    formData.append("Segunda", inputsLinha[0].value.trim());
-                    formData.append("Terca", inputsLinha[1].value.trim());
-                    formData.append("Quarta", inputsLinha[2].value.trim());
-                    formData.append("Quinta", inputsLinha[3].value.trim());
-                    formData.append("Sexta", inputsLinha[4].value.trim());
 
-                    enviosDados.push(formData);
-                    
-                    // Bloqueia a linha visualmente IMEDIATAMENTE
-                    inputsLinha.forEach(inp => {
-                        if (inp.value.trim() !== '') {
-                            inp.readOnly = true;
-                            inp.classList.add('bloqueado');
-                            inp.classList.remove('bg-emerald-50');
-                        }
-                    });
-                }
+                inputsLinha.forEach((inp, colIdx) => {
+                    const setorVal = inp.value.trim();
+
+                    if (setorVal !== '') {
+                        const diaData = new Date(segundaFeiraAtual);
+                        diaData.setDate(diaData.getDate() + colIdx);
+                        const diaDataBR = formatarDataBR(diaData);
+
+                        const formData = new URLSearchParams();
+                        
+                        // 1. Schema exato da planilha Google Sheets ativa
+                        formData.append("DATA_REGISTRO", new Date().toLocaleString('pt-BR'));
+                        formData.append("Semana", dataFiltroISO); // "2026-09-21"
+                        formData.append("Data_Agendada", `${diasNomes[colIdx].toUpperCase()} ${diaDataBR.substring(0, 5)} ${horaInicio}`);
+                        formData.append("Horario", horario);
+                        formData.append("Setor", setorVal);
+                        formData.append("Dia_Indice", String(colIdx));
+
+                        // 2. Parâmetros de redundância e compatibilidade institucional
+                        formData.append("TIPO_FORMULARIO", "AGENDAMENTO");
+                        formData.append("origem", "AGENDAMENTO");
+                        formData.append("acao", "agendamento");
+                        formData.append("DIA(dia/mês/ano)", dataFiltroBR);
+                        formData.append("Horario Agendado (hora:minutos)", horario);
+
+                        enviosDados.push(formData);
+                    }
+                });
             });
 
-            if(enviosDados.length === 0){
-                alert("Você precisa digitar um setor antes de salvar.");
+            if (enviosDados.length === 0) {
+                alert("Nenhum setor foi preenchido para gravação nesta semana.");
                 btnSalvar.innerHTML = txtOriginal;
                 btnSalvar.disabled = false;
                 return;
             }
 
             try {
-                // Envia os horários marcados um por um para não falhar
+                // Envia os agendamentos registrados
                 for (let formData of enviosDados) {
-                    await fetch(API, { method: 'POST', mode: 'no-cors', body: formData });
+                    await fetch(API, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        body: formData
+                    });
                 }
-                
-                alert("Horários bloqueados e salvos com sucesso na nuvem!");
-                carregarGradeNuvem(); 
-                
+
+                salvarCacheLocal();
+
+                // Desativa modo edição após gravação bem-sucedida
+                if (modoEdicaoAtivo) {
+                    toggleModoEdicao();
+                } else {
+                    aplicarRegrasBloqueio();
+                }
+
+                alert(`Horários da semana (${dataFiltroBR}) gravados com sucesso na sua planilha!`);
+                carregarGradeNuvem();
+
             } catch (error) {
-                alert("Ocorreu um erro ao comunicar com a base de dados.");
+                console.error("Erro no envio:", error);
+                alert("Houve uma oscilação na rede ao gravar os dados. Os horários foram salvos localmente e serão sincronizados novamente.");
             } finally {
                 btnSalvar.innerHTML = txtOriginal;
                 btnSalvar.disabled = false;
             }
         }
 
-        window.addEventListener('DOMContentLoaded', inicializarCalendario);
+        // Limpeza amigável da semana
+        function limparGradeSemana() {
+            if (confirm("Deseja realmente limpar todos os setores preenchidos na grade desta semana?\n\n(Dica: Clique em 'Gravar Agendamentos' após limpar se desejar atualizar a planilha na nuvem).")) {
+                document.querySelectorAll('.setor-input').forEach(inp => {
+                    inp.value = '';
+                    inp.readOnly = false;
+                    inp.classList.remove('bloqueado', 'em-edicao');
+                    inp.placeholder = "Livre";
+                });
+                salvarCacheLocal();
+                aplicarRegrasBloqueio();
+            }
+        }
+
+        // Inicialização
+        function inicializarGrade() {
+            construirTabela();
+            segundaFeiraAtual = getMonday(new Date());
+
+            const inputSemana = document.getElementById('semana-ref');
+            inputSemana.value = formatarDataISO(segundaFeiraAtual);
+
+            inputSemana.addEventListener('change', function(e) {
+                const partes = e.target.value.split('-');
+                if (partes.length === 3) {
+                    const dataInput = new Date(partes[0], partes[1] - 1, partes[2]);
+                    segundaFeiraAtual = getMonday(dataInput);
+                    e.target.value = formatarDataISO(segundaFeiraAtual);
+                    atualizarCabecalhos();
+                    carregarGradeNuvem();
+                }
+            });
+
+            atualizarCabecalhos();
+            carregarGradeNuvem();
+        }
+
+        window.addEventListener('DOMContentLoaded', inicializarGrade);
     </script>
 </body>
 </html>
