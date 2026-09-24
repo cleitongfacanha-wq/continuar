@@ -186,7 +186,7 @@
             <div class="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs text-slate-500 gap-2 bg-slate-50 p-3.5 rounded-2xl border border-slate-200/60">
                 <div class="flex items-center gap-2">
                     <span class="text-base">🛡️</span>
-                    <span><strong>Segurança UDSO:</strong> Horários já reservados são protegidos por credencial criptográfica. Células livres podem ser agendadas normalmente por qualquer usuário.</span>
+                    <span><strong>Segurança UDSO:</strong> Horários já reservados são protegidos. Ao clicar fora da célula após alterá-la, ela bloqueia automaticamente. Para editar novamente, é necessário reinserir a chave.</span>
                 </div>
                 <span class="text-[11px] text-emerald-800 font-semibold whitespace-nowrap">Conectado ao Google Drive</span>
             </div>
@@ -222,6 +222,7 @@
 
         let segundaFeiraAtual = new Date();
         let modoEdicaoLiberado = false;
+        let promptAberto = false;
 
         // Função de verificação criptográfica SHA-256
         async function calcularHashDigest(texto) {
@@ -233,21 +234,55 @@
         }
 
         async function solicitarAutenticacao() {
-            // Se já autenticou nesta sessão da página
-            if (sessionStorage.getItem('udso_auth_grade') === '1') {
-                return true;
-            }
-
-            const entrada = prompt("Segurança UDSO / HGCR:\nDigite a chave de segurança para autorizar alterações em horários reservados:");
+            const entrada = prompt("Segurança UDSO / HGCR:\nDigite a chave de segurança para autorizar alteração neste horário:");
             if (!entrada) return false;
 
             const digest = await calcularHashDigest(entrada);
             if (digest === AUTH_HASH) {
-                sessionStorage.setItem('udso_auth_grade', '1');
                 return true;
             } else {
-                alert("Chave de segurança incorreta. A alteração de horários reservados foi bloqueada.");
+                alert("Chave de segurança incorreta. A alteração foi bloqueada.");
                 return false;
+            }
+        }
+
+        // Atualiza botões e indicadores para o estado Bloqueado / Protegido
+        function atualizarBotoesStatusBloqueado() {
+            modoEdicaoLiberado = false;
+            const btn = document.getElementById('btn-toggle-edicao');
+            if (btn) {
+                btn.className = "bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 px-4 py-2.5 rounded-xl font-bold transition shadow-sm flex items-center gap-1.5";
+                document.getElementById('texto-edicao').innerText = "Desbloquear para Edição";
+                document.getElementById('icone-edicao').innerText = "🔒";
+                document.getElementById('lbl-status-modo').innerHTML = '<span>🔒</span> Células Protegidas';
+            }
+        }
+
+        // Tenta desbloquear uma célula específica mediante senha
+        async function tentarDesbloquearCelula(celula) {
+            // Se for livre (vazia), não necessita senha
+            if (celula.value.trim() === '') {
+                celula.readOnly = false;
+                celula.classList.remove('bloqueado', 'expirado');
+                celula.focus();
+                return;
+            }
+
+            // Se estiver bloqueada e tiver valor, exige senha
+            if (celula.readOnly && !promptAberto) {
+                promptAberto = true;
+                try {
+                    const ok = await solicitarAutenticacao();
+                    if (ok) {
+                        celula.readOnly = false;
+                        celula.classList.remove('bloqueado');
+                        celula.classList.add('em-edicao');
+                        celula.focus();
+                        celula.select();
+                    }
+                } finally {
+                    setTimeout(() => { promptAberto = false; }, 350);
+                }
             }
         }
 
@@ -330,7 +365,7 @@
             carregarGradeNuvem();
         }
 
-        // Alternância do Modo Edição com Verificação de Segurança
+        // Alternância do Modo Edição Geral mediante Chave
         async function acionarModoEdicao() {
             if (!modoEdicaoLiberado) {
                 const autorizado = await solicitarAutenticacao();
@@ -342,16 +377,19 @@
                 document.getElementById('texto-edicao').innerText = "Bloquear Grade";
                 document.getElementById('icone-edicao').innerText = "🔓";
                 document.getElementById('lbl-status-modo').innerHTML = '<span class="text-emerald-700">🔓 Edição Liberada</span>';
-            } else {
-                modoEdicaoLiberado = false;
-                const btn = document.getElementById('btn-toggle-edicao');
-                btn.className = "bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 px-4 py-2.5 rounded-xl font-bold transition shadow-sm flex items-center gap-1.5";
-                document.getElementById('texto-edicao').innerText = "Desbloquear para Edição";
-                document.getElementById('icone-edicao').innerText = "🔒";
-                document.getElementById('lbl-status-modo').innerHTML = '<span>🔒</span> Células Protegidas';
-            }
 
-            aplicarRegrasBloqueio();
+                // Libera temporariamente todas as células
+                document.querySelectorAll('.setor-input').forEach(inp => {
+                    if (inp.value.trim() !== '') {
+                        inp.readOnly = false;
+                        inp.classList.remove('bloqueado');
+                        inp.classList.add('em-edicao');
+                    }
+                });
+            } else {
+                atualizarBotoesStatusBloqueado();
+                aplicarRegrasBloqueio();
+            }
         }
 
         // Aplica regras de bloqueio visual e permissão de edição
@@ -378,7 +416,7 @@
                     input.classList.add('expirado');
                     input.placeholder = "Passado";
                 } else if (temValor) {
-                    // Célula preenchida/agendada
+                    // Célula preenchida/agendada: se não estiver em modo geral liberado, BLOQUEIA SEMPRE
                     if (modoEdicaoLiberado) {
                         input.readOnly = false;
                         input.classList.remove('bloqueado', 'expirado');
@@ -413,40 +451,38 @@
                     salvarCacheLocal();
                 });
 
-                // Se o usuário clicar em uma célula bloqueada, avisa sobre a proteção
-                inp.addEventListener('click', async function() {
-                    if (this.readOnly && this.classList.contains('bloqueado')) {
-                        // Se não estiver em modo liberado, tenta autenticar no clique
-                        const ok = await solicitarAutenticacao();
-                        if (ok) {
-                            modoEdicaoLiberado = true;
-                            acionarModoEdicao();
-                            this.focus();
-                        }
-                    }
+                // Clique sobre célula agendada protegida
+                inp.addEventListener('click', function() {
+                    tentarDesbloquearCelula(this);
                 });
 
-                // Duplo clique sobre célula protegida solicita autenticação
-                inp.addEventListener('dblclick', async function() {
-                    if (this.readOnly && this.classList.contains('bloqueado')) {
-                        const ok = await solicitarAutenticacao();
-                        if (ok) {
-                            this.readOnly = false;
-                            this.classList.remove('bloqueado');
-                            this.classList.add('em-edicao');
-                            this.focus();
-                        }
-                    }
+                // Duplo clique sobre célula agendada protegida
+                inp.addEventListener('dblclick', function() {
+                    tentarDesbloquearCelula(this);
                 });
 
+                // =============================================================
+                // BLUR (CLICAR FORA): BLOQUEIA IMEDIATAMENTE A CÉLULA E PERMANECE BLOQUEADA!
+                // =============================================================
                 inp.addEventListener('blur', function() {
-                    if (this.value.trim() === '') {
-                        this.classList.remove('bloqueado', 'em-edicao');
-                        this.placeholder = "Livre";
-                    } else if (!modoEdicaoLiberado) {
-                        this.classList.remove('em-edicao');
+                    const temValor = this.value.trim() !== '';
+
+                    if (temValor) {
+                        // Trava imediatamente a célula alterada
+                        this.readOnly = true;
+                        this.classList.remove('em-edicao', 'expirado');
                         this.classList.add('bloqueado');
+                    } else {
+                        // Se foi apagada/limpa, torna-se livre novamente
+                        this.readOnly = false;
+                        this.classList.remove('bloqueado', 'em-edicao', 'expirado');
+                        this.placeholder = "Livre";
                     }
+
+                    // Revoga a liberação: qualquer próxima tentativa exigirá senha novamente!
+                    atualizarBotoesStatusBloqueado();
+                    salvarCacheLocal();
+                    atualizarContador();
                 });
             });
         }
@@ -675,13 +711,8 @@
 
                 salvarCacheLocal();
 
-                // Re-bloqueia as células após a gravação
-                modoEdicaoLiberado = false;
-                document.getElementById('btn-toggle-edicao').className = "bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 px-4 py-2.5 rounded-xl font-bold transition shadow-sm flex items-center gap-1.5";
-                document.getElementById('texto-edicao').innerText = "Desbloquear para Edição";
-                document.getElementById('icone-edicao').innerText = "🔒";
-                document.getElementById('lbl-status-modo').innerHTML = '<span>🔒</span> Células Protegidas';
-
+                // Re-bloqueia todas as células após a gravação
+                atualizarBotoesStatusBloqueado();
                 aplicarRegrasBloqueio();
 
                 alert(`Horários da semana (${dataFiltroBR}) gravados com sucesso na sua planilha!`);
